@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String         @id @default(cuid())
+  username       String         @unique // Added username field
+  name           String
+  email          String         @unique
+  password       String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  journalEntries JournalEntry[]
+  moodEntries    MoodEntry[]
+  gameProgress   GameProgress?
+  mindGarden     MindGarden?
+  activityLogs ActivityLog[]
+  bookmarks      Bookmark[]
+  gameSessions   GameSession[] // Relation to GameSession
+
+  @@map("users")
+}
+
+model JournalEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  content   String
+  animation String   @default("calm-wave")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("journal_entries")
+}
+
+model MoodEntry {
+  id          String   @id @default(cuid())
+  userId      String
+  mood        Int
+  notes       String?
+  triggers    String[] @default([])
+  activities  String[] @default([])
+  sleepHours  Float?
+  energyLevel Int?
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mood_entries")
+}
+
+
+model ActivityLog {
+  id           String   @id @default(cuid())
+  userId       String
+  activityType String
+  points       Int
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, activityType, createdAt])
+}
+
+
+model MindGarden {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  growthScore      Int      @default(0)
+  streak           Int      @default(0)
+  ambientMode      String   @default("forest")
+  totalInteractions Int     @default(0)
+  lastActivity     DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt 
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model Affirmation {
+  id        String   @id @default(cuid())
+  content   String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("affirmations")
+}
+
+model GameProgress {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  gamesPlayed        Int      @default(0)
+  totalTime          Int      @default(0)
+  achievements       String[] @default([])
+  streak             Int      @default(0)
+  favoriteGames      Json     @default("[]") 
+  skillLevels        Json     @default("{}") 
+  weeklyGoal         Int      @default(30)
+  currentWeekMinutes Int      @default(0)
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("game_progress")
+}
+
+model Bookmark {
+  id         String   @id @default(cuid())
+  userId     String
+  resourceId String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("bookmarks")
+}
+
+model GameSession {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameId     String
+  duration   Int
+  score      Int
+  completed  Boolean
+  difficulty String
+  createdAt  DateTime @default(now())
+
+  @@map("game_sessions")
+}

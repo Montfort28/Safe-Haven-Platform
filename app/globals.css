@@ -1,0 +1,107 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap");
+
+html,
+body,
+#__next {
+  font-family: "Rubik", Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  background: inherit;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen;
+    @apply text-slate-700;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg;
+  }
+
+  .gradient-bg {
+    @apply bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-full hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply bg-white/50 backdrop-blur-sm border border-white/30 px-6 py-3 rounded-full hover:bg-white/70 transition-all duration-200;
+  }
+
+  @keyframes typewriter {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+  .animate-typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typewriter 2s steps(40, end), fadeIn 1s;
+  }
+  .animate-fade-in {
+    animation: fadeIn 1s ease-in;
+  }
+  .animate-bounce {
+    animation: bounce 2s infinite;
+  }
+  .animate-flip-in {
+    animation: flip-in 0.5s ease-out;
+  }
+  @keyframes flip-in {
+    from {
+      transform: rotateY(90deg);
+      opacity: 0;
+    }
+    to {
+      transform: rotateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+.fade-page-transition {
+  animation: fadein 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

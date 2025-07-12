@@ -1,0 +1,11 @@
+# Ignore heavy and auto-generated folders
+node_modules/
+.next/
+.env
+
+# Ignore logs and build artifacts
+*.log
+*.DS_Store
+dist/
+out/
+coverage/
