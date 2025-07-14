@@ -61,7 +61,16 @@ const AFFIRMATIONS = [
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
-  const [moodData, setMoodData] = useState<MoodData[]>([]);
+
+  const [moodData, setMoodData] = useState<MoodData[]>([
+    { day: 'Mon', mood: 6, date: '2024-01-01' },
+    { day: 'Tue', mood: 7, date: '2024-01-02' },
+    { day: 'Wed', mood: 5, date: '2024-01-03' },
+    { day: 'Thu', mood: 8, date: '2024-01-04' },
+    { day: 'Fri', mood: 6, date: '2024-01-05' },
+    { day: 'Sat', mood: 7, date: '2024-01-06' },
+    { day: 'Sun', mood: 6, date: '2024-01-07' },
+  ]);
   const [recentEntries, setRecentEntries] = useState<JournalEntry[]>([]);
   const [activityStats, setActivityStats] = useState<ActivityStats>({
     totalMoodEntries: 0,
@@ -232,7 +241,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50 animate-fade-in">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
       <SoundPlayer src="/sounds/ambient-rain.mp3" loop />
       <Navbar />
       <div className="max-w-7xl mx-auto p-6">

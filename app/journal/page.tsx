@@ -89,6 +89,7 @@ export default function JournalPage() {
   const [breathingMode, setBreathingMode] = useState(false);
   const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [showAllModal, setShowAllModal] = useState(false);
 
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -345,13 +346,40 @@ export default function JournalPage() {
     </div>
   );
 
+  const handleModalClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      setShowAllModal(false);
+    }
+  };
+
+  // Helper for mood insights
+  const getMoodInsights = (entries: JournalEntry[]) => {
+    if (!entries.length) return { avg: 0, bestDay: '', commonEmotion: '' };
+    // Average mood
+    const moods = entries.map(e => e.mood).filter(Boolean) as number[];
+    const avg = moods.length ? (moods.reduce((a, b) => a + b, 0) / moods.length) : 0;
+    // Best day (highest mood)
+    const bestEntry = entries.reduce((best, curr) => (curr.mood && (!best || curr.mood > (best.mood || 0))) ? curr : best, null as JournalEntry | null);
+    const bestDay = bestEntry ? formatDate(bestEntry.createdAt) : '';
+    // Most common emotion
+    const emotionCounts: Record<string, number> = {};
+    entries.forEach(e => {
+      e.emotions?.forEach(em => {
+        emotionCounts[em] = (emotionCounts[em] || 0) + 1;
+      });
+    });
+    const commonEmotion = Object.entries(emotionCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+    return { avg, bestDay, commonEmotion };
+  };
+  const moodStats = getMoodInsights(entries);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50 animate-fade-in">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
       <Navbar />
       <div className="max-w-7xl mx-auto p-6 flex-grow">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-blue-700 mb-4">Mindful Journal</h1>
-          <p className="text-blue-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-blue-700 mb-4 drop-shadow-lg">Mindful Journal</h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             A safe space to express your thoughts, track your emotions, and reflect on your journey of growth.
           </p>
         </div>
@@ -365,13 +393,6 @@ export default function JournalPage() {
             >
               <Lightbulb className="w-4 h-4" />
               Writing Prompts
-            </button>
-            <button
-              onClick={() => setBreathingMode(true)}
-              className="btn-secondary flex items-center gap-2 hover:bg-blue-100 hover:text-blue-700"
-            >
-              <Brain className="w-4 h-4" />
-              Breathing Exercise
             </button>
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
@@ -443,7 +464,7 @@ export default function JournalPage() {
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 transition-all duration-300"
+                    className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 transition-all duration-300"
                     placeholder="Enter a title for your entry"
                     required
                   />
@@ -502,7 +523,7 @@ export default function JournalPage() {
                       ref={textareaRef}
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
-                      className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/70 transition-all duration-300 min-h-[200px] resize-none"
+                      className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/70 transition-all duration-300 min-h-[200px] resize-none"
                       placeholder={currentPrompt ? `${currentPrompt.text}\n\nStart writing your thoughts here...` : "Write your thoughts here..."}
                       rows={8}
                     />
@@ -637,15 +658,15 @@ export default function JournalPage() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm">This week's average</span>
-                  <span className="font-semibold text-green-600">7.2/10</span>
+                  <span className="font-semibold text-green-600">{moodStats.avg ? moodStats.avg.toFixed(1) : '--'}/10</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm">Best day</span>
-                  <span className="font-semibold text-blue-600">Yesterday</span>
+                  <span className="font-semibold text-blue-600">{moodStats.bestDay || '--'}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm">Most common emotion</span>
-                  <span className="font-semibold text-purple-600">Grateful</span>
+                  <span className="font-semibold text-purple-600">{moodStats.commonEmotion || '--'}</span>
                 </div>
               </div>
             </div>
@@ -655,10 +676,13 @@ export default function JournalPage() {
         {/* Recent Entries */}
         <div className="glass-card p-8 mt-12 bg-white/80">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-blue-700">Recent Entries</h2>
-            <Link href="/journal/all" className="text-blue-600 hover:text-purple-600 text-sm">
-              View All →
-            </Link>
+            <h2 className="text-2xl font-bold text-blue-700">Recent Entries</h2>
+            <button
+              className="text-blue-600 text-sm font-medium px-4 py-2 rounded-lg transition-all duration-300 border border-blue-200 bg-white/70 shadow-sm"
+              onClick={() => setShowAllModal(true)}
+            >
+              View All
+            </button>
           </div>
 
           {isLoading ? (
@@ -670,13 +694,11 @@ export default function JournalPage() {
               {entries.slice(0, 6).map((entry) => (
                 <div
                   key={entry.id}
-                  className="group bg-blue-50 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 border-l-4 border-blue-500 cursor-pointer"
-                  onClick={() => router.push(`/journal/${entry.id}`)}
+                  className="group bg-white rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-blue-500 cursor-pointer hover:bg-gray-50"
+                  onClick={() => setShowAllModal(true)}
                 >
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-medium text-blue-700 line-clamp-1 group-hover:text-purple-600 transition-colors">
-                      {entry.title}
-                    </h3>
+                    <h3 className="font-medium text-black line-clamp-1 group-hover:text-purple-600 transition-colors text-lg">{entry.title}</h3>
                     {entry.mood && (
                       <span className="text-lg">
                         {MOOD_ICONS[entry.mood as keyof typeof MOOD_ICONS]?.icon}
@@ -684,7 +706,7 @@ export default function JournalPage() {
                     )}
                   </div>
 
-                  <p className="text-sm text-blue-600 mb-3 line-clamp-3">
+                  <p className="text-base text-gray-700 mb-3 line-clamp-3">
                     {entry.content.replace(/<[^>]+>/g, '').substring(0, 120)}...
                   </p>
 
@@ -693,18 +715,18 @@ export default function JournalPage() {
                       {entry.emotions.slice(0, 3).map((emotion, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full"
+                          className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full font-medium"
                         >
                           {emotion}
                         </span>
                       ))}
                       {entry.emotions.length > 3 && (
-                        <span className="text-xs text-blue-500">+{entry.emotions.length - 3} more</span>
+                        <span className="text-xs text-blue-500 font-medium">+{entry.emotions.length - 3} more</span>
                       )}
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between text-xs text-blue-400">
+                  <div className="flex items-center justify-between text-xs text-gray-400 font-medium">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
                       {formatDate(entry.createdAt)}
@@ -720,13 +742,13 @@ export default function JournalPage() {
           ) : (
             <div className="text-center py-12">
               <BookOpen className="w-16 h-16 mx-auto mb-4 text-blue-200" />
-              <p className="text-blue-400 mb-4">No journal entries yet</p>
-              <p className="text-sm text-blue-300 mb-6">
+              <p className="text-gray-400 mb-4 text-lg">No journal entries yet</p>
+              <p className="text-base text-gray-300 mb-6">
                 Start your mindful journaling journey by writing your first entry above
               </p>
               <button
                 onClick={() => (document.querySelector('input[type="text"]') as HTMLInputElement | null)?.focus()}
-                className="btn-primary inline-flex items-center"
+                className="btn-primary inline-flex items-center text-base"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Start Writing
@@ -734,6 +756,50 @@ export default function JournalPage() {
             </div>
           )}
         </div>
+
+        {/* Modal for all entries */}
+        {showAllModal && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/30 backdrop-blur-md" onClick={handleModalClick}>
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-0 relative animate-fade-in border-2 border-blue-300 overflow-hidden" style={{ zIndex: 10000 }}>
+              <div className="flex flex-col">
+                <div className="flex items-center justify-between px-8 pt-8 pb-4 border-b border-blue-100">
+                  <h2 className="text-3xl font-bold text-blue-700 text-center w-full">All Journal Entries</h2>
+                  <button
+                    className="absolute top-6 right-6 text-blue-600 hover:text-red-500 text-2xl font-bold"
+                    onClick={() => setShowAllModal(false)}
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="max-h-[70vh] overflow-y-auto px-8 pb-8 pt-4">
+                  {entries.length > 0 ? (
+                    entries.map((entry) => (
+                      <div key={entry.id} className="bg-white rounded-xl p-6 mb-6 shadow-md border-l-4 border-blue-500">
+                        <h3 className="font-bold text-black text-xl mb-2">{entry.title}</h3>
+                        <p className="text-base text-gray-700 mb-2">{entry.content.replace(/<[^>]+>/g, '')}</p>
+                        <div className="flex items-center justify-between text-xs text-gray-400 font-medium">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            {formatDate(entry.createdAt)}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            {entry.content.split(' ').length} words
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <BookOpen className="w-16 h-16 mx-auto mb-4 text-blue-200" />
+                      <p className="text-gray-400 mb-4 text-lg">No journal entries found</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {soundEnabled && <SoundPlayer src="/sounds/paper-rustle.mp3" loop={true} />}

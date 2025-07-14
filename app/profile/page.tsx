@@ -124,9 +124,9 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-100 to-blue-100">
       <Navbar />
-      <div className="flex-1 w-full max-w-3xl mx-auto px-2 md:px-4 lg:px-8 py-4">
+      <div className="w-full px-2 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-6 mx-auto">
         <div className="grid grid-cols-1 gap-4 mb-6">
           {/* Profile Header */}
           <div className="glass-card p-4 flex flex-col items-center justify-center text-center">

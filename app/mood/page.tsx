@@ -54,16 +54,16 @@ const MoodPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const moodEmojis = [
-    { value: 1, emoji: '😭', label: 'Terrible', color: '#ef4444', className: 'animate-pulse' },
-    { value: 2, emoji: '😢', label: 'Very Sad', color: '#f97316', className: 'animate-pulse' },
-    { value: 3, emoji: '😔', label: 'Sad', color: '#eab308', className: 'animate-pulse' },
+    { value: 1, emoji: '😭', label: 'Terrible', color: '#ef4444', className: '' },
+    { value: 2, emoji: '😢', label: 'Very Sad', color: '#f97316', className: '' },
+    { value: 3, emoji: '😔', label: 'Sad', color: '#eab308', className: '' },
     { value: 4, emoji: '😕', label: 'Down', color: '#84cc16', className: '' },
     { value: 5, emoji: '😐', label: 'Neutral', color: '#06b6d4', className: '' },
-    { value: 6, emoji: '🙂', label: 'Okay', color: '#3b82f6', className: 'animate-bounce' },
-    { value: 7, emoji: '😊', label: 'Good', color: '#8b5cf6', className: 'animate-bounce' },
-    { value: 8, emoji: '😄', label: 'Great', color: '#10b981', className: 'animate-bounce' },
-    { value: 9, emoji: '😃', label: 'Amazing', color: '#059669', className: 'animate-bounce' },
-    { value: 10, emoji: '🤩', label: 'Incredible', color: '#047857', className: 'animate-bounce' },
+    { value: 6, emoji: '🙂', label: 'Okay', color: '#3b82f6', className: '' },
+    { value: 7, emoji: '😊', label: 'Good', color: '#8b5cf6', className: '' },
+    { value: 8, emoji: '😄', label: 'Great', color: '#10b981', className: '' },
+    { value: 9, emoji: '😃', label: 'Amazing', color: '#059669', className: '' },
+    { value: 10, emoji: '🤩', label: 'Incredible', color: '#047857', className: '' },
   ];
 
   const commonTriggers = [
@@ -181,11 +181,11 @@ const MoodPage = () => {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
 
-    const data = insights.moodData.slice(-14); // Last 14 days
+    const data = [...insights.moodData.slice(-14)].reverse();
     if (data.length < 2) return;
 
     const xStep = (width - 2 * padding) / (data.length - 1);
-    const yScale = (height - 2 * padding) / 9; // Scale for mood 1-10
+    const yScale = (height - 2 * padding) / 9;
 
     // Draw grid lines
     ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
@@ -198,34 +198,37 @@ const MoodPage = () => {
       ctx.stroke();
     }
 
-    // Draw mood line
+    // Draw smooth mood curve (Bezier)
     ctx.strokeStyle = '#3b82f6';
     ctx.lineWidth = 3;
     ctx.beginPath();
-
-    data.forEach((point, index) => {
-      const x = padding + (index * xStep);
-      const y = height - padding - ((point.mood - 1) * yScale);
-
-      if (index === 0) {
+    for (let i = 0; i < data.length; i++) {
+      const x = padding + (i * xStep);
+      const y = height - padding - ((data[i].mood - 1) * yScale);
+      if (i === 0) {
         ctx.moveTo(x, y);
       } else {
-        ctx.lineTo(x, y);
+        // Calculate control points for Bezier curve
+        const prevX = padding + ((i - 1) * xStep);
+        const prevY = height - padding - ((data[i - 1].mood - 1) * yScale);
+        const cp1X = prevX + xStep / 2;
+        const cp1Y = prevY;
+        const cp2X = x - xStep / 2;
+        const cp2Y = y;
+        ctx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, x, y);
       }
-    });
+    }
     ctx.stroke();
 
     // Draw points
     data.forEach((point, index) => {
       const x = padding + (index * xStep);
       const y = height - padding - ((point.mood - 1) * yScale);
-
       ctx.fillStyle = moodEmojis.find(e => e.value === Math.round(point.mood))?.color || '#3b82f6';
       ctx.beginPath();
       ctx.arc(x, y, 6, 0, 2 * Math.PI);
       ctx.fill();
-
-      // Add mood emoji
+      // Add mood emoji (no animation)
       const emoji = moodEmojis.find(e => e.value === Math.round(point.mood))?.emoji || '😐';
       ctx.font = '16px sans-serif';
       ctx.textAlign = 'center';
@@ -306,16 +309,13 @@ const MoodPage = () => {
   const currentMoodData = moodEmojis.find(e => e.value === mood);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50 animate-fade-in">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
       <Navbar />
       <div className="max-w-7xl mx-auto p-6">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-4">
-            <Heart className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Mood Tracker</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-blue-700 mb-4 drop-shadow-lg">Mood Tracker</h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Track your emotional wellbeing with detailed insights and personalized recommendations
           </p>
         </div>
@@ -369,7 +369,7 @@ const MoodPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Streak</p>
-                  <p className="text-2xl font-bold text-gray-900">{entries.length > 0 ? '3 days' : '0 days'}</p>
+                  <p className="text-2xl font-bold text-gray-900">{entries.length > 0 ? `${entries.length} days` : '0 days'}</p>
                 </div>
                 <div className="p-3 rounded-full bg-purple-100">
                   <Zap className="w-6 h-6 text-purple-600" />

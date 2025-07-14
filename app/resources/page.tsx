@@ -8,6 +8,7 @@ import { Home, BarChart3, Gamepad2, Library, BookOpen, Video, Phone, User, LogOu
 import AppShell from '../AppShell';
 import stories from './stories';
 import Navbar from '@/components/Navbar';
+import { anxietyDetails, depressionDetails } from './copingDetails';
 
 interface Resource {
   id: string;
@@ -113,7 +114,7 @@ const filterOptions = [
   { label: 'Articles', value: 'articles' },
   { label: 'Coping Mechanisms', value: 'coping' },
   { label: 'Stories', value: 'stories' },
-  { label: 'Curated Resources', value: 'resources' },
+  { label: 'Hotlines', value: 'hotlines' },
 ];
 
 const articles = [
@@ -134,8 +135,9 @@ const articles = [
 export default function ResourcesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [openStory, setOpenStory] = useState<Story | null>(null);
+  const [openCopingModal, setOpenCopingModal] = useState<'anxiety' | 'depression' | null>(null);
   const [showHelplineModal, setShowHelplineModal] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<'all' | 'audio' | 'video' | 'articles' | 'coping' | 'stories' | 'resources'>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'audio' | 'video' | 'articles' | 'coping' | 'stories' | 'hotlines'>('all');
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement | null>(null);
   const audioRefs = useRef<Array<HTMLAudioElement | null>>([]);
@@ -222,19 +224,23 @@ export default function ResourcesPage() {
     return <div className="text-lg leading-relaxed text-slate-800" dangerouslySetInnerHTML={{ __html: html }} />;
   }
 
+  // Filtered articles and video
+  const filteredArticles = articles;
+  const filteredVideo = resources.filter(r => r.type === 'video');
+  const hotlineResource = resources.find(r => r.type === 'helpline');
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50 animate-fade-in">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
       <Navbar />
       <div className="max-w-7xl mx-auto p-6">
         {/* Hero Section */}
-        <section className="rounded-3xl bg-gradient-to-r from-blue-200 to-purple-100 shadow-xl p-8 mb-8 flex flex-col md:flex-row items-center gap-8">
+        <section className="rounded-3xl bg-gradient-to-r from-blue-200 to-blue-200 shadow-xl p-8 mb-8 flex flex-col md:flex-row items-center gap-8">
           <div className="flex-1">
             <h1 className="text-4xl md:text-5xl font-extrabold text-blue-900 mb-4 drop-shadow-lg">You Are Not Alone</h1>
-            <p className="text-lg md:text-xl text-slate-700 mb-4 max-w-2xl">Explore trusted resources, real stories, and practical tools for managing anxiety and depression. Safe Haven is your supportive space for mental wellness.</p>
-            <div className="flex flex-wrap gap-4 mt-6">
+            <p className="text-lg md:text-xl text-slate-700 mb-4 max-w-xl">Explore trusted resources, real stories, and practical tools for managing anxiety and depression. Safe Haven is your supportive space for mental wellness.</p>
+            <div className="flex flex-row gap-4 mt-6">
               <a href="#coping" className="btn-primary">Coping Mechanisms</a>
               <a href="#stories" className="btn-secondary">Real Stories</a>
-              <a href="#resources" className="btn-tertiary">All Resources</a>
             </div>
           </div>
         </section>
@@ -252,18 +258,18 @@ export default function ResourcesPage() {
           ))}
         </div>
 
-        {/* Coping Mechanisms Section */}
+        {/* Coping Mechanisms Section - should come first */}
         {(activeFilter === 'all' || activeFilter === 'coping') && (
           <section id="coping" className="mb-16">
             <h2 className="text-2xl font-bold text-blue-800 mb-6 flex items-center gap-2"><Heart className="w-6 h-6 text-pink-500" /> Coping Mechanisms</h2>
             <div className="grid md:grid-cols-2 gap-8">
               {copingMechanisms.map((coping) => (
-                <div key={coping.id} className="rounded-2xl p-6 bg-white shadow-lg border border-blue-100 flex flex-col gap-2">
+                <div key={coping.id} className="rounded-2xl p-6 bg-gradient-to-br from-blue-50 to-purple-50 shadow-lg border border-blue-100 flex flex-col gap-2 cursor-pointer hover:scale-[1.03] transition-transform" onClick={() => setOpenCopingModal(coping.id as 'anxiety' | 'depression')}>
                   <div className="flex items-center gap-4 mb-3">
                     {coping.icon}
-                    <h3 className="text-xl font-semibold text-slate-800">{coping.title}</h3>
+                    <h3 className="text-xl font-semibold text-blue-800">{coping.title}</h3>
                   </div>
-                  <ul className="list-disc pl-6 text-slate-700 space-y-1">
+                  <ul className="list-disc pl-6 text-slate-600 space-y-1">
                     {coping.steps.map((step, idx) => (
                       <li key={idx}>{step}</li>
                     ))}
@@ -272,6 +278,138 @@ export default function ResourcesPage() {
               ))}
             </div>
           </section>
+        )}
+        {/* Real Stories Section - should follow Coping Mechanisms */}
+        {(activeFilter === 'all' || activeFilter === 'stories') && (
+          <section id="stories" className="mb-16">
+            <h2 className="text-2xl font-bold text-blue-800 mb-6 flex items-center gap-2"><User className="w-6 h-6 text-blue-400" /> Real Stories</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {mappedStories.map(story => (
+                <div key={story.id} className="rounded-2xl p-6 bg-gradient-to-br from-blue-50 to-purple-50 shadow-lg border border-blue-100 flex flex-col gap-2 transition-transform hover:scale-[1.03]">
+                  <h3 className="text-lg font-semibold text-blue-800 mb-1">{story.title}</h3>
+                  <p className="text-slate-600 text-sm mb-2">{story.summary}</p>
+                  <span className="inline-block text-xs text-blue-600 font-medium">{story.name}{story.age ? `, ${story.age}` : ''}</span>
+                  <button className="btn-primary mt-3 w-fit" onClick={() => setOpenStory(story)}>Read Story</button>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+        {/* Articles Section - below Real Stories */}
+        {(activeFilter === 'all' || activeFilter === 'articles') && (
+          <section id="articles" className="mb-16">
+            <h2 className="text-2xl font-bold text-blue-800 mb-6 flex items-center gap-2"><BookOpen className="w-6 h-6 text-blue-500" /> Articles</h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              {filteredArticles.map((article) => (
+                <div key={article.id} className="rounded-2xl p-6 bg-gradient-to-br from-blue-50 to-purple-50 shadow-lg border border-blue-100 flex flex-col gap-2 transition-transform hover:scale-[1.03]">
+                  <div className="flex items-center gap-3 mb-2">
+                    <BookOpen className="w-5 h-5 text-blue-500" />
+                    <h3 className="text-lg font-semibold text-blue-800">{article.title}</h3>
+                  </div>
+                  <p className="text-slate-600 mb-2">{article.description}</p>
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary flex items-center w-fit"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    View Article
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+        {/* Hotlines Section - only visible in hotlines filter */}
+        {activeFilter === 'hotlines' && hotlineResource && (
+          <section id="hotlines" className="mb-16">
+            <h2 className="text-2xl font-bold text-blue-800 mb-6 flex items-center gap-2"><Phone className="w-6 h-6 text-pink-500" /> Hotlines / Emergency Contact</h2>
+            <div className="grid md:grid-cols-1 gap-8">
+              <div className="rounded-2xl p-6 bg-gradient-to-br from-blue-50 to-pink-50 shadow-lg border border-pink-100 flex flex-col gap-2 transition-transform hover:scale-[1.03] cursor-pointer" onClick={() => setShowHelplineModal(true)}>
+                <div className="flex items-center gap-3 mb-2">
+                  <Phone className="w-5 h-5 text-pink-500" />
+                  <h3 className="text-lg font-semibold text-blue-800">{hotlineResource.title}</h3>
+                </div>
+                <p className="text-slate-600 mb-2">{hotlineResource.description}</p>
+                <button className="btn-primary flex items-center w-fit">
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  View Hotlines
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
+        {/* Video Section - only visible in video filter */}
+        {activeFilter === 'video' && (
+          <section id="video" className="mb-16">
+            <h2 className="text-2xl font-bold text-blue-800 mb-6 flex items-center gap-2"><Video className="w-6 h-6 text-purple-500" /> Videos</h2>
+            <div className="grid md:grid-cols-1 gap-8">
+              {filteredVideo.map((video) => (
+                <div key={video.id} className="rounded-2xl p-6 bg-gradient-to-br from-blue-50 to-purple-50 shadow-lg border border-blue-100 flex flex-col gap-2 transition-transform hover:scale-[1.03]">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Video className="w-5 h-5 text-purple-500" />
+                    <h3 className="text-lg font-semibold text-blue-800">{video.title}</h3>
+                  </div>
+                  <p className="text-slate-600 mb-2">{video.description}</p>
+                  <a
+                    href={video.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary flex items-center w-fit"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    View Video
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Modal for Coping Mechanism */}
+        {openCopingModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-blue-200/60 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8 relative animate-fadeIn overflow-y-auto max-h-[90vh] border border-blue-200">
+              <button className="absolute top-4 right-4 text-gray-400 hover:text-blue-600 text-xl" onClick={() => setOpenCopingModal(null)}>&times;</button>
+              <h3 className="text-2xl font-extrabold text-blue-800 mb-4 tracking-tight">{openCopingModal === 'anxiety' ? anxietyDetails.title : depressionDetails.title}</h3>
+              <p className="text-base text-slate-700 mb-4">{openCopingModal === 'anxiety' ? anxietyDetails.description : depressionDetails.description}</p>
+              <div className="mb-4">
+                <h4 className="text-lg font-semibold text-blue-700 mb-2">What is it?</h4>
+                <p className="text-slate-800">{openCopingModal === 'anxiety' ? anxietyDetails.whatIsIt : depressionDetails.whatIsIt}</p>
+              </div>
+              <div className="mb-4">
+                <h4 className="text-lg font-semibold text-blue-700 mb-2">Causes</h4>
+                <ul className="list-disc pl-6 text-slate-800">
+                  {(openCopingModal === 'anxiety' ? anxietyDetails.causes : depressionDetails.causes).map((cause, idx) => <li key={idx}>{cause}</li>)}
+                </ul>
+              </div>
+              <div className="mb-4">
+                <h4 className="text-lg font-semibold text-blue-700 mb-2">Signs & Symptoms</h4>
+                <ul className="list-disc pl-6 text-slate-800">
+                  {(openCopingModal === 'anxiety' ? anxietyDetails.signs : depressionDetails.signs).map((sign, idx) => <li key={idx}>{sign}</li>)}
+                </ul>
+              </div>
+              <div className="mb-4">
+                <h4 className="text-lg font-semibold text-blue-700 mb-2">Prevention</h4>
+                <ul className="list-disc pl-6 text-slate-800">
+                  {(openCopingModal === 'anxiety' ? anxietyDetails.prevention : depressionDetails.prevention).map((prev, idx) => <li key={idx}>{prev}</li>)}
+                </ul>
+              </div>
+              <div className="mb-4">
+                <h4 className="text-lg font-semibold text-blue-700 mb-2">What to Do</h4>
+                <ul className="list-disc pl-6 text-slate-800">
+                  {(openCopingModal === 'anxiety' ? anxietyDetails.whatToDo : depressionDetails.whatToDo).map((doit, idx) => <li key={idx}>{doit}</li>)}
+                </ul>
+              </div>
+              <div className="mb-4">
+                <h4 className="text-lg font-semibold text-blue-700 mb-2">Helpful Resources</h4>
+                <ul className="list-disc pl-6 text-blue-700">
+                  {(openCopingModal === 'anxiety' ? anxietyDetails.resources : depressionDetails.resources).map((res, idx) => <li key={idx}><a href={res.url} target="_blank" rel="noopener noreferrer" className="underline">{res.title}</a></li>)}
+                </ul>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Audio Therapy Section */}
@@ -285,7 +423,7 @@ export default function ResourcesPage() {
                 <div key={audio.id} className="rounded-2xl p-6 bg-white shadow-lg border border-cyan-100 flex flex-col gap-2">
                   <div className="flex items-center gap-3 mb-2">
                     <Library className="w-5 h-5 text-cyan-500" />
-                    <h3 className="text-lg font-semibold text-slate-800">{audio.title}</h3>
+                    <h3 className="text-lg font-semibold text-blue-800">{audio.title}</h3>
                   </div>
                   <p className="text-slate-600 mb-2">{audio.description}</p>
                   <audio
@@ -303,23 +441,6 @@ export default function ResourcesPage() {
             </div>
           </section>
         )}
-
-        {/* Real Stories Section */}
-        {(activeFilter === 'all' || activeFilter === 'stories') && (
-          <section id="stories" className="mb-16">
-            <h2 className="text-2xl font-bold text-purple-800 mb-6 flex items-center gap-2"><User className="w-6 h-6 text-blue-400" /> Real Stories</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              {allStories.map(story => (
-                <div key={story.id} className="rounded-2xl p-6 bg-gradient-to-br from-blue-50 to-purple-50 shadow-lg border border-blue-100 cursor-pointer hover:scale-[1.03] transition-transform" onClick={() => setOpenStory({ ...story, issue: story.issue === 'depression' ? 'depression' : 'anxiety' })}>
-                  <h3 className="text-lg font-semibold text-slate-800 mb-1">{story.title}</h3>
-                  <p className="text-slate-600 text-sm mb-2">{story.summary}</p>
-                  <span className="inline-block text-xs text-blue-600 font-medium">{story.name}{story.age ? `, ${story.age}` : ''}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
         {/* Modal for Story */}
         {openStory && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-blue-200/60 backdrop-blur-sm">
@@ -336,51 +457,6 @@ export default function ResourcesPage() {
               </div>
             </div>
           </div>
-        )}
-
-        {/* Resources Section */}
-        {(activeFilter === 'all' || activeFilter === 'resources' || activeFilter === 'video') && (
-          <section id="resources" className="mb-16">
-            <h2 className="text-2xl font-bold text-blue-800 mb-6 flex items-center gap-2"><BookOpen className="w-6 h-6 text-blue-500" /> Curated Resources</h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              {filteredResources.map((resource) => (
-                <div key={resource.id} className="rounded-2xl p-6 bg-gradient-to-br from-blue-50 to-purple-50 shadow-lg border border-blue-100 flex flex-col gap-2">
-                  <div className="flex items-center gap-3 mb-2">
-                    {resource.type === 'article' && <BookOpen className="w-5 h-5 text-blue-500" />}
-                    {resource.type === 'video' && <Video className="w-5 h-5 text-purple-500" />}
-                    {resource.type === 'helpline' && <Phone className="w-5 h-5 text-pink-500" />}
-                    {resource.type === 'audio' && <Library className="w-5 h-5 text-cyan-500" />}
-                    <h3 className="text-lg font-semibold text-slate-800">{resource.title}</h3>
-                  </div>
-                  <p className="text-slate-600 mb-2">{resource.description}</p>
-                  {resource.type === 'audio' ? (
-                    <audio controls className="w-full mt-2">
-                      <source src={resource.url} type="audio/m4a" />
-                      Your browser does not support the audio element.
-                    </audio>
-                  ) : resource.type === 'helpline' ? (
-                    <button
-                      onClick={() => setShowHelplineModal(true)}
-                      className="btn-primary flex items-center w-fit"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Call Now
-                    </button>
-                  ) : (
-                    <a
-                      href={resource.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-primary flex items-center w-fit"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      View Resource
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
         )}
 
         {/* Helpline Modal */}

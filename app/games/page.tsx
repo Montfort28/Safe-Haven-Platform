@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Heart, Star, Timer, Trophy, Sparkles, Zap, Target, Gamepad2, Home, BarChart3, Library, BookOpen, User, Play, Pause, RotateCcw, Check, X } from 'lucide-react';
+import { Heart, Star, Clock, Timer, Trophy, Sparkles, Zap, Target, Gamepad2, Home, BarChart3, Library, BookOpen, User, Play, Pause, RotateCcw, Check, X } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 
 // --- Types ---
@@ -677,12 +677,12 @@ export default function GamesPage() {
   const GameComponent = currentGame ? games.find(g => g.id === currentGame)?.component : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 animate-fade-in">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
       <Navbar />
-      <div className="max-w-5xl mx-auto p-6">
+      <div className="w-full px-2 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-6 mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-blue-700 mb-4 drop-shadow-lg">
             Therapeutic Games
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -690,28 +690,27 @@ export default function GamesPage() {
           </p>
         </div>
 
-        {/* Stats Bar */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-8">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{gameStats.totalGames}</div>
-                <div className="text-sm text-gray-600">Games Played</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{gameStats.totalScore}</div>
-                <div className="text-sm text-gray-600">Total Score</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{Math.floor(gameStats.totalTime / 60)}m</div>
-                <div className="text-sm text-gray-600">Time Played</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{gameStats.achievements.length}</div>
-                <div className="text-sm text-gray-600">Achievements</div>
-              </div>
-            </div>
-            <Trophy className="h-8 w-8 text-yellow-500" />
+        {/* Enhanced Stats Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-gradient-to-br from-blue-200 to-blue-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
+            <Trophy className="h-10 w-10 text-yellow-500 mb-2" />
+            <div className="text-3xl font-extrabold text-blue-900">{gameStats.totalGames}</div>
+            <div className="text-base text-blue-700 font-medium mt-1">Games Played</div>
+          </div>
+          <div className="bg-gradient-to-br from-pink-200 to-pink-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
+            <Star className="h-10 w-10 text-pink-500 mb-2" />
+            <div className="text-3xl font-extrabold text-pink-900">{gameStats.totalScore}</div>
+            <div className="text-base text-pink-700 font-medium mt-1">Total Score</div>
+          </div>
+          <div className="bg-gradient-to-br from-green-200 to-green-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
+            <Clock className="h-10 w-10 text-green-500 mb-2" />
+            <div className="text-3xl font-extrabold text-green-900">{Math.floor(gameStats.totalTime / 60)}m</div>
+            <div className="text-base text-green-700 font-medium mt-1">Time Played</div>
+          </div>
+          <div className="bg-gradient-to-br from-purple-200 to-purple-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
+            <User className="h-10 w-10 text-purple-500 mb-2" />
+            <div className="text-3xl font-extrabold text-purple-900">{gameStats.achievements.length}</div>
+            <div className="text-base text-purple-700 font-medium mt-1">Achievements</div>
           </div>
         </div>
 
