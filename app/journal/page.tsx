@@ -385,30 +385,28 @@ export default function JournalPage() {
         </div>
 
         {/* Wellness Toolbar */}
-        <div className="glass-card p-4 mb-8 bg-gradient-to-r from-blue-50 to-purple-50">
-          <div className="flex flex-wrap gap-4 justify-center">
-            <button
-              onClick={() => setShowPrompts(!showPrompts)}
-              className="btn-secondary flex items-center gap-2 hover:bg-blue-100 hover:text-blue-700"
-            >
-              <Lightbulb className="w-4 h-4" />
-              Writing Prompts
-            </button>
-            <button
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              className="btn-secondary flex items-center gap-2 hover:bg-blue-100 hover:text-blue-700"
-            >
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              {soundEnabled ? 'Sounds On' : 'Sounds Off'}
-            </button>
-            <button
-              onClick={() => setAutoSave(!autoSave)}
-              className={`btn-secondary flex items-center gap-2 ${autoSave ? 'bg-green-100' : ''} hover:bg-blue-100 hover:text-blue-700`}
-            >
-              <Save className="w-4 h-4" />
-              Auto-save {autoSave ? 'On' : 'Off'}
-            </button>
-          </div>
+        <div className="flex flex-wrap gap-4 justify-center mb-8">
+          <button
+            onClick={() => setShowPrompts(!showPrompts)}
+            className="px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-yellow-400 to-yellow-400 shadow-lg hover:from-yellow-500 hover:to-pink-600 transition-all duration-300 border-none flex items-center gap-2"
+          >
+            <Lightbulb className="w-5 h-5" />
+            Writing Prompts
+          </button>
+          <button
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className={`px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-green-400 to-green-400 shadow-lg hover:from-green-500 hover:to-blue-600 transition-all duration-300 border-none flex items-center gap-2`}
+          >
+            {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            {soundEnabled ? 'Sounds On' : 'Sounds Off'}
+          </button>
+          <button
+            onClick={() => setAutoSave(!autoSave)}
+            className={`px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-400 to-purple-400 shadow-lg hover:from-purple-500 hover:to-blue-700 transition-all duration-300 border-none flex items-center gap-2`}
+          >
+            <Save className="w-5 h-5" />
+            Auto-save {autoSave ? 'On' : 'Off'}
+          </button>
         </div>
 
         {/* Writing Prompts */}
@@ -574,7 +572,7 @@ export default function JournalPage() {
           <div className="space-y-6">
             {/* Streak Tracker */}
             <div className="glass-card p-6 bg-gradient-to-r from-yellow-50 to-orange-50">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-orange-600">
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-orange-600">
                 <Flame className="w-5 h-5 text-orange-500" />
                 Writing Streak
               </h3>
@@ -597,7 +595,7 @@ export default function JournalPage() {
 
             {/* Gratitude Section */}
             <div className="glass-card p-6 bg-gradient-to-r from-pink-50 to-purple-50">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-pink-600">
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-pink-600">
                 <Heart className="w-5 h-5 text-pink-500" />
                 Daily Gratitude
               </h3>
@@ -624,7 +622,7 @@ export default function JournalPage() {
 
             {/* Goals Section */}
             <div className="glass-card p-6 bg-gradient-to-r from-blue-50 to-purple-50">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-600">
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-blue-600">
                 <Target className="w-5 h-5 text-blue-500" />
                 Today's Goals
               </h3>
@@ -651,7 +649,7 @@ export default function JournalPage() {
 
             {/* Mood Insights */}
             <div className="glass-card p-6 bg-gradient-to-r from-green-50 to-blue-50">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-green-600">
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-green-600">
                 <TrendingUp className="w-5 h-5 text-green-500" />
                 Mood Insights
               </h3>
