@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Heart, Star, Clock, Timer, Trophy, Sparkles, Zap, Target, Gamepad2, Home, BarChart3, Library, BookOpen, User, Play, Pause, RotateCcw, Check, X } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import EmergencySupport from '@/components/EmergencySupport';
 
 // --- Types ---
 type Emotion = {
@@ -678,6 +679,7 @@ export default function GamesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
+      <EmergencySupport />
       <Navbar />
       <div className="w-full px-2 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-6 mx-auto">
         {/* Header */}

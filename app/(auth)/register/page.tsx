@@ -5,6 +5,7 @@ import { Eye, EyeOff, Heart, Brain, Sparkles, Shield, Leaf, UserPlus, Smile } fr
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
+    username: '',
     name: '',
     email: '',
     password: '',
@@ -13,9 +14,11 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const [mounted, setMounted] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  // Toast state
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [emailError, setEmailError] = useState('');
 
   useEffect(() => {
     setMounted(true);
@@ -32,33 +35,76 @@ export default function RegisterPage() {
     setPasswordStrength(strength);
   }, [formData.password]);
 
+  // Auto-dismiss toast after 3 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setToast(null);
+    setEmailError('');
 
+    // All fields required
+    if (!formData.username || !formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+      setToast({ message: 'Please fill in all fields', type: 'error' });
+      setIsLoading(false);
+      return;
+    }
+
+    // Email must end with gmail.com
+    if (!/^([\w.-]+)@gmail\.com$/.test(formData.email)) {
+      setEmailError('Email must be a valid Gmail address ending with gmail.com');
+      setToast({ message: 'Please enter a valid Gmail address ending with gmail.com', type: 'error' });
+      setIsLoading(false);
+      return;
+    }
+
+    // Passwords must match
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setToast({ message: 'Passwords do not match', type: 'error' });
       setIsLoading(false);
       return;
     }
 
+    // Password length
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setToast({ message: 'Password must be at least 6 characters long', type: 'error' });
       setIsLoading(false);
       return;
     }
 
-    // Simulate API call
-    setTimeout(() => {
-      if (formData.name && formData.email && formData.password) {
-        console.log('Registration successful!');
-        // In real app: router.push('/dashboard');
+    // API call to register user
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: formData.username,
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setToast({ message: 'Registration successful! Please sign in.', type: 'success' });
+        setIsLoading(false);
+        setTimeout(() => {
+          window.location.href = `/login?email=${encodeURIComponent(formData.email)}&password=${encodeURIComponent(formData.password)}`;
+        }, 1200);
       } else {
-        setError('Please fill in all fields');
+        setToast({ message: data.error || 'Registration failed', type: 'error' });
+        setIsLoading(false);
       }
+    } catch (error) {
+      setToast({ message: 'Server error', type: 'error' });
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const FloatingElement = ({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) => (
@@ -89,6 +135,13 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-indigo-300 via-purple-300 to-teal-300">
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg font-semibold text-white transition-all duration-500 ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'} animate-fade-in`}
+        >
+          {toast.message}
+        </div>
+      )}
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <FloatingElement className="top-20 left-10" delay={0}>
@@ -139,6 +192,23 @@ export default function RegisterPage() {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="group">
+                <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-cyan-600 transition-colors">
+                  Username
+                </label>
+                <div className="relative">
+                  <input
+                    id="username"
+                    type="text"
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    className="w-full px-6 py-4 border-2 border-white/50 rounded-2xl focus:ring-4 focus:ring-cyan-500/20 focus:border-cyan-400 bg-white/60 backdrop-blur-sm placeholder-gray-500 text-gray-800 font-medium transition-all duration-300 hover:bg-white/70"
+                    placeholder="Choose a username"
+                    required
+                  />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/10 to-purple-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none"></div>
+                </div>
+              </div>
+              <div className="group">
                 <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-cyan-600 transition-colors">
                   Full Name
                 </label>
@@ -165,13 +235,19 @@ export default function RegisterPage() {
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, email: e.target.value });
+                      setEmailError('');
+                    }}
                     className="w-full px-6 py-4 border-2 border-white/50 rounded-2xl focus:ring-4 focus:ring-cyan-500/20 focus:border-cyan-400 bg-white/60 backdrop-blur-sm placeholder-gray-500 text-gray-800 font-medium transition-all duration-300 hover:bg-white/70"
                     placeholder="Enter your email"
                     required
                   />
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/10 to-purple-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none"></div>
                 </div>
+                {emailError && (
+                  <div className="mt-2 text-xs text-red-600 font-medium animate-shake">{emailError}</div>
+                )}
               </div>
 
               <div className="group">
@@ -259,11 +335,7 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              {error && (
-                <div className="p-4 bg-red-100/80 backdrop-blur-sm border border-red-200 text-red-700 rounded-2xl text-sm font-medium animate-shake">
-                  {error}
-                </div>
-              )}
+              {/* Remove error block, only use toast */}
 
               <button
                 type="submit"
@@ -296,7 +368,11 @@ export default function RegisterPage() {
             <div className="mt-8 text-center">
               <p className="text-gray-600 font-medium">
                 Already part of our community?{' '}
-                <button className="text-cyan-600 hover:text-cyan-700 font-bold hover:underline transition-all">
+                <button
+                  type="button"
+                  className="text-cyan-600 hover:text-cyan-700 font-bold hover:underline transition-all"
+                  onClick={() => window.location.href = '/login'}
+                >
                   Sign in here
                 </button>
               </p>
@@ -349,6 +425,13 @@ export default function RegisterPage() {
         }
         .animate-shake {
           animation: shake 0.5s ease-in-out;
+        }
+        @keyframes fade-in {
+          0% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.5s ease;
         }
       `}</style>
     </div>

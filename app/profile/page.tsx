@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Home, BarChart3, Gamepad2, Library, BookOpen, User, LogOut, Shield, Sparkles, TrendingUp, Calendar, Award, Settings, Camera, Edit3, Check, X } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import EmergencySupport from '@/components/EmergencySupport';
 
 interface User {
   id: string;
@@ -125,6 +126,7 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-100 to-blue-100">
+      <EmergencySupport />
       <Navbar />
       <div className="w-full px-2 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-6 mx-auto">
         <div className="grid grid-cols-1 gap-4 mb-6">

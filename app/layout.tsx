@@ -1,4 +1,5 @@
 import './globals.css';
+import EmergencySupport from '@/components/EmergencySupport';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

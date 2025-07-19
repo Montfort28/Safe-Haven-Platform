@@ -1,4 +1,3 @@
-// app/resources/page.tsx
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -8,6 +7,7 @@ import { Home, BarChart3, Gamepad2, Library, BookOpen, Video, Phone, User, LogOu
 import AppShell from '../AppShell';
 import stories from './stories';
 import Navbar from '@/components/Navbar';
+import EmergencySupport from '@/components/EmergencySupport';
 import { anxietyDetails, depressionDetails } from './copingDetails';
 
 interface Resource {
@@ -231,6 +231,7 @@ export default function ResourcesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
+      <EmergencySupport />
       <Navbar />
       <div className="max-w-7xl mx-auto p-6">
         {/* Hero Section */}
@@ -245,7 +246,62 @@ export default function ResourcesPage() {
           </div>
         </section>
 
-        {/* Filter Bar */}
+        {/* Search Bar & Emotion Filter */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-center">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            placeholder="Search resources, articles, videos..."
+            className="w-full md:w-96 px-4 py-2 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 bg-white text-blue-700 text-base shadow"
+          />
+          <select
+            className="w-full md:w-64 px-4 py-2 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 bg-white text-blue-700 text-base shadow"
+            value={activeFilter}
+            onChange={e => setActiveFilter(e.target.value as any)}
+            aria-label="Filter by type"
+          >
+            {filterOptions.map(option => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+          {/* Emotion Filter */}
+          <select
+            className="w-full md:w-64 px-4 py-2 rounded-lg border border-green-200 focus:ring-2 focus:ring-green-500 bg-white text-green-700 text-base shadow"
+            defaultValue=""
+            onChange={e => {
+              const emotion = e.target.value;
+              if (emotion === "") return;
+              // Example: filter by emotion, show relevant resources
+              if (emotion === "anxious") {
+                setActiveFilter("coping");
+                setSearchTerm("breathing");
+              } else if (emotion === "depressed") {
+                setActiveFilter("coping");
+                setSearchTerm("depression");
+              } else if (emotion === "sad") {
+                setActiveFilter("audio");
+                setSearchTerm("music");
+              } else {
+                setSearchTerm(emotion);
+              }
+            }}
+            aria-label="Filter by emotion"
+          >
+            <option value="">How are you feeling?</option>
+            <option value="anxious">I feel anxious</option>
+            <option value="depressed">I feel depressed</option>
+            <option value="sad">I feel sad</option>
+            <option value="stressed">I feel stressed</option>
+            <option value="lonely">I feel lonely</option>
+            <option value="hopeful">I feel hopeful</option>
+            <option value="energetic">I feel energetic</option>
+            <option value="calm">I feel calm</option>
+          </select>
+        </div>
+
+        {/* Filter Bar (legacy, now replaced by select above) */}
+        {/*
         <div className="flex flex-wrap gap-4 mb-12 justify-center">
           {filterOptions.map(option => (
             <button
@@ -257,6 +313,7 @@ export default function ResourcesPage() {
             </button>
           ))}
         </div>
+        */}
 
         {/* Coping Mechanisms Section - should come first */}
         {(activeFilter === 'all' || activeFilter === 'coping') && (

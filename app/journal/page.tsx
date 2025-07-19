@@ -13,6 +13,7 @@ import {
 import { formatDate } from '@/lib/utils';
 import SoundPlayer from '@/components/SoundPlayer';
 import Navbar from '@/components/Navbar';
+import EmergencySupport from '@/components/EmergencySupport';
 
 // Fallback getCurrentTime function if not defined in utils
 const getCurrentTime = (timeZone: string = 'UTC'): string => {
@@ -352,29 +353,67 @@ export default function JournalPage() {
     }
   };
 
-  // Helper for mood insights
-  const getMoodInsights = (entries: JournalEntry[]) => {
-    if (!entries.length) return { avg: 0, bestDay: '', commonEmotion: '' };
-    // Average mood
-    const moods = entries.map(e => e.mood).filter(Boolean) as number[];
-    const avg = moods.length ? (moods.reduce((a, b) => a + b, 0) / moods.length) : 0;
-    // Best day (highest mood)
-    const bestEntry = entries.reduce((best, curr) => (curr.mood && (!best || curr.mood > (best.mood || 0))) ? curr : best, null as JournalEntry | null);
-    const bestDay = bestEntry ? formatDate(bestEntry.createdAt) : '';
-    // Most common emotion
-    const emotionCounts: Record<string, number> = {};
-    entries.forEach(e => {
-      e.emotions?.forEach(em => {
-        emotionCounts[em] = (emotionCounts[em] || 0) + 1;
-      });
-    });
-    const commonEmotion = Object.entries(emotionCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
-    return { avg, bestDay, commonEmotion };
-  };
-  const moodStats = getMoodInsights(entries);
+
+  // Mood Insights state from backend analytics
+  const [moodStats, setMoodStats] = useState({ avg: 0, bestDay: '', commonEmotion: '', trend: 'constant' });
+
+  useEffect(() => {
+    const fetchMoodAnalytics = async () => {
+      try {
+        const token = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('token='))
+          ?.split('=')[1];
+        const res = await fetch('/api/mood/analytics', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (res.ok) {
+          const analytics = await res.json();
+          const moodData = analytics.data?.moodData || [];
+          // Only consider last 7 days for weekly insights
+          const last7 = moodData.slice(-7);
+          if (last7.length > 0) {
+
+            const avg = last7.reduce((sum: number, e: MoodData) => sum + (e.mood || 0), 0) / last7.length;
+            // Best day (highest mood)
+            interface MoodData {
+              mood: number;
+              date: string;
+            }
+            const best: MoodData = last7.reduce(
+              (a: MoodData, b: MoodData) => (a.mood > b.mood ? a : b),
+              last7[0] as MoodData
+            );
+            // Most common mood (as emotion)
+            interface MoodCounts {
+              [mood: number]: number;
+            }
+            const moodCounts: MoodCounts = last7.reduce((acc: MoodCounts, e: { mood: number; date: string }) => {
+              acc[e.mood] = (acc[e.mood] || 0) + 1;
+              return acc;
+            }, {} as MoodCounts);
+            const common = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0][0];
+            // Trend: compare first and last mood
+            let trend = 'constant';
+            if (last7.length > 1) {
+              if (last7[last7.length - 1].mood > last7[0].mood) trend = 'improving';
+              else if (last7[last7.length - 1].mood < last7[0].mood) trend = 'declining';
+            }
+            setMoodStats({ avg, bestDay: best.date, commonEmotion: common, trend });
+          } else {
+            setMoodStats({ avg: 0, bestDay: '', commonEmotion: '', trend: 'constant' });
+          }
+        }
+      } catch (e) {
+        setMoodStats({ avg: 0, bestDay: '', commonEmotion: '', trend: 'constant' });
+      }
+    };
+    fetchMoodAnalytics();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
+      <EmergencySupport />
       <Navbar />
       <div className="max-w-7xl mx-auto p-6 flex-grow">
         <div className="text-center mb-8">
@@ -382,6 +421,10 @@ export default function JournalPage() {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             A safe space to express your thoughts, track your emotions, and reflect on your journey of growth.
           </p>
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <span className="text-green-600 font-semibold text-lg">🔐</span>
+            <span className="text-green-700 text-base font-medium">Your entries are private and encrypted</span>
+          </div>
         </div>
 
         {/* Wellness Toolbar */}
@@ -647,7 +690,7 @@ export default function JournalPage() {
               </div>
             </div>
 
-            {/* Mood Insights */}
+            {/* Mood Insights (from backend analytics) */}
             <div className="glass-card p-6 bg-gradient-to-r from-green-50 to-blue-50">
               <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-green-600">
                 <TrendingUp className="w-5 h-5 text-green-500" />
@@ -660,11 +703,19 @@ export default function JournalPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm">Best day</span>
-                  <span className="font-semibold text-blue-600">{moodStats.bestDay || '--'}</span>
+                  <span className="font-semibold text-blue-600">{moodStats.bestDay ? formatDate(moodStats.bestDay) : '--'}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Most common emotion</span>
+                  <span className="text-sm">Most common mood</span>
                   <span className="font-semibold text-purple-600">{moodStats.commonEmotion || '--'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Trend</span>
+                  <span className="font-semibold">
+                    {moodStats.trend === 'improving' && <Smile className="inline w-5 h-5 text-green-500" />}
+                    {moodStats.trend === 'declining' && <Frown className="inline w-5 h-5 text-red-500" />}
+                    {moodStats.trend === 'constant' && <Meh className="inline w-5 h-5 text-yellow-500" />}
+                  </span>
                 </div>
               </div>
             </div>

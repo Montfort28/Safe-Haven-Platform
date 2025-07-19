@@ -8,25 +8,32 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const schema = z.object({
+      username: z.string().min(1),
       name: z.string().min(1),
       email: z.string().email(),
       password: z.string().min(6),
     });
 
-    const { name, email, password } = schema.parse(body);
+    const { username, name, email, password } = schema.parse(body);
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email },
+          { username },
+        ],
+      },
     });
 
     if (existingUser) {
-      return NextResponse.json({ success: false, error: 'Email already in use' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Email or username already in use' }, { status: 400 });
     }
 
     const hashedPassword = await hashPassword(password);
 
     const user = await prisma.user.create({
       data: {
+        username,
         name,
         email,
         password: hashedPassword,

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Home, BarChart3, Gamepad2, Library, BookOpen, User, Heart, TrendingUp, TrendingDown, Minus, Calendar, Clock, Zap, Moon, Sun, Activity, Target, ChevronUp, ChevronDown, Brain, Shield } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import EmergencySupport from '@/components/EmergencySupport';
 
 interface MoodEntry {
   id: string;
@@ -310,6 +311,7 @@ const MoodPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
+      <EmergencySupport />
       <Navbar />
       <div className="max-w-7xl mx-auto p-6">
         {/* Header Section */}
@@ -318,6 +320,10 @@ const MoodPage = () => {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Track your emotional wellbeing with detailed insights and personalized recommendations
           </p>
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <span className="text-green-600 font-semibold text-lg">🔐</span>
+            <span className="text-green-700 text-base font-medium">Your entries are private and encrypted</span>
+          </div>
         </div>
 
         {/* Quick Stats */}

@@ -3,14 +3,16 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Heart, BookOpen, User, Home, BarChart3, Gamepad2, Library, Plus, TrendingUp, Sun, Flame, Play, Pause, RotateCcw } from 'lucide-react';
+import { Heart, BookOpen, User, Home, BarChart3, Gamepad2, Library, Plus, TrendingUp, Sun, Flame, Play, Brain, Pause, RotateCcw } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Area, AreaChart } from 'recharts';
 import { formatDate } from '@/lib/utils';
 import SoundPlayer from '@/components/SoundPlayer';
 import Navbar from '@/components/Navbar';
+import EmergencySupport from '@/components/EmergencySupport';
 
 interface User {
   id: string;
+  username: string;
   name: string;
   email: string;
 }
@@ -35,17 +37,7 @@ interface ActivityStats {
   averageMood: number;
 }
 
-// Enhanced sample mood data for demo
-const SAMPLE_MOOD_DATA: MoodData[] = [
-  { day: 'Mon', mood: 6, date: '2024-01-01' },
-  { day: 'Tue', mood: 7, date: '2024-01-02' },
-  { day: 'Wed', mood: 5, date: '2024-01-03' },
-  { day: 'Thu', mood: 8, date: '2024-01-04' },
-  { day: 'Fri', mood: 6, date: '2024-01-05' },
-  { day: 'Sat', mood: 7, date: '2024-01-06' },
-  { day: 'Sun', mood: 6, date: '2024-01-07' },
-];
-
+// Remove chart constants, use only actual stats from API
 const AFFIRMATIONS = [
   'You are enough just as you are.',
   'Every day is a new beginning.',
@@ -60,17 +52,11 @@ const AFFIRMATIONS = [
 ];
 
 export default function DashboardPage() {
+  // All state variables and router at the top
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-
-  const [moodData, setMoodData] = useState<MoodData[]>([
-    { day: 'Mon', mood: 6, date: '2024-01-01' },
-    { day: 'Tue', mood: 7, date: '2024-01-02' },
-    { day: 'Wed', mood: 5, date: '2024-01-03' },
-    { day: 'Thu', mood: 8, date: '2024-01-04' },
-    { day: 'Fri', mood: 6, date: '2024-01-05' },
-    { day: 'Sat', mood: 7, date: '2024-01-06' },
-    { day: 'Sun', mood: 6, date: '2024-01-07' },
-  ]);
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [moodData, setMoodData] = useState<MoodData[]>([]);
   const [recentEntries, setRecentEntries] = useState<JournalEntry[]>([]);
   const [activityStats, setActivityStats] = useState<ActivityStats>({
     totalMoodEntries: 0,
@@ -83,11 +69,40 @@ export default function DashboardPage() {
   const [relaxationTime, setRelaxationTime] = useState(300); // 5 minutes in seconds
   const [isRelaxationActive, setIsRelaxationActive] = useState(false);
   const [relaxationTimer, setRelaxationTimer] = useState<NodeJS.Timeout | null>(null);
-  const [showWelcome, setShowWelcome] = useState(true); // Default to true for now
-  const router = useRouter();
+  const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale'>("inhale");
+
+  useEffect(() => {
+    let breathInterval: NodeJS.Timeout | undefined;
+    if (isRelaxationActive) {
+      breathInterval = setInterval(() => {
+        setBreathPhase(prev => {
+          if (prev === "inhale") return "hold";
+          if (prev === "hold") return "exhale";
+          return "inhale";
+        });
+      }, 4000);
+    } else {
+      setBreathPhase("inhale");
+    }
+    return () => {
+      if (breathInterval) clearInterval(breathInterval);
+    };
+  }, [isRelaxationActive]);
+
+  // ...existing code...
 
   useEffect(() => {
     fetchDashboardData();
+    // Auto-refresh when tab becomes visible
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        fetchDashboardData();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   useEffect(() => {
@@ -117,24 +132,29 @@ export default function DashboardPage() {
         setUser(userData.data);
       }
 
-      // Fetch mood data
-      const moodResponse = await fetch('/api/mood/recent', {
+      // Fetch mood analytics (for graph and stats)
+      const moodAnalyticsRes = await fetch('/api/mood/analytics', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (moodResponse.ok) {
-        const moodData = await moodResponse.json();
-        const formattedData = Array.isArray(moodData.data)
-          ? moodData.data.map((entry: any) => ({
+      let moodAnalytics = null;
+      let moodEntries: any[] = [];
+      if (moodAnalyticsRes.ok) {
+        const moodAnalyticsJson = await moodAnalyticsRes.json();
+        moodAnalytics = moodAnalyticsJson.data;
+        moodEntries = moodAnalytics?.moodData || [];
+        // Sort mood entries by date ascending
+        moodEntries.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        // Format for chart
+        setMoodData(
+          moodEntries.map((entry: any) => ({
             day: formatDate(entry.date),
             mood: entry.mood,
             date: entry.date
           }))
-          : [];
-        setMoodData(formattedData);
-
-        // Calculate suggestions based on mood
-        if (formattedData.length > 0) {
-          const avgMood = formattedData.reduce((sum: number, entry: any) => sum + entry.mood, 0) / formattedData.length;
+        );
+        // Suggestion logic (for the old suggestion, but new card will use a new one)
+        if (moodEntries.length > 0) {
+          const avgMood = moodEntries.reduce((sum: number, entry: any) => sum + entry.mood, 0) / moodEntries.length;
           if (avgMood < 4) {
             const suggestions = [
               'Your mood seems low. Try nurturing your Mind Garden to feel more grounded.',
@@ -143,33 +163,51 @@ export default function DashboardPage() {
               'Explore our resources for coping strategies.',
             ];
             setSuggestion(suggestions[Math.floor(Math.random() * suggestions.length)]);
+          } else {
+            setSuggestion('');
           }
+        } else {
+          setSuggestion('');
         }
       }
 
-      // Fetch journal entries
+      // Fetch journal entries (for stats and recent)
       const journalResponse = await fetch('/api/journal?limit=3', {
         headers: { Authorization: `Bearer ${token}` },
       });
+      let journalEntries: any[] = [];
       if (journalResponse.ok) {
         const journalData = await journalResponse.json();
-        setRecentEntries(journalData.data);
+        journalEntries = journalData.data || [];
+        setRecentEntries(journalEntries);
       }
 
-      // Fetch activity stats
-      const statsResponse = await fetch('/api/games/stats', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        setActivityStats(prevStats => ({
-          ...prevStats,
-          streak: statsData.data.streak || 0,
-          totalMoodEntries: moodData.length || 0,
-          totalJournalEntries: recentEntries.length || 0,
-          averageMood: moodData.length > 0 ? moodData.reduce((sum, entry) => sum + entry.mood, 0) / moodData.length : 0
-        }));
+      // Fetch streak and stats (from games/stats or mood/analytics)
+      let streak = 0;
+      if (moodAnalytics && typeof moodAnalytics.streak === 'number') {
+        streak = moodAnalytics.streak;
+      } else {
+        // fallback to games stats if available
+        const statsResponse = await fetch('/api/games/stats', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json();
+          streak = statsData.data.streak || 0;
+        }
       }
+
+      // Calculate average mood
+      const averageMood = moodEntries.length > 0
+        ? moodEntries.reduce((sum, entry) => sum + entry.mood, 0) / moodEntries.length
+        : 0;
+
+      setActivityStats({
+        streak: moodEntries.length > 0 && streak === 0 && moodAnalytics && typeof moodAnalytics.streak !== 'number' ? 1 : streak,
+        totalMoodEntries: moodEntries.length,
+        totalJournalEntries: journalEntries.length,
+        averageMood,
+      });
 
       await fetchNewAffirmation();
     } catch (error) {
@@ -240,8 +278,10 @@ export default function DashboardPage() {
     return null;
   };
 
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
+      <EmergencySupport />
       <SoundPlayer src="/sounds/ambient-rain.mp3" loop />
       <Navbar />
       <div className="max-w-7xl mx-auto p-6">
@@ -249,16 +289,43 @@ export default function DashboardPage() {
         <div className={`mb-8 transition-all duration-1000 ${showWelcome ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
             <h1 className="text-4xl font-bold text-slate-800 mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Welcome back, {user?.name}!
+              Welcome back, {user?.username || user?.name}!
             </h1>
             <p className="text-slate-600 text-lg mb-4">
-              Here's your personalized wellness overview. Track your mood, write in your journal, and nurture your mental garden.
+              This is your wellness page. Here you can see how you're feeling, write about your day, and take care of your mind.
             </p>
             <div className="flex flex-wrap gap-2 text-sm text-slate-500">
               <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">📊 View mood trends</span>
               <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full">📝 Journal entries</span>
               <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full">🎮 Wellness games</span>
               <span className="bg-pink-100 text-pink-700 px-3 py-1 rounded-full">🌱 Mind garden</span>
+            </div>
+            {/* Personalized Feedback & Motivation */}
+            <div className="mt-6">
+              {activityStats.totalJournalEntries >= 3 && (
+                <div className="mb-3 p-4 bg-gradient-to-r from-green-100 to-blue-100 border border-green-200 rounded-xl text-green-700 font-semibold flex items-center gap-2 animate-fade-in">
+                  <Flame className="w-5 h-5 text-orange-500 animate-pulse" />
+                  You've journaled {activityStats.totalJournalEntries} times this week — keep it going!
+                </div>
+              )}
+              {activityStats.totalMoodEntries > 0 && moodData.slice(-4).every(entry => entry.mood <= 4) && (
+                <div className="mb-3 p-4 bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-200 rounded-xl text-blue-700 font-semibold flex items-center gap-2 animate-fade-in">
+                  <Heart className="w-5 h-5 text-blue-500 animate-pulse" />
+                  You marked feeling anxious 4 days in a row. Here's a <Link href="/games" className="underline text-blue-600">breathing game</Link> to help you relax.
+                </div>
+              )}
+              {activityStats.streak >= 5 && (
+                <div className="mb-3 p-4 bg-gradient-to-r from-yellow-100 to-orange-100 border border-yellow-200 rounded-xl text-yellow-700 font-semibold flex items-center gap-2 animate-fade-in">
+                  <TrendingUp className="w-5 h-5 text-orange-500 animate-pulse" />
+                  Amazing streak! {activityStats.streak} days in a row. Consistency builds resilience.
+                </div>
+              )}
+              {activityStats.averageMood >= 8 && (
+                <div className="mb-3 p-4 bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200 rounded-xl text-purple-700 font-semibold flex items-center gap-2 animate-fade-in">
+                  <Sun className="w-5 h-5 text-yellow-500 animate-pulse" />
+                  Your average mood is high! Keep doing what works for you.
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -318,14 +385,6 @@ export default function DashboardPage() {
                 </Link>
               </div>
             )}
-            {suggestion && (
-              <div className="mt-4 p-4 bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-200 text-blue-700 rounded-lg text-sm animate-pulse">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-                  {suggestion}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Quick Actions */}
@@ -353,6 +412,37 @@ export default function DashboardPage() {
                 <Gamepad2 className="w-5 h-5 group-hover:animate-pulse" />
                 <span className="font-medium">Play a Game</span>
               </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Average Mood & Personalized Suggestion Card */}
+        <div className="mb-8">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-purple-200 flex flex-col items-center justify-center w-full lg:col-span-3">
+            <h2 className="text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+              <TrendingUp className="w-7 h-7 text-purple-500" />
+              Average Mood
+            </h2>
+            <div className="text-6xl font-extrabold text-purple-700 mb-2">{activityStats.averageMood.toFixed(1)}</div>
+            <div className="text-lg text-slate-600 mb-2">Based on your recent entries</div>
+            <div className="w-full mt-6">
+              <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-xl p-6 shadow border border-purple-100 text-center">
+                <h3 className="text-xl font-bold text-purple-700 mb-2 flex items-center justify-center gap-2">
+                  <Brain className="w-6 h-6 text-purple-700" />
+                  Personalized Suggestion
+                </h3>
+                <p className="text-slate-700 text-lg">
+                  {(() => {
+                    const avg = activityStats.averageMood;
+                    if (avg === 0) return 'Log your mood to get a simple tip!';
+                    if (avg < 3) return 'You seem down. Try talking to someone you trust or do something you enjoy.';
+                    if (avg < 5) return 'Try to get good sleep and take small breaks. It can help you feel better.';
+                    if (avg < 7) return 'You are doing okay! Keep up your daily habits and maybe try something new.';
+                    if (avg < 8.5) return 'You are doing well! Keep your good habits and remember to relax.';
+                    return 'Great job! Keep smiling and enjoy your day!';
+                  })()}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -433,87 +523,179 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Daily Affirmation */}
-        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20 text-center mb-8 transition-all duration-500 hover:shadow-xl">
-          <h2 className="text-xl font-semibold text-slate-800 mb-6 flex items-center justify-center gap-2">
-            <Sun className="w-6 h-6 text-yellow-500 animate-spin" style={{ animationDuration: '3s' }} />
+        {/* Enhanced Daily Affirmation */}
+        <div className="relative bg-gradient-to-br from-yellow-100 via-purple-100 to-blue-100 rounded-3xl p-8 shadow-2xl border border-purple-200 text-center mb-8 transition-all duration-500 hover:shadow-3xl hover:scale-[1.03] overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div className="absolute top-10 left-10 w-16 h-16 bg-gradient-to-r from-yellow-300 to-purple-300 rounded-full blur-2xl opacity-30 animate-blob"></div>
+            <div className="absolute bottom-10 right-10 w-20 h-20 bg-gradient-to-r from-blue-300 to-purple-300 rounded-full blur-2xl opacity-30 animate-blob animation-delay-2000"></div>
+          </div>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6 flex items-center justify-center gap-2">
+            <Sun className="w-8 h-8 text-yellow-500 animate-spin" style={{ animationDuration: '3s' }} />
             Daily Affirmation
           </h2>
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
-            <p className="text-2xl text-slate-700 italic leading-relaxed animate-pulse">
+          <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8 mb-6 shadow-lg border border-purple-100">
+            <p className="text-3xl text-purple-700 italic font-semibold leading-relaxed animate-pulse">
               "{affirmation}"
             </p>
           </div>
           <button
             onClick={fetchNewAffirmation}
-            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2 mx-auto"
+            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-8 py-4 rounded-2xl font-bold transition-all duration-300 hover:scale-110 flex items-center justify-center gap-3 mx-auto shadow-xl"
           >
-            <Sun className="w-5 h-5" />
+            <Sun className="w-6 h-6" />
             New Affirmation
           </button>
+          <div className="mt-6 text-purple-600 text-base font-medium italic">
+            "A positive thought in the morning can change your whole day."
+          </div>
         </div>
 
         {/* Enhanced Relaxation Timer */}
-        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20 text-center transition-all duration-500 hover:shadow-xl">
-          <h2 className="text-xl font-semibold text-slate-800 mb-6 flex items-center justify-center gap-2">
-            <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+        <div className="relative bg-gradient-to-br from-indigo-50/80 via-purple-50/80 to-pink-50/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/30 text-center transition-all duration-700 hover:shadow-3xl hover:scale-[1.03] overflow-hidden mb-8">
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div className="absolute top-8 left-8 w-16 h-16 bg-gradient-to-r from-blue-300 to-purple-300 rounded-full blur-2xl opacity-30 animate-blob"></div>
+            <div className="absolute bottom-8 right-8 w-20 h-20 bg-gradient-to-r from-pink-300 to-purple-300 rounded-full blur-2xl opacity-30 animate-blob animation-delay-2000"></div>
+          </div>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-8 flex items-center justify-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-spin-slow"></div>
             5-Minute Guided Relaxation
           </h2>
           <div className="max-w-md mx-auto">
-            <div className="relative mb-6">
-              <div className="w-32 h-32 mx-auto bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center relative overflow-hidden">
+            <div className="relative mb-8 flex flex-col items-center">
+              {/* Animated Breathing Circle */}
+              <div className="relative w-40 h-40 mx-auto">
                 <div
-                  className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full transition-all duration-1000"
+                  className={`inset-0 rounded-full bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 transition-all duration-700 absolute`}
                   style={{
-                    transform: `scale(${isRelaxationActive ? 1.1 : 1})`,
-                    opacity: isRelaxationActive ? 0.3 : 0.1
+                    transform: isRelaxationActive
+                      ? breathPhase === 'inhale'
+                        ? 'scale(1.18)'
+                        : breathPhase === 'hold'
+                          ? 'scale(1.05)'
+                          : 'scale(0.85)'
+                      : 'scale(1)',
+                    opacity: isRelaxationActive ? 0.4 : 0.15
                   }}
                 ></div>
-                <div className="relative z-10">
-                  <p className="text-3xl font-bold text-slate-800">{formatTime(relaxationTime)}</p>
-                  <p className="text-sm text-slate-600">
-                    {isRelaxationActive ? 'Breathe deeply...' : 'Ready to relax?'}
-                  </p>
+                <div className="inset-4 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center absolute overflow-hidden">
+                  <div className="relative z-10 text-center">
+                    <p className="text-4xl font-bold bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent animate-number-glow">
+                      {formatTime(relaxationTime)}
+                    </p>
+                    <p className="text-xs font-medium text-slate-600 mt-1 animate-fade-in-out">
+                      {isRelaxationActive ? (
+                        <span className="flex items-center justify-center gap-1">
+                          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                          {breathPhase === 'inhale' ? 'Inhale deeply...' : breathPhase === 'hold' ? 'Hold your breath...' : 'Exhale slowly...'}
+                        </span>
+                      ) : (
+                        'Ready to relax?'
+                      )}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-4 mb-6">
               {!isRelaxationActive ? (
                 <button
                   onClick={startRelaxation}
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+                  className="group relative bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 hover:from-emerald-600 hover:via-green-600 hover:to-teal-600 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-500 hover:scale-110 hover:shadow-2xl flex items-center gap-3 overflow-hidden"
                 >
-                  <Play className="w-5 h-5" />
-                  Start Session
+                  <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  <Play className="w-6 h-6 animate-pulse" />
+                  <span>Start Session</span>
                 </button>
               ) : (
                 <button
                   onClick={pauseRelaxation}
-                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+                  className="group relative bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-600 hover:via-orange-600 hover:to-red-600 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-500 hover:scale-110 hover:shadow-2xl flex items-center gap-3 overflow-hidden"
                 >
-                  <Pause className="w-5 h-5" />
-                  Pause
+                  <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  <Pause className="w-6 h-6 animate-pulse" />
+                  <span>Pause</span>
                 </button>
               )}
               <button
                 onClick={resetRelaxation}
-                className="bg-gradient-to-r from-gray-500 to-slate-500 hover:from-gray-600 hover:to-slate-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+                className="group relative bg-gradient-to-r from-slate-500 via-gray-600 to-zinc-600 hover:from-slate-600 hover:via-gray-700 hover:to-zinc-700 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-500 hover:scale-110 hover:shadow-2xl flex items-center gap-3 overflow-hidden"
               >
-                <RotateCcw className="w-5 h-5" />
-                Reset
+                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                <RotateCcw className="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" />
+                <span>Reset</span>
               </button>
             </div>
-            <div className="mt-6 text-sm text-slate-600 leading-relaxed">
-              {isRelaxationActive ? (
-                <p className="animate-pulse">Focus on your breathing. Inhale slowly through your nose, hold for a moment, then exhale through your mouth.</p>
-              ) : (
-                <p>Take a moment to center yourself with a guided breathing exercise. Find a comfortable position and let your mind relax.</p>
-              )}
+            <div className="relative bg-white/30 backdrop-blur-sm rounded-2xl p-6 border border-white/40 shadow-inner mt-4">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-pulse"></div>
+                <h3 className="text-lg font-semibold text-slate-700">Breathing Guide</h3>
+                <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+              </div>
+              <div className="text-sm text-slate-600 leading-relaxed">
+                {isRelaxationActive ? (
+                  <div className="space-y-3">
+                    <p className="animate-breathing-text font-medium text-slate-700">
+                      🌊 Focus on your breathing rhythm
+                    </p>
+                    <div className="flex justify-center items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-blue-400 rounded-full animate-pulse"></div>
+                        <span>Inhale 4s</span>
+                      </div>
+                      <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+                        <span>Hold 4s</span>
+                      </div>
+                      <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-pink-400 rounded-full animate-pulse" style={{ animationDelay: '4s' }}></div>
+                        <span>Exhale 4s</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-500 animate-fade-in-out">
+                      Let your mind drift away from daily worries...
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="font-medium text-slate-700">
+                      🧘‍♀️ Take a moment to center yourself
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      This exercise helps reduce stress, improve focus, and promote emotional balance. Find a comfortable position and let your mind relax. This guided breathing exercise will help you achieve a state of calm and tranquility.
+                    </p>
+                    <div className="flex justify-center gap-2 mt-4">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
       <SoundPlayer src="/sounds/paper-rustle.mp3" />
+      <style jsx>{`
+        @keyframes breath-expand {
+          0% { transform: scale(0.9); }
+          50% { transform: scale(1.15); }
+          100% { transform: scale(0.9); }
+        }
+        @keyframes breath-contract {
+          0% { transform: scale(1.15); }
+          50% { transform: scale(0.9); }
+          100% { transform: scale(1.15); }
+        }
+        .animate-breath-expand {
+          animation: breath-expand 4s infinite;
+        }
+        .animate-breath-contract {
+          animation: breath-contract 4s infinite;
+        }
+      `}</style>
     </div>
   );
 }

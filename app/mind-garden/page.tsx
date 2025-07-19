@@ -10,6 +10,7 @@ import {
   Wind, CloudRain, Leaf
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import EmergencySupport from '@/components/EmergencySupport';
 
 interface MindGarden {
   id: string;
@@ -197,11 +198,11 @@ export default function MindGardenPage() {
       }
     } else {
       switch (key) {
-        case 'streak': return 'from-orange-400 via-yellow-300 to-pink-300';
-        case 'points': return 'from-yellow-300 via-amber-200 to-orange-200';
-        case 'soil': return 'from-blue-300 via-cyan-200 to-teal-200';
-        case 'light': return 'from-green-300 via-emerald-200 to-teal-200';
-        default: return 'from-white via-blue-100 to-indigo-100';
+        case 'streak': return 'from-yellow-100 via-yellow-50 to-pink-50';
+        case 'points': return 'from-yellow-50 via-amber-100 to-orange-50';
+        case 'soil': return 'from-blue-50 via-cyan-50 to-teal-50';
+        case 'light': return 'from-green-50 via-emerald-50 to-teal-50';
+        default: return 'from-white via-white to-white';
       }
     }
   };
@@ -222,23 +223,33 @@ export default function MindGardenPage() {
   const RealisticTreeVisualization = ({ health, stage, soilQuality, sunlight, environment }: RealisticTreeVisualizationProps) => {
     const getTreeElements = () => {
       const healthColor = health > 80 ? '#22c55e' : health > 60 ? '#84cc16' : health > 40 ? '#eab308' : '#ef4444';
-      const trunkHeight = stage === 'seed' ? 0 : stage === 'sprout' ? 40 : stage === 'sapling' ? 80 : stage === 'tree' ? 120 : 160;
-      const canopySize = stage === 'seed' ? 0 : stage === 'sprout' ? 20 : stage === 'sapling' ? 60 : stage === 'tree' ? 100 : 140;
+
+      // More realistic growth stages
+      const stages = {
+        seed: { trunk: 0, canopy: 0, roots: 0 },
+        germination: { trunk: 0, canopy: 0, roots: 25 }, // Just roots underground
+        sprout: { trunk: 15, canopy: 20, roots: 35 }, // Tiny stem and first leaves
+        sapling: { trunk: 60, canopy: 50, roots: 60 }, // Small tree
+        tree: { trunk: 120, canopy: 100, roots: 80 }, // Mature tree
+        ancient: { trunk: 160, canopy: 140, roots: 100 } // Old tree
+      };
+
+      const currentStage = stages[stage];
 
       return {
         trunk: {
-          height: trunkHeight,
-          width: Math.max(8, trunkHeight * 0.15),
+          height: currentStage.trunk,
+          width: Math.max(4, currentStage.trunk * 0.15),
           color: '#8b4513'
         },
         canopy: {
-          size: canopySize,
+          size: currentStage.canopy,
           color: healthColor,
-          opacity: health / 100
+          opacity: Math.max(0.7, health / 100)
         },
         roots: {
-          spread: Math.max(20, trunkHeight * 0.8),
-          depth: Math.max(10, trunkHeight * 0.3)
+          spread: currentStage.roots,
+          depth: Math.max(15, currentStage.roots * 0.4)
         }
       };
     };
@@ -248,175 +259,218 @@ export default function MindGardenPage() {
     const isRaining = environment.weather === 'rain';
 
     return (
-      <div className="relative w-full h-96 overflow-hidden">
-        {/* Realistic Ground Terrain */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 z-10">
-          <svg width="100%" height="100%" viewBox="0 0 800 128" className="absolute bottom-0">
-            {/* Layered Ground */}
-            <defs>
-              <radialGradient id="soilGradient" cx="0.5" cy="0" r="1">
-                <stop offset="0%" stopColor="#8b4513" />
-                <stop offset="50%" stopColor="#a0522d" />
-                <stop offset="100%" stopColor="#654321" />
-              </radialGradient>
-              <linearGradient id="grassGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3a7c47" />
-                <stop offset="100%" stopColor="#2d5a37" />
-              </linearGradient>
-            </defs>
+      <div className="relative w-full h-96 overflow-hidden rounded-2xl">
+        {/* Sky Background */}
+        <div className={`absolute inset-0 transition-all duration-1000 ${isNight
+          ? 'bg-gradient-to-b from-indigo-900 via-purple-900 to-slate-800'
+          : 'bg-gradient-to-b from-sky-300 via-sky-200 to-sky-100'
+          }`} />
 
-            {/* Soil base */}
-            <path d="M0 40 Q200 35 400 40 Q600 45 800 40 L800 128 L0 128 Z" fill="url(#soilGradient)" />
-
-            {/* Grass surface */}
-            <path d="M0 40 Q200 35 400 40 Q600 45 800 40 L800 55 Q600 50 400 55 Q200 50 0 55 Z" fill="url(#grassGradient)" />
-
-            {/* Grass blades */}
-            {grassBlades.map((blade, i) => (
-              <path
-                key={i}
-                d={blade.d}
-                stroke="#4a7c59"
-                strokeWidth="1"
-                fill="none"
-                opacity={blade.opacity}
-              // No transform here, only animate with CSS if needed
-              />
-            ))}
+        {/* Ground Layer as a styled div */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 z-20" style={{
+          background: 'linear-gradient(to bottom, #4a7c59 0%, #3a5a47 20%, #8b4513 50%, #a0522d 80%, #654321 100%)',
+          borderTopLeftRadius: '1.5rem',
+          borderTopRightRadius: '1.5rem',
+          boxShadow: '0 -4px 24px 0 rgba(60,40,20,0.15)'
+        }}>
+          {/* Grass surface */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '12px',
+            background: '#4a7c59',
+            opacity: 0.9,
+            borderTopLeftRadius: '1.5rem',
+            borderTopRightRadius: '1.5rem',
+          }} />
+          {/* Grass blades */}
+          <svg width="100%" height="18" viewBox="0 0 800 18" style={{ position: 'absolute', top: 0, left: 0 }}>
+            {Array.from({ length: 200 }).map((_, i) => {
+              const x = (i * 4) + (Math.random() * 2);
+              const height = 6 + Math.random() * 10;
+              const curve = Math.random() * 3 - 1.5;
+              const opacity = 0.6 + Math.random() * 0.4;
+              return (
+                <path
+                  key={i}
+                  d={`M${x} 16 Q${x + curve} ${16 - height} ${x + curve * 0.5} ${14 - height}`}
+                  stroke="#4a7c59"
+                  strokeWidth="1"
+                  fill="none"
+                  opacity={opacity}
+                />
+              );
+            })}
           </svg>
         </div>
 
         {/* Tree Visualization */}
-        <div className="absolute left-1/2" style={{ bottom: '8rem', transform: 'translateX(-50%)' }}>
-          <svg width="300" height="200" viewBox="0 0 300 200">
+        <div className="absolute left-1/2 bottom-24 transform -translate-x-1/2 z-30">
+          <svg width="400" height="360" viewBox="0 0 400 360">
             <defs>
-              <radialGradient id="trunkGradient" cx="0.3" cy="0.3" r="0.7">
-                <stop offset="0%" stopColor="#a0522d" />
-                <stop offset="70%" stopColor="#8b4513" />
+              <linearGradient id="trunkGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#654321" />
+                <stop offset="30%" stopColor="#8b4513" />
+                <stop offset="70%" stopColor="#a0522d" />
                 <stop offset="100%" stopColor="#654321" />
-              </radialGradient>
+              </linearGradient>
               <radialGradient id="canopyGradient" cx="0.3" cy="0.3" r="0.8">
                 <stop offset="0%" stopColor={tree.canopy.color} stopOpacity={tree.canopy.opacity} />
-                <stop offset="70%" stopColor={tree.canopy.color} stopOpacity={tree.canopy.opacity * 0.8} />
-                <stop offset="100%" stopColor="#1a4a2e" stopOpacity={tree.canopy.opacity * 0.6} />
+                <stop offset="80%" stopColor="#1a4a2e" stopOpacity={tree.canopy.opacity * 0.7} />
               </radialGradient>
-              <filter id="leafShadow">
-                <feDropShadow dx="2" dy="4" stdDeviation="3" floodOpacity="0.3" />
-              </filter>
             </defs>
 
             {/* Underground Roots */}
-            {stage !== 'seed' && (
+            {tree.roots.spread > 0 && (
               <g opacity="0.4">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <path
-                    key={i}
-                    d={`M150 ${200 - tree.trunk.height} Q${150 + (i - 3) * 15} ${200 - tree.trunk.height + 20} ${150 + (i - 3) * tree.roots.spread / 6} ${200 - tree.trunk.height + tree.roots.depth}`}
-                    stroke="#8b4513"
-                    strokeWidth={Math.max(2, 8 - i)}
-                    fill="none"
-                    opacity={0.6}
-                  />
-                ))}
-              </g>
-            )}
-
-            {/* Tree Trunk */}
-            {tree.trunk.height > 0 && (
-              <rect
-                x={150 - tree.trunk.width / 2}
-                y={200 - tree.trunk.height}
-                width={tree.trunk.width}
-                height={tree.trunk.height}
-                fill="url(#trunkGradient)"
-                rx={tree.trunk.width / 4}
-                style={{
-                  transform: `rotate(${Math.sin(Date.now() / 2000) * environment.windIntensity * 0.5}deg)`,
-                  transformOrigin: '50% 100%',
-                  transition: 'transform 0.5s ease'
-                }}
-              />
-            )}
-
-            {/* Tree Canopy */}
-            {tree.canopy.size > 0 && (
-              <g>
-                {/* Main canopy */}
-                <circle
-                  cx="150"
-                  cy={200 - tree.trunk.height - tree.canopy.size / 2}
-                  r={tree.canopy.size / 2}
-                  fill="url(#canopyGradient)"
-                  filter="url(#leafShadow)"
-                  style={{
-                    transform: `translate(${Math.sin(Date.now() / 1500) * environment.windIntensity * 3}px, ${Math.cos(Date.now() / 1800) * environment.windIntensity * 2}px)`,
-                    transition: 'transform 0.3s ease'
-                  }}
-                />
-
-                {/* Additional foliage clusters */}
-                {stage === 'tree' || stage === 'ancient' ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <circle
-                      key={i}
-                      cx={150 + (i - 2) * 20}
-                      cy={200 - tree.trunk.height - tree.canopy.size / 2 + (i % 2) * 15}
-                      r={tree.canopy.size / 4}
-                      fill="url(#canopyGradient)"
-                      opacity={0.8}
-                      style={{
-                        transform: `translate(${Math.sin(Date.now() / 1200 + i) * environment.windIntensity * 2}px, ${Math.cos(Date.now() / 1600 + i) * environment.windIntensity * 1.5}px)`,
-                        transition: 'transform 0.3s ease'
-                      }}
-                    />
-                  ))
-                ) : null}
-
-                {/* Falling leaves */}
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <g key={i}>
+                {Array.from({ length: 6 }).map((_, i) => {
+                  const angle = (i * 60) + 210; // Start from bottom
+                  const length = tree.roots.spread;
+                  const x = 200 + Math.cos(angle * Math.PI / 180) * length;
+                  const y = 250 + Math.sin(angle * Math.PI / 180) * (length * 0.4);
+                  return (
                     <path
-                      d="M0 0 Q3 -2 6 0 Q3 2 0 0"
-                      fill={tree.canopy.color}
-                      opacity={0.7}
-                      style={{
-                        transform: `translate(${150 + Math.sin(Date.now() / 1000 + i) * 60}px, ${200 - tree.trunk.height + Math.sin(Date.now() / 800 + i * 2) * 40}px) rotate(${Date.now() / 100 + i * 45}deg)`,
-                        transition: 'transform 0.2s ease'
-                      }}
+                      key={i}
+                      d={`M200 250 Q${200 + (x - 200) * 0.6} ${250 + (y - 250) * 0.8} ${x} ${y}`}
+                      stroke="#654321"
+                      strokeWidth={Math.max(1, 4 - i * 0.3)}
+                      fill="none"
                     />
-                  </g>
-                ))}
+                  );
+                })}
               </g>
             )}
 
-            {/* Seed stage visualization */}
+            {/* SEED STAGE - Properly positioned in ground */}
             {stage === 'seed' && (
               <g>
-                {/* Place seed deeper inside the ground: y=130 visually buried in soil */}
-                <ellipse cx="150" cy="130" rx="6" ry="8" fill="#8b4513" opacity="0.95" />
-                {/* Soil shading above seed for buried effect */}
-                <ellipse cx="150" cy="124" rx="12" ry="7" fill="#a0522d" opacity="0.7" />
-                {/* Grass blades above ground */}
-                <path d="M145 120 Q147 118 150 120 Q153 118 155 120" stroke="#4a7c59" strokeWidth="2" fill="none" opacity="0.7" />
+                {/* Seed visually embedded in the ground (half above, half below ground) */}
+                <ellipse cx="200" cy="360" rx="6" ry="9" fill="#8b4513" />
+                <ellipse cx="200" cy="358" rx="4" ry="6" fill="#cd853f" />
+              </g>
+            )}
+
+            {/* GERMINATION STAGE - Roots growing */}
+            {stage === 'germination' && (
+              <g>
+                {/* Seed with crack */}
+                <ellipse cx="200" cy="250" rx="6" ry="9" fill="#8b4513" />
+                <path d="M194 250 L206 250" stroke="#4a7c59" strokeWidth="1" />
+                {/* Small root tip */}
+                <path d="M200 259 Q198 265 195 270" stroke="#cd853f" strokeWidth="2" fill="none" />
+              </g>
+            )}
+
+            {/* SPROUT STAGE - First stem and leaves */}
+            {stage === 'sprout' && (
+              <g>
+                {/* Tiny stem */}
+                <rect
+                  x="198"
+                  y={250 - tree.trunk.height}
+                  width="4"
+                  height={tree.trunk.height}
+                  fill="#4a7c59"
+                  rx="2"
+                />
+                {/* First tiny leaves */}
+                <ellipse cx="195" cy={250 - tree.trunk.height} rx="8" ry="4" fill={tree.canopy.color} opacity="0.9" />
+                <ellipse cx="205" cy={250 - tree.trunk.height - 2} rx="8" ry="4" fill={tree.canopy.color} opacity="0.9" />
+              </g>
+            )}
+
+            {/* SAPLING AND ABOVE - Traditional tree structure */}
+            {(stage === 'sapling' || stage === 'tree' || stage === 'ancient') && (
+              <g>
+                {/* Tree Trunk */}
+                <rect
+                  x={200 - tree.trunk.width / 2}
+                  y={250 - tree.trunk.height}
+                  width={tree.trunk.width}
+                  height={tree.trunk.height}
+                  fill="url(#trunkGradient)"
+                  rx={tree.trunk.width / 8}
+                />
+
+                {/* Bark texture */}
+                {Array.from({ length: Math.floor(tree.trunk.height / 12) }).map((_, i) => (
+                  <line
+                    key={i}
+                    x1={200 - tree.trunk.width / 2 + 1}
+                    y1={250 - i * 12}
+                    x2={200 + tree.trunk.width / 2 - 1}
+                    y2={250 - i * 12}
+                    stroke="#543821"
+                    strokeWidth="0.5"
+                    opacity="0.6"
+                  />
+                ))}
+
+                {/* Tree Canopy */}
+                <circle
+                  cx="200"
+                  cy={250 - tree.trunk.height - tree.canopy.size / 2}
+                  r={tree.canopy.size / 2}
+                  fill="url(#canopyGradient)"
+                />
+
+                {/* Additional foliage for mature trees */}
+                {stage === 'tree' || stage === 'ancient' ? (
+                  Array.from({ length: 4 }).map((_, i) => {
+                    const angle = i * 90;
+                    const distance = tree.canopy.size / 4;
+                    const x = 200 + Math.cos(angle * Math.PI / 180) * distance;
+                    const y = (250 - tree.trunk.height - tree.canopy.size / 2) + Math.sin(angle * Math.PI / 180) * distance;
+                    return (
+                      <circle
+                        key={i}
+                        cx={x}
+                        cy={y}
+                        r={tree.canopy.size / 6}
+                        fill="url(#canopyGradient)"
+                        opacity="0.8"
+                      />
+                    );
+                  })
+                ) : null}
+
+                {/* Flowers for healthy mature trees */}
+                {health > 80 && (stage === 'tree' || stage === 'ancient') && (
+                  Array.from({ length: 6 }).map((_, i) => {
+                    const angle = i * 60;
+                    const distance = tree.canopy.size / 3;
+                    const x = 200 + Math.cos(angle * Math.PI / 180) * distance;
+                    const y = (250 - tree.trunk.height - tree.canopy.size / 2) + Math.sin(angle * Math.PI / 180) * distance;
+                    return (
+                      <g key={i}>
+                        <circle cx={x} cy={y} r="2" fill="#ff69b4" />
+                        <circle cx={x} cy={y} r="1" fill="#ffb6c1" />
+                      </g>
+                    );
+                  })
+                )}
               </g>
             )}
           </svg>
         </div>
 
         {/* Environmental Effects */}
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none z-30">
           {/* Rain */}
           {isRaining && (
             <div className="absolute inset-0">
               {Array.from({ length: 100 }).map((_, i) => (
                 <div
                   key={i}
-                  className="absolute w-0.5 bg-blue-400 opacity-60"
+                  className="absolute bg-blue-300 opacity-60 rounded-full"
                   style={{
                     left: `${Math.random() * 100}%`,
                     top: `${Math.random() * 100}%`,
-                    height: `${10 + Math.random() * 20}px`,
-                    animation: `raindrop ${0.5 + Math.random() * 0.5}s linear infinite`,
+                    width: '1px',
+                    height: `${6 + Math.random() * 10}px`,
+                    animation: `raindrop ${0.4 + Math.random() * 0.6}s linear infinite`,
                     animationDelay: `${Math.random() * 2}s`
                   }}
                 />
@@ -424,45 +478,104 @@ export default function MindGardenPage() {
             </div>
           )}
 
-          {/* Fireflies at night */}
+          {/* Night effects */}
           {isNight && (
             <div className="absolute inset-0">
-              {fireflies.map((f, i) => (
+              {Array.from({ length: 15 }).map((_, i) => (
                 <div
                   key={i}
-                  className="absolute w-1 h-1 bg-yellow-300 rounded-full animate-pulse"
+                  className="absolute w-1 h-1 bg-yellow-200 rounded-full"
                   style={{
-                    left: `${f.left}%`,
-                    top: `${f.top}%`,
-                    animation: `firefly ${f.duration}s ease-in-out infinite`,
-                    animationDelay: `${f.delay}s`
+                    left: `${20 + Math.random() * 60}%`,
+                    top: `${20 + Math.random() * 60}%`,
+                    boxShadow: '0 0 8px #fef08a',
+                    animation: `firefly ${3 + Math.random() * 2}s ease-in-out infinite`,
+                    animationDelay: `${Math.random() * 3}s`
                   }}
                 />
               ))}
             </div>
           )}
 
-          {/* Particles for interaction feedback */}
-          <div className="absolute inset-0" id="particles-container" />
+          {/* Day effects */}
+          {!isNight && (
+            <div className="absolute inset-0">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute text-slate-600 text-sm"
+                  style={{
+                    left: `${Math.random() * 80}%`,
+                    top: `${10 + Math.random() * 30}%`,
+                    animation: `bird ${4 + Math.random() * 2}s ease-in-out infinite`,
+                    animationDelay: `${Math.random() * 4}s`
+                  }}
+                >
+                  🐦
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Butterflies for healthy trees */}
+          {health > 70 && !isNight && (stage === 'tree' || stage === 'ancient') && (
+            <div className="absolute inset-0">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute text-lg"
+                  style={{
+                    left: `${35 + Math.random() * 30}%`,
+                    top: `${35 + Math.random() * 30}%`,
+                    animation: `butterfly ${3 + Math.random() * 2}s ease-in-out infinite`,
+                    animationDelay: `${Math.random() * 3}s`
+                  }}
+                >
+                  🦋
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Health indicator */}
-        <div className="absolute top-4 right-4 bg-black/20 backdrop-blur-md rounded-xl p-3 border border-white/10">
+        <div className="absolute top-4 right-4 bg-black/20 backdrop-blur-sm rounded-xl p-3 border border-white/10 z-40">
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <Heart
-                className={`w-6 h-6 ${health > 70 ? 'text-green-400' : health > 40 ? 'text-yellow-400' : 'text-red-400'}`}
-                style={{
-                  filter: health > 70 ? 'drop-shadow(0 0 6px #22c55e)' : 'none'
-                }}
-              />
-              <div className="absolute inset-0 animate-pulse">
-                <Heart className="w-6 h-6 text-white opacity-20" />
-              </div>
-            </div>
+            <Heart
+              className={`w-6 h-6 ${health > 70 ? 'text-green-400' : health > 40 ? 'text-yellow-400' : 'text-red-400'}`}
+            />
             <div className="text-white font-bold text-lg">{health}%</div>
           </div>
         </div>
+
+        {/* Growth stage indicator */}
+        <div className="absolute top-4 left-4 bg-black/20 backdrop-blur-sm rounded-xl p-3 border border-white/10 z-40">
+          <div className="text-white font-semibold capitalize">{stage}</div>
+        </div>
+
+        {/* CSS Animations */}
+        <style jsx>{`
+        @keyframes raindrop {
+          0% { transform: translateY(-100vh); opacity: 0.8; }
+          100% { transform: translateY(100vh); opacity: 0.2; }
+        }
+        
+        @keyframes firefly {
+          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+          50% { transform: translate(15px, -10px) scale(1.2); opacity: 1; }
+        }
+        
+        @keyframes bird {
+          0%, 100% { transform: translateX(0) translateY(0); }
+          50% { transform: translateX(20px) translateY(-10px); }
+        }
+        
+        @keyframes butterfly {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(10px, -15px) scale(1.1); }
+          66% { transform: translate(-8px, -20px) scale(0.9); }
+        }
+      `}</style>
       </div>
     );
   };
@@ -477,17 +590,24 @@ export default function MindGardenPage() {
   }
 
   const EnhancedStatCard = ({ icon: Icon, value, label, color, gradient, animate = false }: EnhancedStatCardProps) => (
-    <div className={`relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${gradient} backdrop-blur-sm border border-white/10 shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-3xl group cursor-pointer`}>
+    <div
+      className={`relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${gradient} border border-white/10 shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-3xl group cursor-pointer`}
+      style={{
+        background: environmentState.timeOfDay === 'day' ? 'rgba(255,255,255,0.97)' : undefined,
+        color: environmentState.timeOfDay === 'day' ? '#222' : undefined
+      }}
+    >
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-3">
           <Icon
             className={`w-8 h-8 ${color} ${animate ? 'animate-bounce' : ''} transition-transform duration-300 group-hover:scale-110`}
+            style={{ color: environmentState.timeOfDay === 'day' ? '#222' : undefined }}
           />
           <div className="w-2 h-2 bg-white/40 rounded-full animate-pulse" />
         </div>
-        <div className="text-3xl font-bold text-white mb-1 tracking-tight">{value}</div>
-        <div className="text-white/80 text-sm font-medium">{label}</div>
+        <div className={`text-3xl font-bold mb-1 tracking-tight ${environmentState.timeOfDay === 'day' ? 'text-black' : 'text-white'}`}>{value}</div>
+        <div className={`text-sm font-medium ${environmentState.timeOfDay === 'day' ? 'text-gray-700' : 'text-white/80'}`}>{label}</div>
         <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-white/5 rounded-full blur-xl" />
       </div>
     </div>
@@ -519,19 +639,7 @@ export default function MindGardenPage() {
     </Link>
   );
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="text-center">
-          <div className="relative">
-            <div className="animate-spin rounded-full h-20 w-20 border-4 border-green-400/30 border-t-green-400 mx-auto mb-6"></div>
-            <div className="absolute inset-0 rounded-full bg-green-400/10 animate-pulse"></div>
-          </div>
-          <p className="text-white/80 text-lg">Loading your digital sanctuary...</p>
-        </div>
-      </div>
-    );
-  }
+  // Removed loading spinner and blue background for instant display
   if (message) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -553,6 +661,7 @@ export default function MindGardenPage() {
       ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900'
       : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
       }`}>
+      <EmergencySupport />
       <Navbar />
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Main Tree Display */}
@@ -866,26 +975,51 @@ export default function MindGardenPage() {
             Recent Growth Activity
           </h3>
           <div className="space-y-4">
-            {[
-              { type: 'journal', action: 'Completed daily reflection', time: '2 hours ago', points: 25, icon: BookOpen, color: 'text-slate-400' },
-              { type: 'mood', action: 'Logged emotional state', time: '4 hours ago', points: 20, icon: Heart, color: 'text-red-400' },
-              { type: 'game', action: 'Finished cognitive training', time: '6 hours ago', points: 30, icon: Gamepad2, color: 'text-purple-400' },
-              { type: 'resource', action: 'Read mental health article', time: '1 day ago', points: 15, icon: Library, color: 'text-cyan-400' }
-            ].map((activity, index) => (
-              <div key={index} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                  <activity.icon className={`w-6 h-6 ${activity.color}`} />
-                </div>
-                <div className="flex-1">
-                  <div className="text-white font-semibold">{activity.action}</div>
-                  <div className="text-white/60 text-sm">{activity.time}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-green-400 font-bold">+{activity.points}</div>
-                  <div className="text-white/60 text-sm">vitality</div>
-                </div>
-              </div>
-            ))}
+            {garden?.activities && garden.activities.length > 0 ? (
+              garden.activities.map((activity, index) => {
+                let icon = BookOpen, color = 'text-slate-400', action = '';
+                if (activity.type === 'journal') {
+                  icon = BookOpen; color = 'text-slate-400'; action = 'Completed daily reflection';
+                } else if (activity.type === 'mood') {
+                  icon = Heart; color = 'text-red-400'; action = 'Logged emotional state';
+                } else if (activity.type === 'game') {
+                  icon = Gamepad2; color = 'text-purple-400'; action = 'Finished cognitive training';
+                } else if (activity.type === 'resource') {
+                  icon = Library; color = 'text-cyan-400'; action = 'Read mental health article';
+                } else if (activity.type === 'checkin') {
+                  icon = Calendar; color = 'text-indigo-400'; action = 'Checked in';
+                }
+                // Format time (simple)
+                const timeAgo = (() => {
+                  const now = new Date();
+                  const ts = new Date(activity.timestamp);
+                  const diffMs = now.getTime() - ts.getTime();
+                  const diffMins = Math.floor(diffMs / 60000);
+                  if (diffMins < 60) return `${diffMins} min ago`;
+                  const diffHours = Math.floor(diffMins / 60);
+                  if (diffHours < 24) return `${diffHours} hr ago`;
+                  const diffDays = Math.floor(diffHours / 24);
+                  return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+                })();
+                return (
+                  <div key={index} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                      {icon && <icon className={`w-6 h-6 ${color}`} />}
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-white font-semibold">{action}</div>
+                      <div className="text-white/60 text-sm">{timeAgo}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-green-400 font-bold">+{activity.points}</div>
+                      <div className="text-white/60 text-sm">vitality</div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-white/60 text-center py-8">No recent activity yet.</div>
+            )}
           </div>
         </div>
       </div>
