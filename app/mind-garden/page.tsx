@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -36,7 +37,7 @@ interface Achievement {
 }
 
 interface ActivityLog {
-  type: 'journal' | 'mood' | 'game' | 'resource' | 'checkin';
+  type: string; // Accept any backend activity type
   points: number;
   timestamp: string;
 }
@@ -49,6 +50,16 @@ interface GrowthStats {
 }
 
 export default function MindGardenPage() {
+  // --- Automatic day/night switching based on local time ---
+  // DEMO: Switch day/night every 10 seconds with a smooth transition
+  useEffect(() => {
+    let isNight = false;
+    const interval = setInterval(() => {
+      isNight = !isNight;
+      setEnvironmentState((prev) => ({ ...prev, timeOfDay: isNight ? 'night' : 'day' }));
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
   // --- Replace hardcoded initial state with null ---
   const [garden, setGarden] = useState<MindGarden | null>(null);
   const [stats, setStats] = useState<GrowthStats | null>(null);
@@ -64,59 +75,48 @@ export default function MindGardenPage() {
     windIntensity: 0.3
   });
 
-  // Simulate environmental changes
+  // --- Fetch garden and stats data on mount ---
   useEffect(() => {
-    const interval = setInterval(() => {
-      setEnvironmentState(prev => ({
-        ...prev,
-        timeOfDay: prev.timeOfDay === 'day' ? 'night' : 'day',
-        weather: Math.random() > 0.7 ? 'rain' : 'clear',
-        windIntensity: 0.2 + Math.random() * 0.6
-      }));
-    }, 8000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // --- Fetch real stats from backend on mount ---
-  useEffect(() => {
-    async function fetchGardenStats() {
-      setIsLoading(true);
+    const fetchData = async () => {
       try {
         const token = document.cookie
           .split('; ')
           .find(row => row.startsWith('token='))
           ?.split('=')[1];
-        // Fetch garden data
-        const gardenRes = await fetch('/api/mind-garden', {
-          headers: { Authorization: `Bearer ${token}` },
+        const res = await fetch('/api/mind-garden/stats', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
-        const statsRes = await fetch('/api/mind-garden/stats', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        if (!res.ok) {
+          setMessage('Failed to load your Mind Garden.');
+          return;
+        }
+        const data = await res.json();
         let gardenData = null;
         let statsData = null;
-        if (gardenRes.ok) {
-          const gardenJson = await gardenRes.json();
-          if (gardenJson.data) gardenData = gardenJson.data;
-        }
-        if (statsRes.ok) {
-          const statsJson = await statsRes.json();
-          if (statsJson.data) statsData = statsJson.data;
-        }
-        if (!gardenData || !statsData) {
-          setMessage('No Mind Garden data found. Please check your account or try again later.');
-          setIsLoading(false);
+        // Accept stats-only response
+        if (data.garden && data.stats) {
+          gardenData = data.garden;
+          statsData = data.stats;
+        } else if (data.success && data.data && data.data.garden && data.data.stats) {
+          gardenData = data.data.garden;
+          statsData = data.data.stats;
+        } else if (data.success && data.data && data.data.todayPoints !== undefined) {
+          // Only stats present, no garden data: show error and do not show fake garden
+          setMessage('No Mind Garden data found. Please complete activities (journal, mood, games, resources) to start growing your garden!');
+          setGarden(null);
+          setStats(null);
+          return;
+        } else {
+          setMessage('Received invalid data from the server.');
           return;
         }
         setGarden(gardenData);
         setStats(statsData);
       } catch (err) {
-        console.error('Fetch error:', err);
-        setMessage('Failed to load your Mind Garden stats.');
+        setMessage('Failed to load your Mind Garden.');
       }
-      setIsLoading(false);
-    }
-    fetchGardenStats();
+    };
+    fetchData();
   }, []);
 
   // --- Water tree action: update backend and refresh ---
@@ -140,7 +140,6 @@ export default function MindGardenPage() {
         setIsLoading(false);
         return;
       }
-      setMessage('Your tree feels refreshed and vibrant!');
       // Refresh stats
       const res = await fetch('/api/mind-garden/stats', {
         headers: {
@@ -162,6 +161,23 @@ export default function MindGardenPage() {
       } else if (data.success && data.data && data.data.garden && data.data.stats) {
         gardenData = data.data.garden;
         statsData = data.data.stats;
+      } else if (data.success && data.data && typeof data.data === 'object') {
+        // Accept fallback: if only stats, create fallback garden
+        statsData = data.data;
+        gardenData = {
+          id: 'unknown',
+          treeHealth: 100,
+          treeStage: 'seed',
+          streak: 0,
+          totalPoints: 0,
+          lastWatered: '',
+          soilQuality: 100,
+          sunlightHours: 8,
+          achievements: [],
+          weeklyGrowth: [],
+          activities: []
+        };
+        setMessage('Garden data missing. Showing stats only.');
       } else {
         console.error('Unexpected API response after watering:', data);
         setMessage('Received invalid data from the server after watering.');
@@ -170,6 +186,7 @@ export default function MindGardenPage() {
       }
       setGarden(gardenData);
       setStats(statsData);
+      setMessage('Your tree feels refreshed and vibrant!');
     } catch (err) {
       console.error('Fetch error:', err);
       setMessage('Failed to water your tree.');
@@ -178,12 +195,15 @@ export default function MindGardenPage() {
   };
 
   // --- Helper: determine tree stage based on points ---
+  // More gradual, realistic growth stages
   const getTreeStage = (points: number) => {
     if (points < 50) return 'seed';
     if (points < 200) return 'sprout';
-    if (points < 1000) return 'sapling';
-    if (points < 3000) return 'tree';
-    return 'ancient';
+    if (points < 600) return 'sapling';
+    if (points < 1500) return 'youngTree';
+    if (points < 4000) return 'matureTree';
+    if (points < 10000) return 'ancientTree';
+    return 'legendaryTree';
   };
 
   // EnhancedStatCard: use bright gradients for day, muted for night
@@ -221,36 +241,58 @@ export default function MindGardenPage() {
   }
 
   const RealisticTreeVisualization = ({ health, stage, soilQuality, sunlight, environment }: RealisticTreeVisualizationProps) => {
+    // Set the ground Y coordinate to match the top of the ground div in SVG
+    const groundY = 320;
+    // Add a glow state to trigger glow effect on user interaction
+    const [glow, setGlow] = useState(false);
+    // Expose a method to trigger glow from parent (will be used later)
+    useEffect(() => {
+      if (glow) {
+        const timeout = setTimeout(() => setGlow(false), 1200);
+        return () => clearTimeout(timeout);
+      }
+    }, [glow]);
+
     const getTreeElements = () => {
       const healthColor = health > 80 ? '#22c55e' : health > 60 ? '#84cc16' : health > 40 ? '#eab308' : '#ef4444';
 
-      // More realistic growth stages
+      // More realistic, gradual growth stages, all strictly grounded at y=320 (ground level)
       const stages = {
-        seed: { trunk: 0, canopy: 0, roots: 0 },
-        germination: { trunk: 0, canopy: 0, roots: 25 }, // Just roots underground
-        sprout: { trunk: 15, canopy: 20, roots: 35 }, // Tiny stem and first leaves
-        sapling: { trunk: 60, canopy: 50, roots: 60 }, // Small tree
-        tree: { trunk: 120, canopy: 100, roots: 80 }, // Mature tree
-        ancient: { trunk: 160, canopy: 140, roots: 100 } // Old tree
+        seed: { trunk: 0, canopy: 0, roots: 0, baseY: 320, branches: 0 },
+        sprout: { trunk: 18, canopy: 16, roots: 22, baseY: 320, branches: 0 },
+        sapling: { trunk: 50, canopy: 32, roots: 38, baseY: 320, branches: 1 },
+        youngTree: { trunk: 90, canopy: 54, roots: 60, baseY: 320, branches: 2 },
+        matureTree: { trunk: 150, canopy: 90, roots: 90, baseY: 320, branches: 3 },
+        ancientTree: { trunk: 210, canopy: 120, roots: 120, baseY: 320, branches: 4 },
+        legendaryTree: { trunk: 260, canopy: 150, roots: 150, baseY: 320, branches: 5 },
+        tree: { trunk: 120, canopy: 70, roots: 70, baseY: 320, branches: 2 } // ensure 'tree' stage is visible
       };
-
-      const currentStage = stages[stage];
-
+      type StageKey = keyof typeof stages;
+      const validStages = Object.keys(stages) as StageKey[];
+      // Map legacy/short stages to new ones for compatibility
+      let safeStage: StageKey = validStages.includes(stage as StageKey) ? (stage as StageKey) : 'seed';
+      if (stage === 'tree') safeStage = 'tree';
+      if (stage === 'ancient') safeStage = 'ancientTree';
+      const currentStage = stages[safeStage];
       return {
         trunk: {
           height: currentStage.trunk,
-          width: Math.max(4, currentStage.trunk * 0.15),
-          color: '#8b4513'
+          width: Math.max(6, currentStage.trunk * 0.13),
+          color: '#8b4513',
+          baseY: currentStage.baseY
         },
         canopy: {
           size: currentStage.canopy,
           color: healthColor,
-          opacity: Math.max(0.7, health / 100)
+          opacity: Math.max(0.7, health / 100),
+          baseY: currentStage.baseY - currentStage.trunk
         },
         roots: {
           spread: currentStage.roots,
-          depth: Math.max(15, currentStage.roots * 0.4)
-        }
+          depth: Math.max(18, currentStage.roots * 0.5),
+          baseY: currentStage.baseY
+        },
+        branches: currentStage.branches
       };
     };
 
@@ -261,7 +303,7 @@ export default function MindGardenPage() {
     return (
       <div className="relative w-full h-96 overflow-hidden rounded-2xl">
         {/* Sky Background */}
-        <div className={`absolute inset-0 transition-all duration-1000 ${isNight
+        <div className={`absolute inset-0 transition-all duration-[10000ms] ${isNight
           ? 'bg-gradient-to-b from-indigo-900 via-purple-900 to-slate-800'
           : 'bg-gradient-to-b from-sky-300 via-sky-200 to-sky-100'
           }`} />
@@ -307,7 +349,8 @@ export default function MindGardenPage() {
         </div>
 
         {/* Tree Visualization */}
-        <div className="absolute left-1/2 bottom-24 transform -translate-x-1/2 z-30">
+        {/* Tree Visualization, base always at groundY */}
+        <div className="absolute left-1/2" style={{ bottom: 56, transform: 'translateX(-50%)', zIndex: 30 }}>
           <svg width="400" height="360" viewBox="0 0 400 360">
             <defs>
               <linearGradient id="trunkGradient" x1="0" y1="0" x2="1" y2="0">
@@ -355,7 +398,7 @@ export default function MindGardenPage() {
             {/* GERMINATION STAGE - Roots growing */}
             {stage === 'germination' && (
               <g>
-                {/* Seed with crack */}
+                {/* Seed with crack, grounded at y=250 */}
                 <ellipse cx="200" cy="250" rx="6" ry="9" fill="#8b4513" />
                 <path d="M194 250 L206 250" stroke="#4a7c59" strokeWidth="1" />
                 {/* Small root tip */}
@@ -363,94 +406,118 @@ export default function MindGardenPage() {
               </g>
             )}
 
-            {/* SPROUT STAGE - First stem and leaves */}
+            {/* SPROUT STAGE - First stem and leaves, strictly grounded at y=320 */}
             {stage === 'sprout' && (
               <g>
-                {/* Tiny stem */}
+                {/* Tiny stem, base at y=320 */}
                 <rect
                   x="198"
-                  y={250 - tree.trunk.height}
+                  y={groundY - tree.trunk.height}
                   width="4"
                   height={tree.trunk.height}
                   fill="#4a7c59"
                   rx="2"
                 />
                 {/* First tiny leaves */}
-                <ellipse cx="195" cy={250 - tree.trunk.height} rx="8" ry="4" fill={tree.canopy.color} opacity="0.9" />
-                <ellipse cx="205" cy={250 - tree.trunk.height - 2} rx="8" ry="4" fill={tree.canopy.color} opacity="0.9" />
+                <ellipse cx="195" cy={groundY - tree.trunk.height} rx="8" ry="4" fill={tree.canopy.color} opacity="0.9" />
+                <ellipse cx="205" cy={groundY - tree.trunk.height - 2} rx="8" ry="4" fill={tree.canopy.color} opacity="0.9" />
+                {/* Visible roots */}
+                <path d={`M200 ${groundY} Q195 ${groundY + 10} 190 ${groundY + 20}`} stroke="#8b4513" strokeWidth="2" fill="none" />
+                <path d={`M200 ${groundY} Q205 ${groundY + 10} 210 ${groundY + 20}`} stroke="#8b4513" strokeWidth="2" fill="none" />
               </g>
             )}
 
-            {/* SAPLING AND ABOVE - Traditional tree structure */}
-            {(stage === 'sapling' || stage === 'tree' || stage === 'ancient') && (
+            {/* SAPLING AND ABOVE - Realistic tree, strictly grounded at y=320 */}
+            {(stage === 'sapling' || stage === 'youngTree' || stage === 'matureTree' || stage === 'ancientTree' || stage === 'legendaryTree') && (
               <g>
-                {/* Tree Trunk */}
+                {/* Trunk */}
                 <rect
                   x={200 - tree.trunk.width / 2}
-                  y={250 - tree.trunk.height}
+                  y={groundY - tree.trunk.height}
                   width={tree.trunk.width}
                   height={tree.trunk.height}
                   fill="url(#trunkGradient)"
                   rx={tree.trunk.width / 8}
                 />
-
                 {/* Bark texture */}
-                {Array.from({ length: Math.floor(tree.trunk.height / 12) }).map((_, i) => (
+                {Array.from({ length: Math.floor(tree.trunk.height / 14) }).map((_, i) => (
                   <line
                     key={i}
                     x1={200 - tree.trunk.width / 2 + 1}
-                    y1={250 - i * 12}
+                    y1={groundY - i * 14}
                     x2={200 + tree.trunk.width / 2 - 1}
-                    y2={250 - i * 12}
+                    y2={groundY - i * 14}
                     stroke="#543821"
                     strokeWidth="0.5"
                     opacity="0.6"
                   />
                 ))}
-
-                {/* Tree Canopy */}
-                <circle
+                {/* Branches */}
+                {Array.from({ length: tree.branches }).map((_, i) => {
+                  const angle = -35 + i * (70 / Math.max(1, tree.branches - 1));
+                  const length = 40 + tree.trunk.height * 0.25;
+                  const x2 = 200 + Math.cos((angle * Math.PI) / 180) * length;
+                  const y2 = groundY - tree.trunk.height + Math.sin((angle * Math.PI) / 180) * length * 0.7;
+                  return (
+                    <line
+                      key={i}
+                      x1={200}
+                      y1={groundY - tree.trunk.height * 0.7}
+                      x2={x2}
+                      y2={y2}
+                      stroke="#7c4a03"
+                      strokeWidth={3 - i * 0.4}
+                      opacity="0.7"
+                      strokeLinecap="round"
+                    />
+                  );
+                })}
+                {/* Canopy */}
+                <ellipse
                   cx="200"
-                  cy={250 - tree.trunk.height - tree.canopy.size / 2}
-                  r={tree.canopy.size / 2}
+                  cy={groundY - tree.trunk.height - tree.canopy.size / 2}
+                  rx={tree.canopy.size / 2 + tree.branches * 2}
+                  ry={tree.canopy.size / 2}
                   fill="url(#canopyGradient)"
+                  style={glow ? { filter: 'drop-shadow(0 0 32px #fef08a)' } : {}}
                 />
-
-                {/* Additional foliage for mature trees */}
-                {stage === 'tree' || stage === 'ancient' ? (
-                  Array.from({ length: 4 }).map((_, i) => {
-                    const angle = i * 90;
-                    const distance = tree.canopy.size / 4;
+                {/* Extra foliage for mature/ancient/legendary trees */}
+                {(stage === 'matureTree' || stage === 'ancientTree' || stage === 'legendaryTree') && (
+                  Array.from({ length: 5 + tree.branches }).map((_, i) => {
+                    const angle = i * (360 / (5 + tree.branches));
+                    const distance = tree.canopy.size / 2 + 10;
                     const x = 200 + Math.cos(angle * Math.PI / 180) * distance;
-                    const y = (250 - tree.trunk.height - tree.canopy.size / 2) + Math.sin(angle * Math.PI / 180) * distance;
+                    const y = (groundY - tree.trunk.height - tree.canopy.size / 2) + Math.sin(angle * Math.PI / 180) * (tree.canopy.size / 2);
                     return (
-                      <circle
+                      <ellipse
                         key={i}
                         cx={x}
                         cy={y}
-                        r={tree.canopy.size / 6}
+                        rx={tree.canopy.size / 6}
+                        ry={tree.canopy.size / 7}
                         fill="url(#canopyGradient)"
-                        opacity="0.8"
+                        opacity="0.7"
                       />
                     );
                   })
-                ) : null}
-
-                {/* Flowers for healthy mature trees */}
-                {health > 80 && (stage === 'tree' || stage === 'ancient') && (
-                  Array.from({ length: 6 }).map((_, i) => {
-                    const angle = i * 60;
-                    const distance = tree.canopy.size / 3;
-                    const x = 200 + Math.cos(angle * Math.PI / 180) * distance;
-                    const y = (250 - tree.trunk.height - tree.canopy.size / 2) + Math.sin(angle * Math.PI / 180) * distance;
-                    return (
-                      <g key={i}>
-                        <circle cx={x} cy={y} r="2" fill="#ff69b4" />
-                        <circle cx={x} cy={y} r="1" fill="#ffb6c1" />
-                      </g>
-                    );
-                  })
                 )}
+                {/* Roots */}
+                {Array.from({ length: 5 + tree.branches }).map((_, i) => {
+                  const angle = 100 + i * (80 / (4 + tree.branches));
+                  const length = tree.roots.spread;
+                  const x = 200 + Math.cos(angle * Math.PI / 180) * length;
+                  const y = groundY + Math.sin(angle * Math.PI / 180) * (tree.roots.depth);
+                  return (
+                    <path
+                      key={i}
+                      d={`M200 ${groundY} Q${200 + (x - 200) * 0.5} ${groundY + (y - groundY) * 0.7} ${x} ${y}`}
+                      stroke="#8b4513"
+                      strokeWidth={2 - i * 0.2}
+                      fill="none"
+                      opacity="0.7"
+                    />
+                  );
+                })}
               </g>
             )}
           </svg>
@@ -591,23 +658,18 @@ export default function MindGardenPage() {
 
   const EnhancedStatCard = ({ icon: Icon, value, label, color, gradient, animate = false }: EnhancedStatCardProps) => (
     <div
-      className={`relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${gradient} border border-white/10 shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-3xl group cursor-pointer`}
-      style={{
-        background: environmentState.timeOfDay === 'day' ? 'rgba(255,255,255,0.97)' : undefined,
-        color: environmentState.timeOfDay === 'day' ? '#222' : undefined
-      }}
+      className={`relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${gradient} shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-3xl group cursor-pointer`}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-3">
           <Icon
             className={`w-8 h-8 ${color} ${animate ? 'animate-bounce' : ''} transition-transform duration-300 group-hover:scale-110`}
-            style={{ color: environmentState.timeOfDay === 'day' ? '#222' : undefined }}
           />
           <div className="w-2 h-2 bg-white/40 rounded-full animate-pulse" />
         </div>
-        <div className={`text-3xl font-bold mb-1 tracking-tight ${environmentState.timeOfDay === 'day' ? 'text-black' : 'text-white'}`}>{value}</div>
-        <div className={`text-sm font-medium ${environmentState.timeOfDay === 'day' ? 'text-gray-700' : 'text-white/80'}`}>{label}</div>
+        <div className="text-3xl font-bold mb-1 tracking-tight text-slate-900">{value}</div>
+        <div className="text-sm font-semibold text-slate-700">{label}</div>
         <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-white/5 rounded-full blur-xl" />
       </div>
     </div>
@@ -624,16 +686,16 @@ export default function MindGardenPage() {
 
   const ActionCard = ({ href, icon: Icon, title, points, color, description }: ActionCardProps) => (
     <Link href={href} className="block group">
-      <div className={`relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${color} backdrop-blur-sm border border-white/10 shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-3xl cursor-pointer`}>
+      <div className={`relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${color} shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-3xl cursor-pointer`}>
         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="relative z-10 text-center">
           <div className="mb-4">
-            <Icon className="w-10 h-10 text-white mx-auto transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
+            <Icon className="w-10 h-10 text-slate-900 mx-auto transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
           </div>
-          <div className="text-white font-bold text-lg mb-2">{title}</div>
-          <div className="text-white/80 text-sm mb-2">{description}</div>
-          <div className="text-white/60 text-xs font-medium">+{points} vitality</div>
-          <div className="absolute top-2 right-2 w-3 h-3 bg-white/20 rounded-full animate-pulse" />
+          <div className="text-slate-900 font-bold text-lg mb-2">{title}</div>
+          <div className="text-slate-700 text-sm mb-2">{description}</div>
+          <div className="text-green-700 text-xs font-bold">+{points} vitality</div>
+          <div className="absolute top-2 right-2 w-3 h-3 bg-green-200 rounded-full animate-pulse" />
         </div>
       </div>
     </Link>
@@ -641,75 +703,96 @@ export default function MindGardenPage() {
 
   // Removed loading spinner and blue background for instant display
   if (message) {
+    // Only block page if it's a true error, not just missing garden
+    if (message && !message.includes('Garden data missing')) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+          <div className="text-center">
+            <p className="text-red-400 text-lg font-bold">{message}</p>
+          </div>
+        </div>
+      );
+    }
+  }
+  if (!garden || !stats) {
+    // If message is already set, show it, else show a default error
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         <div className="text-center">
-          <p className="text-red-400 text-lg font-bold">{message}</p>
+          <p className="text-red-400 text-lg font-bold">{message || 'No Mind Garden data found. Please complete activities (journal, mood, games, resources) to start growing your garden!'}</p>
         </div>
       </div>
     );
   }
-  if (!garden || !stats) {
-    return null;
-  }
 
-  // --- Use real tree stage ---
-  const treeStage = getTreeStage(garden.totalPoints);
+  // Use backend values directly for stage and health
+  const treeStage = garden.treeStage || 'seed';
+  const health = typeof garden.treeHealth === 'number' ? garden.treeHealth : 0;
 
+  // Show recent activities with type and points
+  const recentActivities = Array.isArray(garden.activities) ? garden.activities : [];
+
+  // Optionally, fetch and show daily progress using stats if not already present
+  // ...existing code...
+
+  // Only the garden area changes night/day, the rest of the page is always light
   return (
-    <div className={`min-h-screen transition-all duration-1000 ${environmentState.timeOfDay === 'night'
-      ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900'
-      : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
-      }`}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100">
       <EmergencySupport />
       <Navbar />
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Main Tree Display */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-black/5 via-black/10 to-black/20 backdrop-blur-xl border border-white/10 shadow-3xl">
+        {/* Garden visualization area (only this changes night/day) */}
+        <div className="relative overflow-hidden rounded-3xl">
           <div className="p-8">
-            <div className="text-center mb-6">
-              <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">Your Digital Sanctuary</h1>
-              <p className="text-white/70 text-lg">
-                Stage: <span className="capitalize text-green-400 font-semibold text-xl">{treeStage}</span>
-              </p>
+            <div className="flex justify-center items-center mb-6">
+              {/* Title/stage division always static color */}
+              <div className="text-center w-full">
+                <h1 className="text-4xl font-bold mb-2 tracking-tight text-blue-900">Your Digital Sanctuary</h1>
+                <p className="text-blue-700 text-lg">
+                  Stage: <span className="capitalize text-green-400 font-semibold text-xl">{treeStage}</span>
+                </p>
+              </div>
             </div>
+            {/* Plant health and growth strictly reflect user activity */}
             <RealisticTreeVisualization
-              health={garden.treeHealth}
+              health={health}
               stage={treeStage}
               soilQuality={garden.soilQuality}
               sunlight={garden.sunlightHours}
               environment={environmentState}
             />
 
+            {/* Stats cards - all values strictly from backend, no hardcoded/fake values */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
               <EnhancedStatCard
                 icon={Flame}
                 value={garden.streak}
                 label="Day Streak"
-                color="text-orange-400"
-                gradient={getCardGradient('streak')}
+                color="text-orange-700"
+                gradient="from-orange-300 via-yellow-200 to-pink-200"
                 animate={true}
               />
               <EnhancedStatCard
                 icon={Star}
                 value={garden.totalPoints.toLocaleString()}
                 label="Total Points"
-                color="text-yellow-400"
-                gradient={getCardGradient('points')}
+                color="text-yellow-700"
+                gradient="from-yellow-300 via-orange-200 to-amber-200"
               />
               <EnhancedStatCard
                 icon={Droplets}
                 value={`${garden.soilQuality}%`}
                 label="Soil Vitality"
-                color="text-blue-400"
-                gradient={getCardGradient('soil')}
+                color="text-blue-700"
+                gradient="from-blue-300 via-cyan-200 to-teal-200"
               />
               <EnhancedStatCard
                 icon={Sun}
                 value={`${garden.sunlightHours}h`}
                 label="Daily Energy"
-                color="text-green-400"
-                gradient={getCardGradient('light')}
+                color="text-green-700"
+                gradient="from-green-300 via-emerald-200 to-teal-200"
               />
             </div>
 
@@ -735,58 +818,59 @@ export default function MindGardenPage() {
         </div>
 
         {/* Enhanced Stats Dashboard */}
+        {/* Growth Analytics and Milestone - clear, light, visible, real data only */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-gradient-to-br from-black/10 via-black/20 to-black/30 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-3xl">
-            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-              <TrendingUp className="w-6 h-6 text-green-400" />
+          {/* Unified card style and color for analytics and milestone */}
+          <div className="rounded-3xl p-8 shadow-xl bg-gradient-to-br from-green-100 via-emerald-50 to-teal-50 border border-green-200">
+            <h3 className="text-2xl font-bold mb-6 flex items-center gap-3 text-green-900">
+              <TrendingUp className="w-6 h-6 text-green-500" />
               Growth Analytics
             </h3>
             <div className="space-y-6">
-              <div className="flex justify-between items-center text-white/80">
-                <span className="text-lg">Sanctuary Vitality</span>
-                <span className="text-xl font-bold text-white">{garden.treeHealth}/100</span>
+              <div className="flex justify-between items-center">
+                <span className="text-lg text-green-800">Sanctuary Progress</span>
+                <span className="text-xl font-bold text-green-900">{garden.treeHealth}/100</span>
               </div>
-              <div className="h-4 bg-white/10 rounded-full overflow-hidden">
+              <div className="h-4 bg-green-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 rounded-full transition-all duration-2000 shadow-lg"
+                  className="h-full bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 rounded-full transition-all duration-2000 shadow-lg"
                   style={{ width: `${garden.treeHealth}%` }}
                 />
               </div>
               <div className="grid grid-cols-3 gap-6 mt-6">
                 <div className="text-center">
-                  <div className="text-white/60 text-sm mb-1">Today</div>
-                  <div className="text-2xl font-bold text-green-400">+{stats.todayPoints}</div>
+                  <div className="text-sm mb-1 text-green-700">Today</div>
+                  <div className="text-2xl font-bold text-green-700">+{stats.todayPoints}</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-white/60 text-sm mb-1">This Week</div>
-                  <div className="text-2xl font-bold text-blue-400">+{stats.weekPoints}</div>
+                  <div className="text-sm mb-1 text-green-700">This Week</div>
+                  <div className="text-2xl font-bold text-green-700">+{stats.weekPoints}</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-white/60 text-sm mb-1">This Month</div>
-                  <div className="text-2xl font-bold text-purple-400">+{stats.monthPoints}</div>
+                  <div className="text-sm mb-1 text-green-700">This Month</div>
+                  <div className="text-2xl font-bold text-green-700">+{stats.monthPoints}</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-black/10 via-black/20 to-black/30 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-3xl">
-            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-              <Target className="w-6 h-6 text-purple-400" />
+          <div className="rounded-3xl p-8 shadow-xl bg-gradient-to-br from-green-100 via-emerald-50 to-teal-50 border border-green-200">
+            <h3 className="text-2xl font-bold mb-6 flex items-center gap-3 text-green-900">
+              <Target className="w-6 h-6 text-green-500" />
               Next Milestone
             </h3>
             <div className="space-y-6">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl flex items-center justify-center">
-                  <Trophy className="w-8 h-8 text-purple-400" />
+                <div className="w-16 h-16 bg-gradient-to-br from-green-200 to-emerald-100 rounded-2xl flex items-center justify-center">
+                  <Trophy className="w-8 h-8 text-green-700" />
                 </div>
                 <div>
-                  <div className="text-white font-bold text-lg">{stats.nextMilestone.reward}</div>
-                  <div className="text-white/60">{(stats.nextMilestone.points - garden.totalPoints).toLocaleString()} points remaining</div>
+                  <div className="font-bold text-lg text-green-900">{stats.nextMilestone.reward}</div>
+                  <div className="text-green-700">{(stats.nextMilestone.points - garden.totalPoints).toLocaleString()} points remaining</div>
                 </div>
               </div>
-              <div className="h-4 bg-white/10 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-full transition-all duration-2000 shadow-lg"
+              <div className="h-4 bg-green-100 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 rounded-full transition-all duration-2000 shadow-lg"
                   style={{ width: `${(garden.totalPoints / stats.nextMilestone.points) * 100}%` }}
                 />
               </div>
@@ -795,13 +879,14 @@ export default function MindGardenPage() {
         </div>
 
         {/* Enhanced Action Cards */}
+        {/* Remove unused/unwanted cards, keep only real actions */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <ActionCard
             href="/journal"
             icon={BookOpen}
             title="Reflect & Record"
             points={25}
-            color="from-slate-700/30 via-slate-600/30 to-slate-800/30"
+            color="from-orange-500 to-yellow-200"
             description="Document your thoughts"
           />
           <ActionCard
@@ -809,7 +894,7 @@ export default function MindGardenPage() {
             icon={Heart}
             title="Emotional Check-in"
             points={20}
-            color="from-red-700/30 via-rose-600/30 to-pink-700/30"
+            color="from-pink-500 to-rose-200"
             description="Track your wellbeing"
           />
           <ActionCard
@@ -817,7 +902,7 @@ export default function MindGardenPage() {
             icon={Gamepad2}
             title="Mental Training"
             points={30}
-            color="from-violet-700/30 via-purple-600/30 to-indigo-700/30"
+            color="from-indigo-500 to-blue-200"
             description="Cognitive exercises"
           />
           <ActionCard
@@ -825,101 +910,49 @@ export default function MindGardenPage() {
             icon={Library}
             title="Knowledge Base"
             points={15}
-            color="from-teal-700/30 via-cyan-600/30 to-blue-700/30"
+            color="from-cyan-500 to-teal-200"
             description="Expand your understanding"
           />
         </div>
-
-        {/* Environmental Conditions Panel */}
-        <div className="bg-gradient-to-br from-black/10 via-black/20 to-black/30 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-3xl">
-          <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-            <Wind className="w-6 h-6 text-cyan-400" />
-            Environmental Conditions
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className={`w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center ${environmentState.timeOfDay === 'day'
-                ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20'
-                : 'bg-gradient-to-br from-indigo-500/20 to-purple-500/20'
-                }`}>
-                {environmentState.timeOfDay === 'day' ? (
-                  <Sun className="w-8 h-8 text-yellow-400" />
-                ) : (
-                  <Moon className="w-8 h-8 text-indigo-300" />
-                )}
-              </div>
-              <div className="text-white font-semibold capitalize">{environmentState.timeOfDay}</div>
-              <div className="text-white/60 text-sm">Cycle</div>
-            </div>
-
-            <div className="text-center">
-              <div className={`w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center ${environmentState.weather === 'rain'
-                ? 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20'
-                : 'bg-gradient-to-br from-sky-500/20 to-blue-500/20'
-                }`}>
-                {environmentState.weather === 'rain' ? (
-                  <CloudRain className="w-8 h-8 text-blue-400" />
-                ) : (
-                  <Sun className="w-8 h-8 text-sky-400" />
-                )}
-              </div>
-              <div className="text-white font-semibold capitalize">{environmentState.weather}</div>
-              <div className="text-white/60 text-sm">Weather</div>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
-                <Wind className="w-8 h-8 text-green-400" />
-              </div>
-              <div className="text-white font-semibold">{Math.round(environmentState.windIntensity * 10)}/10</div>
-              <div className="text-white/60 text-sm">Wind Level</div>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center">
-                <Leaf className="w-8 h-8 text-orange-400" />
-              </div>
-              <div className="text-white font-semibold capitalize">{environmentState.season}</div>
-              <div className="text-white/60 text-sm">Season</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Advanced Growth Metrics */}
+        {/* Advanced Growth Metrics & Achievements */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-gradient-to-br from-black/10 via-black/20 to-black/30 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-3xl">
-            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-              <Award className="w-6 h-6 text-gold-400" />
-              Growth Timeline
+          {/* Growth Timeline with real point allocation logic */}
+          <div className="lg:col-span-2 rounded-3xl p-8 shadow-xl bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 border border-blue-200">
+            <h3 className="text-2xl font-extrabold text-blue-900 mb-6 flex items-center gap-3">
+              <Award className="w-6 h-6 text-indigo-500" />
+              Growth Timeline & Point Allocation
             </h3>
             <div className="space-y-6">
+              {/* Show how points are earned and real milestones */}
+              <div className="mb-4 text-blue-800 text-sm font-medium">
+                <span className="font-bold">How points are earned:</span> Journaling (+25), Mood Check-in (+20), Playing a Game (+30), Reading a Resource (+15), Daily Check-in (+10). Points are added to your total and help your plant grow. Inactivity causes health decay.
+              </div>
               {[
-                { stage: 'Seed', completed: true, points: 0, description: 'Beginning of your journey' },
-                { stage: 'Sprout', completed: true, points: 100, description: 'First signs of growth' },
-                { stage: 'Sapling', completed: true, points: 500, description: 'Steady development phase' },
-                { stage: 'Tree', completed: garden.totalPoints >= 2000, points: 2000, description: 'Mature and resilient' },
-                { stage: 'Ancient Tree', completed: garden.totalPoints >= 5000, points: 5000, description: 'Wisdom and mastery' }
+                { stage: 'Seed', completed: garden.totalPoints >= 0, points: 0, description: 'Beginning of your journey', reward: '🌱 Welcome Badge' },
+                { stage: 'Sprout', completed: garden.totalPoints >= 50, points: 50, description: 'First signs of growth', reward: '🥚 Sprout Award' },
+                { stage: 'Sapling', completed: garden.totalPoints >= 200, points: 200, description: 'Steady development phase', reward: '🌿 Sapling Medal' },
+                { stage: 'Young Tree', completed: garden.totalPoints >= 600, points: 600, description: 'Growing strong', reward: '🌳 Young Tree Trophy' },
+                { stage: 'Mature Tree', completed: garden.totalPoints >= 1500, points: 1500, description: 'Mature and resilient', reward: '🏆 Maturity Ribbon' },
+                { stage: 'Ancient Tree', completed: garden.totalPoints >= 4000, points: 4000, description: 'Wisdom and mastery', reward: '🦉 Wisdom Laurel' },
+                { stage: 'Legendary Tree', completed: garden.totalPoints >= 10000, points: 10000, description: 'A legend in the garden', reward: '🌟 Legendary Crown' }
               ].map((milestone, index) => (
                 <div key={index} className="flex items-center gap-6">
                   <div className={`w-4 h-4 rounded-full ${milestone.completed
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-500 shadow-lg shadow-green-500/30'
-                    : garden.treeStage === milestone.stage.toLowerCase() || garden.treeStage === milestone.stage.toLowerCase().replace(' ', '')
-                      ? 'bg-gradient-to-r from-yellow-500 to-orange-500 shadow-lg shadow-yellow-500/30 animate-pulse'
-                      : 'bg-white/20'
+                    ? 'bg-gradient-to-r from-indigo-400 to-purple-400 shadow-lg shadow-indigo-400/30'
+                    : 'bg-white/20'
                     }`} />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className={`font-bold text-lg ${milestone.completed ? 'text-green-400' :
-                          garden.treeStage === milestone.stage.toLowerCase() || garden.treeStage === milestone.stage.toLowerCase().replace(' ', '') ? 'text-yellow-400' : 'text-white/60'
-                          }`}>
+                        <div className={`font-bold text-lg text-blue-900`}>
                           {milestone.stage}
                         </div>
-                        <div className="text-white/60 text-sm">{milestone.description}</div>
+                        <div className="text-indigo-700 text-sm">{milestone.description}</div>
+                        <div className="text-green-700 text-xs mt-1">Reward: {milestone.reward}</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-white font-semibold">{milestone.points.toLocaleString()}</div>
-                        <div className="text-white/60 text-sm">points</div>
+                        <div className="text-indigo-900 font-extrabold">{milestone.points.toLocaleString()}</div>
+                        <div className="text-indigo-700 text-sm">points</div>
                       </div>
                     </div>
                   </div>
@@ -928,49 +961,79 @@ export default function MindGardenPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-black/10 via-black/20 to-black/30 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-3xl">
-            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-              <Zap className="w-6 h-6 text-yellow-400" />
-              Daily Vitality
+          {/* Daily Progress with real backend data */}
+          <div className="rounded-3xl p-8 shadow-xl bg-gradient-to-br from-pink-100 via-rose-100 to-yellow-100 border border-pink-200">
+            <h3 className="text-2xl font-extrabold text-pink-900 mb-6 flex items-center gap-3">
+              <Zap className="w-6 h-6 text-yellow-500" />
+              Daily Progress
             </h3>
             <div className="space-y-6">
               <div className="text-center">
-                <div className="text-4xl font-bold text-white mb-2">{stats.todayPoints}</div>
-                <div className="text-white/60">Points Today</div>
+                <div className="text-4xl font-extrabold text-pink-700 mb-2">{stats.todayPoints}</div>
+                <div className="text-pink-900 font-bold">Points Today</div>
               </div>
-
+              {/* Real activity data for today */}
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-white/80">Journal Entry</span>
-                  <span className="text-green-400 font-semibold">+25</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-white/80">Mood Check</span>
-                  <span className="text-blue-400 font-semibold">+20</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-white/80">Game Session</span>
-                  <span className="text-purple-400 font-semibold">+30</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-white/80">Resource Read</span>
-                  <span className="text-cyan-400 font-semibold">+15</span>
+                {garden.activities && garden.activities.filter(a => {
+                  const today = new Date();
+                  const ts = new Date(a.timestamp);
+                  return ts.toDateString() === today.toDateString();
+                }).length > 0 ? (
+                  garden.activities.filter(a => {
+                    const today = new Date();
+                    const ts = new Date(a.timestamp);
+                    return ts.toDateString() === today.toDateString();
+                  }).map((activity, idx) => (
+                    <div key={idx} className="flex justify-between items-center">
+                      <span className="text-pink-700 font-bold capitalize">{activity.type.replace('checkin', 'Check-in')}</span>
+                      <span className="text-pink-700 font-bold">+{activity.points}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-pink-400 text-center">No activity yet today.</div>
+                )}
+              </div>
+              <div className="pt-4 border-t border-pink-200">
+                <div className="flex justify-between items-center text-lg font-extrabold">
+                  <span className="text-pink-900">Potential Total</span>
+                  <span className="text-pink-700">+{garden.activities && garden.activities.filter(a => {
+                    const today = new Date();
+                    const ts = new Date(a.timestamp);
+                    return ts.toDateString() === today.toDateString();
+                  }).reduce((sum, a) => sum + a.points, 0)}</span>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div className="pt-4 border-t border-white/10">
-                <div className="flex justify-between items-center text-lg font-bold">
-                  <span className="text-white">Potential Total</span>
-                  <span className="text-yellow-400">+90</span>
-                </div>
-              </div>
+          {/* Achievements & Rewards */}
+          <div className="rounded-3xl p-8 shadow-xl bg-gradient-to-br from-yellow-100 via-amber-50 to-orange-50 border border-yellow-200">
+            <h3 className="text-2xl font-extrabold text-yellow-900 mb-6 flex items-center gap-3">
+              <Trophy className="w-6 h-6 text-yellow-500" />
+              Achievements & Rewards
+            </h3>
+            <div className="space-y-4">
+              {garden.achievements && garden.achievements.length > 0 ? (
+                garden.achievements.map((ach, idx) => (
+                  <div key={idx} className="flex items-center gap-4 p-3 rounded-xl bg-white/70 border border-yellow-100 shadow">
+                    <span className="text-2xl">{ach.icon || '🏅'}</span>
+                    <div className="flex-1">
+                      <div className="font-bold text-yellow-900">{ach.title}</div>
+                      <div className="text-yellow-700 text-xs">{ach.description}</div>
+                      <div className="text-yellow-500 text-xs">{(ach.rarity ? ach.rarity.charAt(0).toUpperCase() + ach.rarity.slice(1) : 'Common')} • {new Date(ach.unlockedAt).toLocaleDateString()}</div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-yellow-400 text-center">No achievements yet. Keep growing your garden to unlock rewards!</div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Recent Activity Feed */}
-        <div className="bg-gradient-to-br from-black/10 via-black/20 to-black/30 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-3xl">
-          <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+        <div className="bg-gradient-to-br from-slate-100 via-blue-100 to-cyan-100 backdrop-blur-xl rounded-3xl p-8 border border-blue-100 shadow-3xl">
+          <h3 className="text-2xl font-bold text-blue-900 mb-6 flex items-center gap-3">
             <Calendar className="w-6 h-6 text-indigo-400" />
             Recent Growth Activity
           </h3>
@@ -1002,23 +1065,23 @@ export default function MindGardenPage() {
                   return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
                 })();
                 return (
-                  <div key={index} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                      {icon && <icon className={`w-6 h-6 ${color}`} />}
+                  <div key={index} className="flex items-center gap-4 p-4 rounded-2xl bg-white/60 hover:bg-white/80 transition-all duration-300 cursor-pointer group">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-white/40 to-white/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                      {icon && React.createElement(icon, { className: `w-6 h-6 ${color}` })}
                     </div>
                     <div className="flex-1">
-                      <div className="text-white font-semibold">{action}</div>
-                      <div className="text-white/60 text-sm">{timeAgo}</div>
+                      <div className="text-blue-900 font-semibold">{action}</div>
+                      <div className="text-blue-500 text-sm">{timeAgo}</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-green-400 font-bold">+{activity.points}</div>
-                      <div className="text-white/60 text-sm">vitality</div>
+                      <div className="text-green-600 font-bold">+{activity.points}</div>
+                      <div className="text-green-700 text-sm">progress</div>
                     </div>
                   </div>
                 );
               })
             ) : (
-              <div className="text-white/60 text-center py-8">No recent activity yet.</div>
+              <div className="text-blue-400 text-center py-8">No recent activity yet.</div>
             )}
           </div>
         </div>
@@ -1046,14 +1109,3 @@ export default function MindGardenPage() {
   );
 }
 
-// Add these before RealisticTreeVisualization
-const grassBlades: { d: string; opacity: number }[] = Array.from({ length: 40 }).map((_, i) => ({
-  d: `M${20 * i} 55 Q${20 * i + 5} ${45 + Math.random() * 10} ${20 * i + 10} 55`,
-  opacity: 0.5 + Math.random() * 0.5
-}));
-const fireflies: { left: number; top: number; duration: number; delay: number }[] = Array.from({ length: 12 }).map(() => ({
-  left: Math.random() * 100,
-  top: Math.random() * 100,
-  duration: 2 + Math.random() * 2,
-  delay: Math.random() * 2
-}));

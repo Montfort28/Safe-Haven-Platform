@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { PUZZLES, Puzzle } from '@/lib/puzzles';
 import { Heart, Star, Clock, Timer, Trophy, Sparkles, Zap, Target, Gamepad2, Home, BarChart3, Library, BookOpen, User, Play, Pause, RotateCcw, Check, X } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import EmergencySupport from '@/components/EmergencySupport';
@@ -15,7 +16,7 @@ type Emotion = {
   matched: boolean;
 };
 
-type GameCompleteHandler = (game: string, score: number, duration: number) => void;
+type GameCompleteHandler = (game: string, score: number, duration: number, achievement?: string) => void;
 
 // --- Helper: Record game start ---
 const recordGameStart = async (gameId: string) => {
@@ -43,107 +44,115 @@ const recordGameStart = async (gameId: string) => {
   }
 };
 
-// --- Game Components ---
-const MoodMatcher = ({ onGameComplete }: { onGameComplete: GameCompleteHandler }) => {
-  const [emotions, setEmotions] = useState<Emotion[]>([]);
-  const [selectedEmotion, setSelectedEmotion] = useState<Emotion | null>(null);
-  const [matchedPairs, setMatchedPairs] = useState<number[]>([]);
+// --- New Multi-Level Puzzle Game with many questions per level, persistent progress, and backend sync ---
+const PuzzleGame = ({ onGameComplete }: { onGameComplete: GameCompleteHandler }) => {
+  const [level, setLevel] = useState<number>(1); // 1: Easy, 2: Medium, 3: Hard
+  const [questions, setQuestions] = useState<Puzzle[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [userInput, setUserInput] = useState<string>('');
   const [score, setScore] = useState<number>(0);
-  const [gameActive, setGameActive] = useState<boolean>(false);
-  const [timeLeft, setTimeLeft] = useState<number>(60);
+  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+  const [showCongrats, setShowCongrats] = useState<boolean>(false);
+  const [achievements, setAchievements] = useState<string[]>([]);
+  const [gameComplete, setGameComplete] = useState<boolean>(false);
 
-  const emotionPairs = [
-    { id: 1, emotion: '😊', description: 'Joy', color: 'bg-yellow-200' },
-    { id: 2, emotion: '😌', description: 'Calm', color: 'bg-blue-200' },
-    { id: 3, emotion: '🤗', description: 'Loved', color: 'bg-pink-200' },
-    { id: 4, emotion: '💪', description: 'Strong', color: 'bg-green-200' },
-    { id: 5, emotion: '🌟', description: 'Proud', color: 'bg-purple-200' },
-    { id: 6, emotion: '🌈', description: 'Hopeful', color: 'bg-indigo-200' }
-  ];
-
-  const startGame = () => {
-    const shuffled = [...emotionPairs, ...emotionPairs].sort(() => Math.random() - 0.5);
-    setEmotions(shuffled.map((item, index) => ({ ...item, uniqueId: index, matched: false })));
-    setGameActive(true);
-    setTimeLeft(60);
-    setScore(0);
-    setMatchedPairs([]);
-    setSelectedEmotion(null);
-  };
-
+  // Load questions for the current level from the puzzle bank
   useEffect(() => {
-    if (gameActive && timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0) {
-      setGameActive(false);
-      onGameComplete('mood-matcher', score, 60);
-    }
-  }, [gameActive, timeLeft, score, onGameComplete]);
+    const levelQuestions = PUZZLES.filter(q => q.level === level && q.game === 'puzzle-game');
+    setQuestions(levelQuestions.sort(() => Math.random() - 0.5));
+    setCurrentIndex(0);
+    setUserInput('');
+    setShowCongrats(false);
+    setGameComplete(false);
+  }, [level]);
 
-  const handleEmotionClick = (emotion: Emotion) => {
-    if (!gameActive || emotion.matched) return;
+  // Load persistent progress/achievements from backend (if available)
+  useEffect(() => {
+    // TODO: Optionally fetch user progress for this game from backend
+  }, []);
 
-    if (!selectedEmotion) {
-      setSelectedEmotion(emotion);
-    } else if (selectedEmotion.id === emotion.id && selectedEmotion.uniqueId !== emotion.uniqueId) {
-      setMatchedPairs([...matchedPairs, emotion.id]);
-      setEmotions(prev => prev.map(e =>
-        e.id === emotion.id ? { ...e, matched: true } : e
-      ));
-      setScore(score + 10);
-      setSelectedEmotion(null);
-
-      if (matchedPairs.length === emotionPairs.length - 1) {
-        setGameActive(false);
-        onGameComplete('mood-matcher', score + 10, 60 - timeLeft);
+  const handleSubmit = () => {
+    if (!questions[currentIndex]) return;
+    if (userInput.trim().toUpperCase() === questions[currentIndex].answer) {
+      setScore(prev => prev + 50 * level);
+      if (currentIndex < questions.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+        setUserInput('');
+        setShowCongrats(false);
+      } else {
+        // Level complete
+        setCompletedLevels(prev => [...prev, level]);
+        setShowCongrats(true);
+        if (level < 3) {
+          setTimeout(() => {
+            setLevel(level + 1);
+            setShowCongrats(false);
+          }, 1200);
+        } else {
+          // All levels complete
+          const achievement = 'Puzzle Master: Beat all levels!';
+          setAchievements(prev => prev.includes(achievement) ? prev : [...prev, achievement]);
+          setGameComplete(true);
+          // Save to backend
+          onGameComplete('puzzle-game', score + 50 * level, 30 * level, achievement);
+        }
       }
-    } else {
-      setSelectedEmotion(null);
     }
   };
 
   return (
     <div className="p-6 bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-gray-800">Mood Matcher</h3>
+        <h3 className="text-xl font-bold text-gray-800">Puzzle Game (Level {level === 1 ? 'Easy' : level === 2 ? 'Medium' : 'Hard'})</h3>
         <div className="flex items-center space-x-4">
           <span className="text-sm text-gray-600">Score: {score}</span>
-          <span className="text-sm text-gray-600">Time: {timeLeft}s</span>
         </div>
       </div>
-      <div className="mb-4 text-blue-700 bg-blue-50 rounded-lg p-3 text-center font-medium">
-        Match pairs of positive emotions by clicking two matching cards. Try to match all pairs before time runs out!
-      </div>
-
-      {!gameActive && emotions.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-gray-600 mb-4">Match positive emotions to boost your mood!</p>
-          <button onClick={startGame} className="bg-pink-500 text-white px-6 py-2 rounded-lg hover:bg-pink-600 transition-colors">
-            Start Game
-          </button>
-        </div>
-      )}
-
-      {emotions.length > 0 && (
-        <div className="grid grid-cols-4 gap-3">
-          {emotions.map((emotion) => (
-            <div
-              key={emotion.uniqueId}
-              onClick={() => handleEmotionClick(emotion)}
-              className={`
-                p-4 rounded-lg cursor-pointer transition-all duration-300 text-center
-                ${emotion.matched ? 'bg-green-200 opacity-50' : emotion.color}
-                ${selectedEmotion?.uniqueId === emotion.uniqueId ? 'ring-4 ring-pink-400' : ''}
-                hover:scale-105
-              `}
+      {questions.length > 0 && !gameComplete && (
+        <>
+          <div className="mb-4 text-blue-700 bg-blue-50 rounded-lg p-3 text-center font-medium">
+            {questions[currentIndex]?.question}
+            <br />
+            <span className="text-xs text-gray-500">Hint: {questions[currentIndex]?.hint}</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <input
+              type="text"
+              value={userInput}
+              onChange={e => setUserInput(e.target.value)}
+              className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 mb-4"
+              placeholder="Your answer..."
+              onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+            />
+            <button
+              onClick={handleSubmit}
+              className="bg-pink-500 text-white px-6 py-2 rounded-lg hover:bg-pink-600 transition-colors"
+              disabled={!userInput.trim()}
             >
-              <div className="text-2xl mb-2">{emotion.emotion}</div>
-              <div className="text-sm font-semibold text-gray-700">{emotion.description}</div>
-            </div>
-          ))}
+              Submit
+            </button>
+          </div>
+        </>
+      )}
+      {showCongrats && !gameComplete && (
+        <div className="text-center mt-4">
+          <div className="text-2xl font-bold text-green-600 mb-2">Level Complete!</div>
+          <div className="text-lg text-purple-700">Get ready for the next level!</div>
         </div>
       )}
+      {gameComplete && (
+        <div className="text-center mt-4">
+          <div className="text-2xl font-bold text-green-600 mb-2">Congratulations!</div>
+          <div className="text-lg text-purple-700">You beat all levels and earned an achievement!</div>
+        </div>
+      )}
+      <div className="mt-6">
+        <h4 className="font-bold text-gray-700 mb-2">Achievements</h4>
+        <ul className="list-disc list-inside text-sm text-gray-600">
+          {achievements.length === 0 && <li>No achievements yet.</li>}
+          {achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+        </ul>
+      </div>
     </div>
   );
 };
@@ -264,6 +273,7 @@ const AnxietyBreather = ({ onGameComplete }: { onGameComplete: GameCompleteHandl
 };
 
 const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHandler }) => {
+  const [level, setLevel] = useState<number>(1); // 1: Easy, 2: Medium, 3: Hard
   const [currentPuzzle, setCurrentPuzzle] = useState<number>(0);
   const [userInput, setUserInput] = useState<string>('');
   const [score, setScore] = useState<number>(0);
@@ -271,14 +281,11 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
   const [startTime, setStartTime] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<string>('');
   const [showInstructions, setShowInstructions] = useState(true);
+  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+  const [achievements, setAchievements] = useState<string[]>([]);
 
-  const puzzles = [
-    { phrase: "You are _ _ _ _ _ _ _", answer: "AMAZING", hint: "You are incredible!" },
-    { phrase: "Tomorrow will be _ _ _ _ _ _", answer: "BETTER", hint: "Hope for the future" },
-    { phrase: "You _ _ _ _ _ _", answer: "MATTER", hint: "Your existence is important" },
-    { phrase: "Stay _ _ _ _ _ _", answer: "STRONG", hint: "Keep your inner power" },
-    { phrase: "You are _ _ _ _ _", answer: "LOVED", hint: "People care about you" }
-  ];
+  // Load positivity puzzles from central bank
+  const puzzles = PUZZLES.filter(q => q.level === level && q.game === 'positivity-puzzle');
 
   const startGame = () => {
     setGameActive(true);
@@ -294,7 +301,7 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
   const handleSubmit = () => {
     const puzzle = puzzles[currentPuzzle];
     if (userInput.toUpperCase() === puzzle.answer) {
-      setScore(score + 20);
+      setScore(score + 20 * level);
       setFeedback('Correct! ' + puzzle.hint);
       setTimeout(() => {
         if (currentPuzzle < puzzles.length - 1) {
@@ -302,11 +309,21 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
           setUserInput('');
           setFeedback('');
         } else {
-          setGameActive(false);
-          const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-          onGameComplete('positivity-puzzle', score + 20, duration);
+          if (level < 3) {
+            setLevel(level + 1);
+            setCurrentPuzzle(0);
+            setCompletedLevels([...completedLevels, level]);
+            setFeedback('Level up!');
+          } else {
+            setGameActive(false);
+            setCompletedLevels([...completedLevels, level]);
+            const achievement = 'Positivity Champion: Beat all levels!';
+            setAchievements((prev) => [...prev, achievement]);
+            const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
+            onGameComplete('positivity-puzzle', score + 20 * level, duration, achievement);
+          }
         }
-      }, 2000);
+      }, 1500);
     } else {
       setFeedback('Try again! Hint: ' + puzzle.hint);
     }
@@ -315,9 +332,9 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
   return (
     <div className="p-6 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-gray-800">Positivity Puzzle</h3>
+        <h3 className="text-xl font-bold text-gray-800">Positivity Puzzle (Level {level === 1 ? 'Easy' : level === 2 ? 'Medium' : 'Hard'})</h3>
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-600">Puzzle: {currentPuzzle + 1}/5</span>
+          <span className="text-sm text-gray-600">Puzzle: {currentPuzzle + 1}/{puzzles.length}</span>
           <span className="text-sm text-gray-600">Score: {score}</span>
         </div>
       </div>
@@ -342,7 +359,7 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
       {gameActive && (
         <div className="text-center">
           <div className="mb-6">
-            <p className="text-2xl font-bold text-gray-800 mb-4">{puzzles[currentPuzzle].phrase}</p>
+            <p className="text-2xl font-bold text-gray-800 mb-4">{puzzles[currentPuzzle].question}</p>
             <input
               type="text"
               value={userInput}
@@ -362,28 +379,46 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
           </button>
 
           {feedback && (
-            <div className={`mt-4 p-3 rounded-lg ${feedback.includes('Correct') ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+            <div className={`mt-4 p-3 rounded-lg ${feedback.includes('Correct') ? 'bg-green-100 text-green-700' : feedback.includes('Level up!') ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
               {feedback}
             </div>
           )}
         </div>
       )}
+      <div className="mt-6">
+        <h4 className="font-bold text-gray-700 mb-2">Achievements</h4>
+        <ul className="list-disc list-inside text-sm text-gray-600">
+          {achievements.length === 0 && <li>No achievements yet.</li>}
+          {achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+        </ul>
+      </div>
     </div>
   );
 };
 
 const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler }) => {
+  const [level, setLevel] = useState<number>(1); // 1: Easy, 2: Medium, 3: Hard
   const [sequence, setSequence] = useState<number[]>([]);
   const [userSequence, setUserSequence] = useState<number[]>([]);
   const [showSequence, setShowSequence] = useState<boolean>(false);
   const [gameActive, setGameActive] = useState<boolean>(false);
-  const [level, setLevel] = useState<number>(1);
   const [score, setScore] = useState<number>(0);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [showTutorial, setShowTutorial] = useState(true);
+  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+  const [achievements, setAchievements] = useState<string[]>([]);
 
   const colors = ['bg-red-400', 'bg-blue-400', 'bg-green-400', 'bg-yellow-400', 'bg-purple-400', 'bg-pink-400'];
   const colorNames = ['Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Pink'];
+
+  // Level settings from central bank (for demo, use as instructions)
+  const levelSettings: { [key: number]: { length: number; rounds: number } } = {
+    1: { length: 3, rounds: 2 },
+    2: { length: 5, rounds: 3 },
+    3: { length: 7, rounds: 4 },
+  };
+  const [round, setRound] = useState<number>(1);
+  // Optionally, you could use PUZZLES for instructions/tasks
 
   const startGame = () => {
     setGameActive(true);
@@ -391,8 +426,11 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
     setLevel(1);
     setScore(0);
     setShowTutorial(false);
+    setCompletedLevels([]);
+    setAchievements([]);
+    setRound(1);
+    generateSequence(levelSettings[1].length);
     recordGameStart('mindful-memory');
-    generateSequence(1);
   };
 
   const generateSequence = (length: number) => {
@@ -400,7 +438,6 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
     setSequence(newSequence);
     setUserSequence([]);
     setShowSequence(true);
-
     setTimeout(() => {
       setShowSequence(false);
     }, length * 1000 + 1000);
@@ -408,20 +445,26 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
 
   const handleColorClick = (colorIndex: number) => {
     if (showSequence || !gameActive) return;
-
     const newUserSequence = [...userSequence, colorIndex];
     setUserSequence(newUserSequence);
-
     if (newUserSequence.length === sequence.length) {
       if (JSON.stringify(newUserSequence) === JSON.stringify(sequence)) {
-        setScore(score + level * 10);
-        setLevel(level + 1);
-        if (level >= 5) {
+        setScore(score + 10 * level);
+        if (round < levelSettings[level].rounds) {
+          setRound(round + 1);
+          setTimeout(() => generateSequence(levelSettings[level].length), 1000);
+        } else if (level < 3) {
+          setCompletedLevels([...completedLevels, level]);
+          setLevel(level + 1);
+          setRound(1);
+          setTimeout(() => generateSequence(levelSettings[level + 1].length), 1000);
+        } else {
+          setCompletedLevels([...completedLevels, level]);
+          const achievement = 'Memory Master: Beat all levels!';
+          setAchievements((prev) => [...prev, achievement]);
           setGameActive(false);
           const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-          onGameComplete('mindful-memory', score + level * 10, duration);
-        } else {
-          setTimeout(() => generateSequence(level + 1), 1000);
+          onGameComplete('mindful-memory', score + 10 * level, duration, achievement);
         }
       } else {
         setGameActive(false);
@@ -434,18 +477,17 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
   return (
     <div className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-gray-800">Mindful Memory</h3>
+        <h3 className="text-xl font-bold text-gray-800">Mindful Memory (Level {level === 1 ? 'Easy' : level === 2 ? 'Medium' : 'Hard'})</h3>
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-600">Level: {level}</span>
+          <span className="text-sm text-gray-600">Round: {round}/{levelSettings[level].rounds}</span>
           <span className="text-sm text-gray-600">Score: {score}</span>
         </div>
       </div>
       {showTutorial && (
         <div className="mb-4 text-indigo-700 bg-indigo-50 rounded-lg p-3 text-center font-medium">
-          Watch the color sequence, then repeat it by clicking the colored tiles in the same order. The first level is just one color to help you learn!
+          Watch the color sequence, then repeat it by clicking the colored tiles in the same order. Each level gets harder!
         </div>
       )}
-
       {!gameActive && (
         <div className="text-center py-8">
           <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-indigo-200 to-purple-200 flex items-center justify-center">
@@ -457,7 +499,6 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
           </button>
         </div>
       )}
-
       {gameActive && (
         <div className="text-center">
           <div className="mb-6">
@@ -480,11 +521,9 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
               ))}
             </div>
           </div>
-
           <div className="text-sm text-gray-600">
             Progress: {userSequence.length}/{sequence.length}
           </div>
-
           {gameActive && (
             <div className="mb-4 text-purple-700 bg-purple-50 rounded-lg p-3 text-center font-medium">
               {showSequence ? 'Watch the sequence...' : 'Now repeat the sequence by clicking the colors below!'}
@@ -492,36 +531,74 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
           )}
         </div>
       )}
+      <div className="mt-6">
+        <h4 className="font-bold text-gray-700 mb-2">Achievements</h4>
+        <ul className="list-disc list-inside text-sm text-gray-600">
+          {achievements.length === 0 && <li>No achievements yet.</li>}
+          {achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+        </ul>
+      </div>
     </div>
   );
 };
 
 const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHandler }) => {
+  const [level, setLevel] = useState<number>(1); // 1: Easy, 2: Medium, 3: Hard
   const [gratitudeItems, setGratitudeItems] = useState<string[]>([]);
   const [currentInput, setCurrentInput] = useState<string>('');
   const [score, setScore] = useState<number>(0);
   const [gameActive, setGameActive] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+  const [achievements, setAchievements] = useState<string[]>([]);
+
+  // Level settings from central bank (for demo, use as prompts)
+  const levelSettings: { [key: number]: { count: number } } = {
+    1: { count: 3 },
+    2: { count: 5 },
+    3: { count: 7 },
+  };
+  // Optionally, you could use PUZZLES for prompts
 
   const startGame = () => {
     setGameActive(true);
     setStartTime(Date.now());
+    setLevel(1);
     setGratitudeItems([]);
     setScore(0);
     setCurrentInput('');
+    setCompletedLevels([]);
+    setAchievements([]);
     recordGameStart('gratitude-builder');
   };
 
-  const addGratitude = () => {
+  const addGratitude = async () => {
     if (currentInput.trim()) {
       setGratitudeItems([...gratitudeItems, currentInput.trim()]);
-      setScore(score + 15);
+      setScore(score + 15 * level);
       setCurrentInput('');
-
-      if (gratitudeItems.length >= 4) {
-        setGameActive(false);
-        const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-        onGameComplete('gratitude-builder', score + 15, duration);
+      // Log gratitude activity to Mind Garden for plant growth
+      try {
+        // Use the same points as score increment, or adjust as needed
+        const { logMindGardenActivity } = await import('@/lib/utils');
+        await logMindGardenActivity('journal', 15 * level);
+      } catch (err) {
+        // Optionally handle/log error
+        console.error('Failed to log gratitude activity:', err);
+      }
+      if (gratitudeItems.length + 1 >= levelSettings[level].count) {
+        if (level < 3) {
+          setCompletedLevels([...completedLevels, level]);
+          setLevel(level + 1);
+          setGratitudeItems([]);
+        } else {
+          setCompletedLevels([...completedLevels, level]);
+          const achievement = 'Gratitude Guru: Beat all levels!';
+          setAchievements((prev) => [...prev, achievement]);
+          setGameActive(false);
+          const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
+          onGameComplete('gratitude-builder', score + 15 * level, duration, achievement);
+        }
       }
     }
   };
@@ -529,25 +606,23 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
   return (
     <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-gray-800">Gratitude Builder</h3>
+        <h3 className="text-xl font-bold text-gray-800">Gratitude Builder (Level {level === 1 ? 'Easy' : level === 2 ? 'Medium' : 'Hard'})</h3>
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-600">Items: {gratitudeItems.length}/5</span>
+          <span className="text-sm text-gray-600">Items: {gratitudeItems.length}/{levelSettings[level].count}</span>
           <span className="text-sm text-gray-600">Score: {score}</span>
         </div>
       </div>
-
       {!gameActive && (
         <div className="text-center py-8">
           <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-200 to-emerald-200 flex items-center justify-center">
             <Heart className="h-16 w-16 text-green-600" />
           </div>
-          <p className="text-gray-600 mb-4">List 5 things you're grateful for today!</p>
+          <p className="text-gray-600 mb-4">List things you're grateful for at each level!</p>
           <button onClick={startGame} className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors">
             Start Gratitude List
           </button>
         </div>
       )}
-
       {gameActive && (
         <div>
           <div className="mb-6">
@@ -567,7 +642,6 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
               Add to List
             </button>
           </div>
-
           <div className="space-y-2">
             {gratitudeItems.map((item, index) => (
               <div key={index} className="bg-white p-3 rounded-lg border border-green-200 flex items-center">
@@ -578,34 +652,74 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
           </div>
         </div>
       )}
+      <div className="mt-6">
+        <h4 className="font-bold text-gray-700 mb-2">Achievements</h4>
+        <ul className="list-disc list-inside text-sm text-gray-600">
+          {achievements.length === 0 && <li>No achievements yet.</li>}
+          {achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+        </ul>
+      </div>
     </div>
   );
 };
+// --- Achievements Modal ---
+import React from 'react';
+const AchievementsModal = ({ achievements, onClose }: { achievements: string[]; onClose: () => void }) => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+    <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full relative">
+      <button onClick={onClose} className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl">&times;</button>
+      <h2 className="text-2xl font-bold mb-4 text-purple-700">Your Achievements</h2>
+      <ul className="list-disc list-inside text-gray-700 space-y-2">
+        {achievements.length === 0 && <li>No achievements yet.</li>}
+        {achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+      </ul>
+    </div>
+  </div>
+);
 
 // Main Games Component
 export default function GamesPage() {
   const [currentGame, setCurrentGame] = useState<string | null>(null);
-  const [gameStats, setGameStats] = useState<{
-    totalGames: number;
-    totalScore: number;
-    totalTime: number;
-    achievements: string[];
-  }>({
-    totalGames: 0,
-    totalScore: 0,
+  // Persistent stats from backend
+  const [gameStats, setGameStats] = useState<any>({
+    gamesPlayed: 0,
     totalTime: 0,
-    achievements: []
+    achievements: [],
+    streak: 0,
   });
+  // Fetch persistent stats from backend
+  const fetchGameStats = async () => {
+    try {
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('token='))
+        ?.split('=')[1];
+      if (token) {
+        const res = await fetch('/api/games/stats', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data) setGameStats(data.data);
+        }
+      }
+    } catch (error) { }
+  };
+
+  useEffect(() => {
+    fetchGameStats();
+  }, []);
   const [showStats, setShowStats] = useState<boolean>(false);
+  const [showAchievements, setShowAchievements] = useState<boolean>(false);
 
   const games = [
     {
-      id: 'mindful-coloring',
-      name: 'Mood Matcher',
-      description: 'Match positive emotions to boost your mood and create positive associations',
-      icon: Heart,
-      color: 'from-pink-400 to-rose-400',
-      component: MoodMatcher
+      id: 'puzzle-game',
+      name: 'Puzzle Game',
+      description: 'Solve awesome puzzles with increasing difficulty and unlock achievements!',
+      icon: Trophy,
+      color: 'from-pink-400 to-purple-400',
+      component: PuzzleGame
     },
     {
       id: 'breathing-exercise',
@@ -641,14 +755,10 @@ export default function GamesPage() {
     }
   ];
 
-  const handleGameComplete = useCallback(async (gameId: string, score: number, duration: number) => {
-    setGameStats(prev => ({
-      totalGames: prev.totalGames + 1,
-      totalScore: prev.totalScore + score,
-      totalTime: prev.totalTime + duration,
-      achievements: [...prev.achievements, `Completed ${gameId}`]
-    }));
-    // Record game completion and time spent
+  // Achievements are now always fetched from backend (gameStats.achievements)
+  const allAchievements = gameStats.achievements || [];
+
+  const handleGameComplete = useCallback(async (gameId: string, score: number, duration: number, achievement?: string) => {
     try {
       const token = document.cookie
         .split('; ')
@@ -666,9 +776,12 @@ export default function GamesPage() {
             duration,
             score,
             completed: true,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            achievement,
           }),
         });
+        // After saving, fetch persistent stats again
+        fetchGameStats();
       }
     } catch (error) {
       console.error('Failed to save game progress:', error);
@@ -679,6 +792,9 @@ export default function GamesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
+      {showAchievements && (
+        <AchievementsModal achievements={allAchievements} onClose={() => setShowAchievements(false)} />
+      )}
       <EmergencySupport />
       <Navbar />
       <div className="w-full px-2 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-6 mx-auto">
@@ -694,24 +810,32 @@ export default function GamesPage() {
 
         {/* Enhanced Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+          <div className="col-span-2 md:col-span-4 flex justify-end mb-2">
+            <button
+              className="bg-purple-500 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition-colors"
+              onClick={() => setShowAchievements(true)}
+            >
+              View Achievements
+            </button>
+          </div>
           <div className="bg-gradient-to-br from-blue-200 to-blue-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <Trophy className="h-10 w-10 text-yellow-500 mb-2" />
-            <div className="text-3xl font-extrabold text-blue-900">{gameStats.totalGames}</div>
+            <div className="text-3xl font-extrabold text-blue-900">{gameStats.gamesPlayed}</div>
             <div className="text-base text-blue-700 font-medium mt-1">Games Played</div>
           </div>
           <div className="bg-gradient-to-br from-pink-200 to-pink-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <Star className="h-10 w-10 text-pink-500 mb-2" />
-            <div className="text-3xl font-extrabold text-pink-900">{gameStats.totalScore}</div>
-            <div className="text-base text-pink-700 font-medium mt-1">Total Score</div>
+            <div className="text-3xl font-extrabold text-pink-900">{gameStats.streak || 0}</div>
+            <div className="text-base text-pink-700 font-medium mt-1">Streak</div>
           </div>
           <div className="bg-gradient-to-br from-green-200 to-green-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <Clock className="h-10 w-10 text-green-500 mb-2" />
-            <div className="text-3xl font-extrabold text-green-900">{Math.floor(gameStats.totalTime / 60)}m</div>
+            <div className="text-3xl font-extrabold text-green-900">{Math.floor((gameStats.totalTime || 0) / 60)}m</div>
             <div className="text-base text-green-700 font-medium mt-1">Time Played</div>
           </div>
           <div className="bg-gradient-to-br from-purple-200 to-purple-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <User className="h-10 w-10 text-purple-500 mb-2" />
-            <div className="text-3xl font-extrabold text-purple-900">{gameStats.achievements.length}</div>
+            <div className="text-3xl font-extrabold text-purple-900">{gameStats.achievements?.length || 0}</div>
             <div className="text-base text-purple-700 font-medium mt-1">Achievements</div>
           </div>
         </div>

@@ -75,8 +75,20 @@ export default function JournalPage() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [mood, setMood] = useState<number | null>(null);
   const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
-  const [gratitudeList, setGratitudeList] = useState<string[]>([]);
-  const [goals, setGoals] = useState<string[]>([]);
+  const [gratitudeList, setGratitudeList] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('gratitudeList');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+  const [goals, setGoals] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('goals');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [wordCount, setWordCount] = useState(0);
@@ -313,15 +325,26 @@ export default function JournalPage() {
 
   const addGratitudeItem = (item: string) => {
     if (item.trim() && !gratitudeList.includes(item.trim())) {
-      setGratitudeList(prev => [...prev, item.trim()]);
+      const updated = [...gratitudeList, item.trim()];
+      setGratitudeList(updated);
+      if (typeof window !== 'undefined') localStorage.setItem('gratitudeList', JSON.stringify(updated));
     }
   };
 
   const addGoal = (goal: string) => {
     if (goal.trim() && !goals.includes(goal.trim())) {
-      setGoals(prev => [...prev, goal.trim()]);
+      const updated = [...goals, goal.trim()];
+      setGoals(updated);
+      if (typeof window !== 'undefined') localStorage.setItem('goals', JSON.stringify(updated));
     }
   };
+  // Persist gratitude and goals to localStorage on change
+  useEffect(() => {
+    if (typeof window !== 'undefined') localStorage.setItem('gratitudeList', JSON.stringify(gratitudeList));
+  }, [gratitudeList]);
+  useEffect(() => {
+    if (typeof window !== 'undefined') localStorage.setItem('goals', JSON.stringify(goals));
+  }, [goals]);
 
   const BreathingGuide = () => (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -564,9 +587,11 @@ export default function JournalPage() {
                       ref={textareaRef}
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
-                      className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/70 transition-all duration-300 min-h-[200px] resize-none"
-                      placeholder={currentPrompt ? `${currentPrompt.text}\n\nStart writing your thoughts here...` : "Write your thoughts here..."}
-                      rows={8}
+                      className="w-full px-5 py-4 border-2 border-blue-200 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 bg-gradient-to-br from-white via-blue-50 to-purple-50 shadow-inner transition-all duration-300 min-h-[220px] resize-vertical text-base leading-relaxed placeholder:text-blue-300"
+                      placeholder={currentPrompt ? `${currentPrompt.text}\n\nStart writing your thoughts here...` : "Start writing your thoughts here..."}
+                      rows={10}
+                      spellCheck={true}
+                      autoCorrect="on"
                     />
                     <button
                       type="button"
@@ -586,6 +611,9 @@ export default function JournalPage() {
                     <p className="text-xs text-blue-400">
                       Last updated: {getCurrentTime('CAT')}
                     </p>
+                  </div>
+                  <div className="absolute bottom-2 right-2 text-xs text-purple-400 font-semibold">
+                    {isSaving ? 'Auto-saving...' : autoSave ? 'Auto-save enabled' : 'Manual save'}
                   </div>
                 </div>
 

@@ -140,6 +140,29 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // --- Mind Garden Growth: Add activity and points for playing a game ---
+    // Log activity
+    await prisma.activityLog.create({
+      data: {
+        userId: payload.userId,
+        activityType: 'game_played',
+        points: 8, // You can adjust the points for game play
+      }
+    });
+
+    // Update Mind Garden growthScore and lastActivity
+    const garden = await prisma.mindGarden.findUnique({ where: { userId: payload.userId } });
+    if (garden) {
+      await prisma.mindGarden.update({
+        where: { userId: payload.userId },
+        data: {
+          growthScore: Math.min(100, garden.growthScore + 8),
+          totalInteractions: garden.totalInteractions + 1,
+          lastActivity: new Date(),
+        },
+      });
+    }
+
     return NextResponse.json({
       success: true,
       data: updatedProgress,

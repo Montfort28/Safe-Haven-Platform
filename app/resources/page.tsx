@@ -59,7 +59,7 @@ const copingMechanisms = [
   },
 ];
 
-const audioTherapy = [
+const audioTherapy: Resource[] = [
   {
     id: 'audio-1',
     title: 'How To Deal With Depression',
@@ -105,6 +105,8 @@ const resources: Resource[] = [
     type: 'helpline',
     url: 'tel:988',
   },
+  // Add audio therapy audios to resources
+  ...audioTherapy,
 ];
 
 const filterOptions = [
@@ -142,11 +144,31 @@ export default function ResourcesPage() {
   const modalRef = useRef<HTMLDivElement | null>(null);
   const audioRefs = useRef<Array<HTMLAudioElement | null>>([]);
 
-  const filteredResources = resources.filter(
-    resource =>
-      resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      resource.description.toLowerCase().includes(searchTerm.toLowerCase())
+  // Improved search: filter and sort by match relevance (type, then title/desc)
+  const term = searchTerm.toLowerCase();
+  let filteredResources = resources.filter(resource =>
+    resource.title.toLowerCase().includes(term) ||
+    resource.description.toLowerCase().includes(term) ||
+    resource.type.toLowerCase().includes(term)
   );
+  // Sort: if search term matches a type exactly, show that type first
+  if (term) {
+    filteredResources = filteredResources.sort((a, b) => {
+      const aTypeMatch = a.type.toLowerCase().startsWith(term) ? 1 : 0;
+      const bTypeMatch = b.type.toLowerCase().startsWith(term) ? 1 : 0;
+      if (aTypeMatch !== bTypeMatch) return bTypeMatch - aTypeMatch;
+      // Then by title match
+      const aTitleMatch = a.title.toLowerCase().startsWith(term) ? 1 : 0;
+      const bTitleMatch = b.title.toLowerCase().startsWith(term) ? 1 : 0;
+      if (aTitleMatch !== bTitleMatch) return bTitleMatch - aTitleMatch;
+      // Then by description match
+      const aDescMatch = a.description.toLowerCase().includes(term) ? 1 : 0;
+      const bDescMatch = b.description.toLowerCase().includes(term) ? 1 : 0;
+      return bDescMatch - aDescMatch;
+    });
+  }
+
+  // ...existing code...
 
   const mappedStories: Story[] = stories.map((s, idx) => {
     let name = '', age = 0, issue: 'anxiety' | 'depression' = 'anxiety';
@@ -224,9 +246,10 @@ export default function ResourcesPage() {
     return <div className="text-lg leading-relaxed text-slate-800" dangerouslySetInnerHTML={{ __html: html }} />;
   }
 
-  // Filtered articles and video
-  const filteredArticles = articles;
-  const filteredVideo = resources.filter(r => r.type === 'video');
+  // Filtered articles, audio, and video based on search
+  const filteredArticles = filteredResources.filter(r => r.type === 'article');
+  const filteredAudio = filteredResources.filter(r => r.type === 'audio');
+  const filteredVideo = filteredResources.filter(r => r.type === 'video');
   const hotlineResource = resources.find(r => r.type === 'helpline');
 
   return (
@@ -247,57 +270,93 @@ export default function ResourcesPage() {
         </section>
 
         {/* Search Bar & Emotion Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-center">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            placeholder="Search resources, articles, videos..."
-            className="w-full md:w-96 px-4 py-2 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 bg-white text-blue-700 text-base shadow"
-          />
-          <select
-            className="w-full md:w-64 px-4 py-2 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 bg-white text-blue-700 text-base shadow"
-            value={activeFilter}
-            onChange={e => setActiveFilter(e.target.value as any)}
-            aria-label="Filter by type"
-          >
-            {filterOptions.map(option => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-          {/* Emotion Filter */}
-          <select
-            className="w-full md:w-64 px-4 py-2 rounded-lg border border-green-200 focus:ring-2 focus:ring-green-500 bg-white text-green-700 text-base shadow"
-            defaultValue=""
-            onChange={e => {
-              const emotion = e.target.value;
-              if (emotion === "") return;
-              // Example: filter by emotion, show relevant resources
-              if (emotion === "anxious") {
-                setActiveFilter("coping");
-                setSearchTerm("breathing");
-              } else if (emotion === "depressed") {
-                setActiveFilter("coping");
-                setSearchTerm("depression");
-              } else if (emotion === "sad") {
-                setActiveFilter("audio");
-                setSearchTerm("music");
-              } else {
-                setSearchTerm(emotion);
-              }
-            }}
-            aria-label="Filter by emotion"
-          >
-            <option value="">How are you feeling?</option>
-            <option value="anxious">I feel anxious</option>
-            <option value="depressed">I feel depressed</option>
-            <option value="sad">I feel sad</option>
-            <option value="stressed">I feel stressed</option>
-            <option value="lonely">I feel lonely</option>
-            <option value="hopeful">I feel hopeful</option>
-            <option value="energetic">I feel energetic</option>
-            <option value="calm">I feel calm</option>
-          </select>
+        <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-center w-full">
+          {/* Enhanced Search Bar */}
+          <div className="relative w-full md:w-96">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              placeholder="Search resources, articles, videos..."
+              className="w-full px-5 py-3 rounded-xl border-2 border-blue-300 focus:ring-4 focus:ring-blue-200 bg-white text-blue-800 text-base shadow-lg transition-all duration-200 pr-12"
+              style={{ boxShadow: '0 2px 12px 0 rgba(59,130,246,0.07)' }}
+            />
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-400 pointer-events-none">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1 0 6.5 6.5a7.5 7.5 0 0 0 10.15 10.15Z" /></svg>
+            </span>
+          </div>
+          {/* Enhanced Filter Bar */}
+          <div className="relative w-full md:w-64 min-w-[180px]">
+            <select
+              className="w-full px-5 py-3 rounded-xl border-2 border-blue-300 focus:ring-4 focus:ring-blue-200 bg-white text-blue-800 text-base shadow-lg transition-all duration-200 appearance-none"
+              value={activeFilter}
+              onChange={e => setActiveFilter(e.target.value as any)}
+              aria-label="Filter by type"
+              style={{ boxShadow: '0 2px 12px 0 rgba(59,130,246,0.07)' }}
+            >
+              {filterOptions.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-400 pointer-events-none">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" /></svg>
+            </span>
+          </div>
+          {/* Enhanced Emotion Filter */}
+          <div className="relative w-full md:w-64 min-w-[180px]">
+            <select
+              className="w-full px-5 py-3 rounded-xl border-2 border-green-300 focus:ring-4 focus:ring-green-200 bg-white text-green-800 text-base shadow-lg transition-all duration-200 appearance-none"
+              defaultValue=""
+              onChange={e => {
+                const emotion = e.target.value;
+                if (emotion === "") return;
+                if (emotion === "anxious") {
+                  setActiveFilter("coping");
+                  setSearchTerm("anxiety");
+                  setOpenCopingModal('anxiety');
+                } else if (emotion === "depressed") {
+                  setActiveFilter("coping");
+                  setSearchTerm("depression");
+                  setOpenCopingModal('depression');
+                } else if (emotion === "sad") {
+                  setActiveFilter("audio");
+                  setSearchTerm("music");
+                } else if (emotion === "stressed") {
+                  setActiveFilter("coping");
+                  setSearchTerm("stress");
+                } else if (emotion === "lonely") {
+                  setActiveFilter("stories");
+                  setSearchTerm("lonely");
+                } else if (emotion === "hopeful") {
+                  setActiveFilter("stories");
+                  setSearchTerm("hope");
+                } else if (emotion === "energetic") {
+                  setActiveFilter("audio");
+                  setSearchTerm("energy");
+                } else if (emotion === "calm") {
+                  setActiveFilter("audio");
+                  setSearchTerm("calm");
+                } else {
+                  setSearchTerm(emotion);
+                }
+              }}
+              aria-label="Filter by emotion"
+              style={{ boxShadow: '0 2px 12px 0 rgba(16,185,129,0.07)' }}
+            >
+              <option value="">How are you feeling?</option>
+              <option value="anxious">I feel anxious</option>
+              <option value="depressed">I feel depressed</option>
+              <option value="sad">I feel sad</option>
+              <option value="stressed">I feel stressed</option>
+              <option value="lonely">I feel lonely</option>
+              <option value="hopeful">I feel hopeful</option>
+              <option value="energetic">I feel energetic</option>
+              <option value="calm">I feel calm</option>
+            </select>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-green-400 pointer-events-none">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" /></svg>
+            </span>
+          </div>
         </div>
 
         {/* Filter Bar (legacy, now replaced by select above) */}
@@ -353,7 +412,7 @@ export default function ResourcesPage() {
           </section>
         )}
         {/* Articles Section - below Real Stories */}
-        {(activeFilter === 'all' || activeFilter === 'articles') && (
+        {(activeFilter === 'all' || activeFilter === 'articles') && filteredArticles.length > 0 && (
           <section id="articles" className="mb-16">
             <h2 className="text-2xl font-bold text-blue-800 mb-6 flex items-center gap-2"><BookOpen className="w-6 h-6 text-blue-500" /> Articles</h2>
             <div className="grid md:grid-cols-2 gap-8">
@@ -383,13 +442,13 @@ export default function ResourcesPage() {
           <section id="hotlines" className="mb-16">
             <h2 className="text-2xl font-bold text-blue-800 mb-6 flex items-center gap-2"><Phone className="w-6 h-6 text-pink-500" /> Hotlines / Emergency Contact</h2>
             <div className="grid md:grid-cols-1 gap-8">
-              <div className="rounded-2xl p-6 bg-gradient-to-br from-blue-50 to-pink-50 shadow-lg border border-pink-100 flex flex-col gap-2 transition-transform hover:scale-[1.03] cursor-pointer" onClick={() => setShowHelplineModal(true)}>
+              <div className="rounded-2xl p-6 bg-gradient-to-br from-blue-50 to-pink-50 shadow-lg border border-pink-100 flex flex-col gap-2 transition-transform hover:scale-[1.03] cursor-pointer group" onClick={() => setShowHelplineModal(true)}>
                 <div className="flex items-center gap-3 mb-2">
-                  <Phone className="w-5 h-5 text-pink-500" />
+                  <Phone className="w-5 h-5 text-pink-500 animate-pulse group-hover:scale-110 transition-transform" />
                   <h3 className="text-lg font-semibold text-blue-800">{hotlineResource.title}</h3>
                 </div>
                 <p className="text-slate-600 mb-2">{hotlineResource.description}</p>
-                <button className="btn-primary flex items-center w-fit">
+                <button className="btn-primary flex items-center w-fit group-hover:bg-pink-600 group-hover:text-white transition-colors">
                   <ExternalLink className="w-4 h-4 mr-2" />
                   View Hotlines
                 </button>
@@ -470,13 +529,13 @@ export default function ResourcesPage() {
         )}
 
         {/* Audio Therapy Section */}
-        {(activeFilter === 'all' || activeFilter === 'audio') && (
+        {(activeFilter === 'all' || activeFilter === 'audio') && filteredAudio.length > 0 && (
           <section id="audio-therapy" className="mb-16">
             <h2 className="text-2xl font-bold text-cyan-800 mb-6 flex items-center gap-2">
               <Library className="w-6 h-6 text-cyan-500" /> Audio Therapy
             </h2>
             <div className="grid md:grid-cols-2 gap-8">
-              {audioTherapy.map((audio, idx) => (
+              {filteredAudio.map((audio, idx) => (
                 <div key={audio.id} className="rounded-2xl p-6 bg-white shadow-lg border border-cyan-100 flex flex-col gap-2">
                   <div className="flex items-center gap-3 mb-2">
                     <Library className="w-5 h-5 text-cyan-500" />
@@ -521,16 +580,64 @@ export default function ResourcesPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-blue-200/60 backdrop-blur-sm">
             <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative animate-fadeIn overflow-y-auto max-h-[90vh] border border-blue-200">
               <button className="absolute top-4 right-4 text-gray-400 hover:text-blue-600 text-xl" onClick={() => setShowHelplineModal(false)}>&times;</button>
-              <h3 className="text-2xl font-bold text-blue-800 mb-4">National Mental Health and Crisis Hotlines</h3>
-              <ul className="mb-4 space-y-2 text-blue-800">
-                <li><b>116</b> – Rwanda Biomedical Center Mental Health Helpline<br /><span className="text-slate-600">24/7 free, confidential support for emotional distress and mental health concerns</span></li>
-                <li><b>8015</b> – Mental Health First / National Suicide Prevention Hotline<br /><span className="text-slate-600">Operates 24/7; staffed by professional counselors in English, French, and Kinyarwanda</span></li>
-                <li><b>112</b> – National Emergency Number (police/ambulance/fire)</li>
-                <li><b>3525</b> – Caritas Rwanda Psychological Support<br /><span className="text-slate-600">Available daily from 8 AM to 10 PM</span></li>
-                <li><b>3512</b> – Isange One-Stop Center for GBV / trauma (24/7)</li>
-                <li><b>+250 788 304 782</b> – MindSky Rwanda Youth Mental Health Line</li>
-              </ul>
-              <a href="tel:116" className="btn-primary w-full flex items-center justify-center mt-4"><Phone className="w-5 h-5 mr-2" /> Call 116 Now</a>
+              <h3 className="text-2xl font-bold text-blue-800 mb-4">Rwanda Crisis Hotlines & Mental Health Support</h3>
+              <div className="mb-6">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-800 mb-1">Mental Health Helpline - RBC</div>
+                      <a href="tel:116" className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">116</a>
+                      <div className="text-sm text-gray-600">24/7 free & confidential support for emotional distress</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-800 mb-1">Caritas Rwanda Crisis Support</div>
+                      <a href="tel:3525" className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">3525</a>
+                      <div className="text-sm text-gray-600">Psychological support & crisis intervention (8AM-10PM daily)</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-800 mb-1">Solid Minds Counseling Clinic</div>
+                      <a href="tel:+250788503528" className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">+250 788 503 528</a>
+                      <div className="text-sm text-gray-600">Licensed outpatient therapy for depression, anxiety & trauma</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-800 mb-1">MindSky Rwanda Youth Helpline</div>
+                      <a href="tel:+250788304782" className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">+250 788 304 782</a>
+                      <div className="text-sm text-gray-600">Youth mental health & suicide prevention (9AM-6PM Mon-Sat)</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-800 mb-1">Emergency Services</div>
+                      <a href="tel:112" className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">112</a>
+                      <div className="text-sm text-gray-600">National emergency line for police, fire & medical services</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mb-6 p-4 bg-gradient-to-r from-purple-100 to-blue-100 rounded-xl">
+                <p className="italic text-purple-700 font-semibold text-center leading-relaxed">
+                  "Your mental health matters. Professional help is available."
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-base text-gray-700 font-medium mb-2">
+                  Crisis support is available 24/7. You don't have to face this alone.
+                </p>
+                <p className="text-sm text-gray-600">
+                  Free, confidential help for mental health crises, emotional distress, and suicide prevention.
+                </p>
+              </div>
             </div>
           </div>
         )}

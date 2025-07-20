@@ -529,25 +529,22 @@ export default function DashboardPage() {
             <div className="absolute top-10 left-10 w-16 h-16 bg-gradient-to-r from-yellow-300 to-purple-300 rounded-full blur-2xl opacity-30 animate-blob"></div>
             <div className="absolute bottom-10 right-10 w-20 h-20 bg-gradient-to-r from-blue-300 to-purple-300 rounded-full blur-2xl opacity-30 animate-blob animation-delay-2000"></div>
           </div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6 flex items-center justify-center gap-2">
+          <h2 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6 flex items-center justify-center gap-2">
             <Sun className="w-8 h-8 text-yellow-500 animate-spin" style={{ animationDuration: '3s' }} />
             Daily Affirmation
           </h2>
           <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8 mb-6 shadow-lg border border-purple-100">
-            <p className="text-3xl text-purple-700 italic font-semibold leading-relaxed animate-pulse">
+            <p className="text-2xl text-purple-700 italic font-semibold leading-relaxed animate-pulse">
               "{affirmation}"
             </p>
           </div>
           <button
             onClick={fetchNewAffirmation}
-            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-8 py-4 rounded-2xl font-bold transition-all duration-300 hover:scale-110 flex items-center justify-center gap-3 mx-auto shadow-xl"
+            className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
           >
-            <Sun className="w-6 h-6" />
+            <Sun className="w-4 h-4 inline-block mr-1" />
             New Affirmation
           </button>
-          <div className="mt-6 text-purple-600 text-base font-medium italic">
-            "A positive thought in the morning can change your whole day."
-          </div>
         </div>
 
         {/* Enhanced Relaxation Timer */}

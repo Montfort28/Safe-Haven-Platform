@@ -39,12 +39,78 @@ interface MoodInsights {
 }
 
 const MoodPage = () => {
-  const [mood, setMood] = useState(5);
-  const [notes, setNotes] = useState('');
-  const [triggers, setTriggers] = useState<string[]>([]);
-  const [activities, setActivities] = useState<string[]>([]);
-  const [sleepHours, setSleepHours] = useState(8);
-  const [energyLevel, setEnergyLevel] = useState(5);
+  const [mood, setMood] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('moodEntry.mood');
+      return stored ? Number(stored) : 5;
+    }
+    return 5;
+  });
+  const [notes, setNotes] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('moodEntry.notes') || '';
+    }
+    return '';
+  });
+  const [triggers, setTriggers] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('moodEntry.triggers');
+      return stored ? JSON.parse(stored) : [];
+    }
+    return [];
+  });
+  const [activities, setActivities] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('moodEntry.activities');
+      return stored ? JSON.parse(stored) : [];
+    }
+    return [];
+  });
+  const [sleepHours, setSleepHours] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('moodEntry.sleepHours');
+      return stored ? Number(stored) : 8;
+    }
+    return 8;
+  });
+  const [energyLevel, setEnergyLevel] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('moodEntry.energyLevel');
+      return stored ? Number(stored) : 5;
+    }
+    return 5;
+  });
+  // Persist mood entry fields to localStorage on change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('moodEntry.mood', String(mood));
+    }
+  }, [mood]);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('moodEntry.notes', notes);
+    }
+  }, [notes]);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('moodEntry.triggers', JSON.stringify(triggers));
+    }
+  }, [triggers]);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('moodEntry.activities', JSON.stringify(activities));
+    }
+  }, [activities]);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('moodEntry.sleepHours', String(sleepHours));
+    }
+  }, [sleepHours]);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('moodEntry.energyLevel', String(energyLevel));
+    }
+  }, [energyLevel]);
   const [entries, setEntries] = useState<MoodEntry[]>([]);
   const [analytics, setAnalytics] = useState<MoodAnalytics | null>(null);
   const [insights, setInsights] = useState<MoodInsights | null>(null);
@@ -52,6 +118,7 @@ const MoodPage = () => {
   const [suggestion, setSuggestion] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [streak, setStreak] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const moodEmojis = [
@@ -82,7 +149,26 @@ const MoodPage = () => {
   useEffect(() => {
     fetchMoodData();
     fetchInsights();
+    fetchStreak();
   }, []);
+  const fetchStreak = async () => {
+    try {
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('token='))
+        ?.split('=')[1];
+      if (!token) return;
+      const response = await fetch('/api/mood/streak', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setStreak(data.data.streak || 0);
+      }
+    } catch (e) {
+      // ignore
+    }
+  };
 
   useEffect(() => {
     if (insights && canvasRef.current) {
@@ -274,6 +360,15 @@ const MoodPage = () => {
         setActivities([]);
         setSleepHours(8);
         setEnergyLevel(5);
+        // Clear localStorage after successful save
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('moodEntry.mood');
+          localStorage.removeItem('moodEntry.notes');
+          localStorage.removeItem('moodEntry.triggers');
+          localStorage.removeItem('moodEntry.activities');
+          localStorage.removeItem('moodEntry.sleepHours');
+          localStorage.removeItem('moodEntry.energyLevel');
+        }
         fetchMoodData();
         fetchInsights();
 
@@ -375,7 +470,7 @@ const MoodPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Streak</p>
-                  <p className="text-2xl font-bold text-gray-900">{entries.length > 0 ? `${entries.length} days` : '0 days'}</p>
+                  <p className="text-2xl font-bold text-gray-900">{streak > 0 ? `${streak} days` : '0 days'}</p>
                 </div>
                 <div className="p-3 rounded-full bg-purple-100">
                   <Zap className="w-6 h-6 text-purple-600" />

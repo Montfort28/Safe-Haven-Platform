@@ -45,31 +45,35 @@ export async function GET(request: NextRequest) {
       take: 10
     });
 
-    // Calculate tree properties based on growth score
-    const treeHealth = Math.min(100, garden.growthScore);
-    const treeStage = getTreeStage(garden.growthScore);
+    // Calculate tree properties
+    const growthScore = garden.growthScore; // Use full value for stage
+    const treeHealth = Math.min(100, growthScore); // Health is capped at 100
+    const treeStage = getTreeStage(growthScore); // Stage uses full growthScore
     const soilQuality = Math.min(100, garden.totalInteractions * 2);
     const sunlightHours = Math.min(24, garden.streak * 2);
 
     // Get weekly growth data
     const weeklyGrowth = await getWeeklyGrowthData(payload.userId);
 
+    // Map activities to show type and points
+    const activities = recentActivities.map(activity => ({
+      type: activity.activityType,
+      points: activity.points,
+      timestamp: activity.createdAt.toISOString()
+    }));
+
     const formattedGarden = {
       id: garden.id,
-      treeHealth,
-      treeStage,
+      treeHealth, // for health bar (0-100)
+      treeStage,  // for stage (seed, sprout, etc.)
       streak: garden.streak,
-      totalPoints: garden.growthScore,
+      totalPoints: growthScore, // show real points
       lastWatered: garden.lastActivity.toISOString(),
       soilQuality,
       sunlightHours,
       achievements: formatAchievements(gameProgress?.achievements || []),
       weeklyGrowth,
-      activities: recentActivities.map(activity => ({
-        type: activity.activityType,
-        points: activity.points,
-        timestamp: activity.createdAt.toISOString()
-      }))
+      activities // show all recent activities with type and points
     };
 
     return NextResponse.json({ success: true, data: formattedGarden });
