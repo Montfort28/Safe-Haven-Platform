@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       'mood': 5,
       'journal': 10,
       'resource': 8,
-      'game': 7,
+      'game': 5,
       'checkin': 5,
       'tree_watered': 5
     };
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     };
 
     const dailyLimit = dailyLimits[activityType as keyof typeof dailyLimits];
-        
+
     if (todayActivities.length >= dailyLimit) {
       return NextResponse.json({
         success: true,

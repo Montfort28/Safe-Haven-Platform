@@ -25,4 +25,50 @@ export const PUZZLES: Puzzle[] = [
     { level: 3, game: 'puzzle-game', question: 'The more you take, the more you leave behind. What are they?', answer: 'FOOTSTEPS', hint: 'You make them when you walk.' },
     { level: 3, game: 'puzzle-game', question: 'What breaks yet never falls, and what falls yet never breaks?', answer: 'DAY AND NIGHT', hint: 'It happens every 24 hours.' },
     { level: 3, game: 'puzzle-game', question: 'What can fill a room but takes up no space?', answer: 'LIGHT', hint: 'You turn it on in the dark.' },
+    // Add positivity-puzzle questions for all levels
+    // Positivity Puzzle - Level 1 (Easy)
+    {
+        game: 'positivity-puzzle',
+        level: 1,
+        question: 'I am _ and capable.',
+        answer: 'STRONG',
+        hint: 'S_____',
+    },
+    {
+        game: 'positivity-puzzle',
+        level: 1,
+        question: 'Today is a _ day.',
+        answer: 'GOOD',
+        hint: 'G___',
+    },
+    // Positivity Puzzle - Level 2 (Medium)
+    {
+        game: 'positivity-puzzle',
+        level: 2,
+        question: 'I choose to be _ today.',
+        answer: 'HAPPY',
+        hint: 'H____',
+    },
+    {
+        game: 'positivity-puzzle',
+        level: 2,
+        question: 'I am grateful for my _.',
+        answer: 'LIFE',
+        hint: 'L___',
+    },
+    // Positivity Puzzle - Level 3 (Hard)
+    {
+        game: 'positivity-puzzle',
+        level: 3,
+        question: 'I believe in my _ to succeed.',
+        answer: 'ABILITY',
+        hint: 'A______',
+    },
+    {
+        game: 'positivity-puzzle',
+        level: 3,
+        question: 'Every challenge is an _ to grow.',
+        answer: 'OPPORTUNITY',
+        hint: 'O__________',
+    },
 ];

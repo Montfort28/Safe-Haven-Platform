@@ -241,75 +241,82 @@ export default function MindGardenPage() {
   }
 
   const RealisticTreeVisualization = ({ health, stage, soilQuality, sunlight, environment }: RealisticTreeVisualizationProps) => {
-    // Set the ground Y coordinate to match the top of the ground div in SVG
-    const groundY = 320;
-    // Add a glow state to trigger glow effect on user interaction
+    const svgWidth = 400;
+    const svgHeight = 440;
+    const groundY = 395;
     const [glow, setGlow] = useState(false);
-    // Expose a method to trigger glow from parent (will be used later)
+    const [prevStage, setPrevStage] = useState(stage);
+    const [animating, setAnimating] = useState(false);
     useEffect(() => {
       if (glow) {
         const timeout = setTimeout(() => setGlow(false), 1200);
         return () => clearTimeout(timeout);
       }
     }, [glow]);
+    // Animate on stage change
+    useEffect(() => {
+      if (stage !== prevStage) {
+        setAnimating(true);
+        setTimeout(() => {
+          setAnimating(false);
+          setPrevStage(stage);
+        }, 900);
+      }
+    }, [stage, prevStage]);
 
-    const getTreeElements = () => {
-      const healthColor = health > 80 ? '#22c55e' : health > 60 ? '#84cc16' : health > 40 ? '#eab308' : '#ef4444';
-
-      // More realistic, gradual growth stages, all strictly grounded at y=320 (ground level)
-      const stages = {
-        seed: { trunk: 0, canopy: 0, roots: 0, baseY: 320, branches: 0 },
-        sprout: { trunk: 18, canopy: 16, roots: 22, baseY: 320, branches: 0 },
-        sapling: { trunk: 50, canopy: 32, roots: 38, baseY: 320, branches: 1 },
-        youngTree: { trunk: 90, canopy: 54, roots: 60, baseY: 320, branches: 2 },
-        matureTree: { trunk: 150, canopy: 90, roots: 90, baseY: 320, branches: 3 },
-        ancientTree: { trunk: 210, canopy: 120, roots: 120, baseY: 320, branches: 4 },
-        legendaryTree: { trunk: 260, canopy: 150, roots: 150, baseY: 320, branches: 5 },
-        tree: { trunk: 120, canopy: 70, roots: 70, baseY: 320, branches: 2 } // ensure 'tree' stage is visible
-      };
-      type StageKey = keyof typeof stages;
-      const validStages = Object.keys(stages) as StageKey[];
-      // Map legacy/short stages to new ones for compatibility
-      let safeStage: StageKey = validStages.includes(stage as StageKey) ? (stage as StageKey) : 'seed';
-      if (stage === 'tree') safeStage = 'tree';
-      if (stage === 'ancient') safeStage = 'ancientTree';
-      const currentStage = stages[safeStage];
-      return {
-        trunk: {
-          height: currentStage.trunk,
-          width: Math.max(6, currentStage.trunk * 0.13),
-          color: '#8b4513',
-          baseY: currentStage.baseY
-        },
-        canopy: {
-          size: currentStage.canopy,
-          color: healthColor,
-          opacity: Math.max(0.7, health / 100),
-          baseY: currentStage.baseY - currentStage.trunk
-        },
-        roots: {
-          spread: currentStage.roots,
-          depth: Math.max(18, currentStage.roots * 0.5),
-          baseY: currentStage.baseY
-        },
-        branches: currentStage.branches
-      };
+    const healthScale = 0.7 + 0.45 * Math.max(0, Math.min(health, 100)) / 100;
+    const healthColor = health > 80 ? '#22c55e' : health > 60 ? '#84cc16' : health > 40 ? '#eab308' : '#ef4444';
+    // Helper for extra details
+    const flowerColors = ['#fbbf24', '#f472b6', '#a3e635', '#f87171', '#60a5fa'];
+    const fruitColors = ['#f87171', '#fbbf24', '#a3e635', '#f472b6'];
+    // ...existing getTreeElements logic...
+    const stages = {
+      seed: { trunk: 0, canopy: 0, roots: 0, branches: 0 },
+      sprout: { trunk: 18, canopy: 16, roots: 22, branches: 0 },
+      sapling: { trunk: 50, canopy: 32, roots: 38, branches: 1 },
+      youngTree: { trunk: 90, canopy: 54, roots: 60, branches: 2 },
+      matureTree: { trunk: 150, canopy: 90, roots: 90, branches: 3 },
+      ancientTree: { trunk: 210, canopy: 120, roots: 120, branches: 4 },
+      legendaryTree: { trunk: 260, canopy: 150, roots: 150, branches: 5 },
+      tree: { trunk: 120, canopy: 70, roots: 70, branches: 2 }
     };
-
-    const tree = getTreeElements();
+    type StageKey = keyof typeof stages;
+    const validStages = Object.keys(stages) as StageKey[];
+    let safeStage: StageKey = validStages.includes(stage as StageKey) ? (stage as StageKey) : 'seed';
+    if (stage === 'tree') safeStage = 'tree';
+    if (stage === 'ancient') safeStage = 'ancientTree';
+    const currentStage = stages[safeStage];
+    const tree = {
+      trunk: {
+        height: currentStage.trunk * healthScale,
+        width: Math.max(6, currentStage.trunk * 0.13 * healthScale),
+        color: '#8b4513',
+      },
+      canopy: {
+        size: currentStage.canopy * healthScale,
+        color: healthColor,
+        opacity: Math.max(0.7, health / 100),
+      },
+      roots: {
+        spread: currentStage.roots * healthScale,
+        depth: Math.max(18, currentStage.roots * 0.5 * healthScale),
+      },
+      branches: currentStage.branches
+    };
     const isNight = environment.timeOfDay === 'night';
     const isRaining = environment.weather === 'rain';
 
     return (
-      <div className="relative w-full h-96 overflow-hidden rounded-2xl">
+      <div className={`relative w-full transition-all duration-700 ${animating ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`} style={{ height: svgHeight }}>
         {/* Sky Background */}
         <div className={`absolute inset-0 transition-all duration-[10000ms] ${isNight
           ? 'bg-gradient-to-b from-indigo-900 via-purple-900 to-slate-800'
           : 'bg-gradient-to-b from-sky-300 via-sky-200 to-sky-100'
-          }`} />
+          }`} style={{ height: svgHeight }} />
 
         {/* Ground Layer as a styled div */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 z-20" style={{
+        <div className="absolute left-0 right-0" style={{
+          bottom: 0, height: 64, zIndex: 20,
           background: 'linear-gradient(to bottom, #4a7c59 0%, #3a5a47 20%, #8b4513 50%, #a0522d 80%, #654321 100%)',
           borderTopLeftRadius: '1.5rem',
           borderTopRightRadius: '1.5rem',
@@ -348,10 +355,9 @@ export default function MindGardenPage() {
           </svg>
         </div>
 
-        {/* Tree Visualization */}
         {/* Tree Visualization, base always at groundY */}
-        <div className="absolute left-1/2" style={{ bottom: 56, transform: 'translateX(-50%)', zIndex: 30 }}>
-          <svg width="400" height="360" viewBox="0 0 400 360">
+        <div className="absolute left-1/2" style={{ bottom: 0, transform: 'translateX(-50%)', zIndex: 30 }}>
+          <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
             <defs>
               <linearGradient id="trunkGradient" x1="0" y1="0" x2="1" y2="0">
                 <stop offset="0%" stopColor="#654321" />
@@ -372,11 +378,11 @@ export default function MindGardenPage() {
                   const angle = (i * 60) + 210; // Start from bottom
                   const length = tree.roots.spread;
                   const x = 200 + Math.cos(angle * Math.PI / 180) * length;
-                  const y = 250 + Math.sin(angle * Math.PI / 180) * (length * 0.4);
+                  const y = groundY + Math.sin(angle * Math.PI / 180) * (tree.roots.depth);
                   return (
                     <path
                       key={i}
-                      d={`M200 250 Q${200 + (x - 200) * 0.6} ${250 + (y - 250) * 0.8} ${x} ${y}`}
+                      d={`M200 ${groundY} Q${200 + (x - 200) * 0.6} ${groundY + (y - groundY) * 0.8} ${x} ${y}`}
                       stroke="#654321"
                       strokeWidth={Math.max(1, 4 - i * 0.3)}
                       fill="none"
@@ -390,26 +396,26 @@ export default function MindGardenPage() {
             {stage === 'seed' && (
               <g>
                 {/* Seed visually embedded in the ground (half above, half below ground) */}
-                <ellipse cx="200" cy="360" rx="6" ry="9" fill="#8b4513" />
-                <ellipse cx="200" cy="358" rx="4" ry="6" fill="#cd853f" />
+                <ellipse cx="200" cy={groundY + 18} rx="6" ry="9" fill="#8b4513" />
+                <ellipse cx="200" cy={groundY + 16} rx="4" ry="6" fill="#cd853f" />
               </g>
             )}
 
             {/* GERMINATION STAGE - Roots growing */}
             {stage === 'germination' && (
               <g>
-                {/* Seed with crack, grounded at y=250 */}
-                <ellipse cx="200" cy="250" rx="6" ry="9" fill="#8b4513" />
-                <path d="M194 250 L206 250" stroke="#4a7c59" strokeWidth="1" />
+                {/* Seed with crack, grounded at y=groundY */}
+                <ellipse cx="200" cy={groundY} rx="6" ry="9" fill="#8b4513" />
+                <path d={`M194 ${groundY} L206 ${groundY}`} stroke="#4a7c59" strokeWidth="1" />
                 {/* Small root tip */}
-                <path d="M200 259 Q198 265 195 270" stroke="#cd853f" strokeWidth="2" fill="none" />
+                <path d={`M200 ${groundY + 9} Q198 ${groundY + 15} 195 ${groundY + 20}`} stroke="#cd853f" strokeWidth="2" fill="none" />
               </g>
             )}
 
-            {/* SPROUT STAGE - First stem and leaves, strictly grounded at y=320 */}
+            {/* SPROUT STAGE - First stem and leaves, strictly grounded at y=groundY */}
             {stage === 'sprout' && (
               <g>
-                {/* Tiny stem, base at y=320 */}
+                {/* Tiny stem, base at y=groundY */}
                 <rect
                   x="198"
                   y={groundY - tree.trunk.height}
@@ -427,8 +433,8 @@ export default function MindGardenPage() {
               </g>
             )}
 
-            {/* SAPLING AND ABOVE - Realistic tree, strictly grounded at y=320 */}
-            {(stage === 'sapling' || stage === 'youngTree' || stage === 'matureTree' || stage === 'ancientTree' || stage === 'legendaryTree') && (
+            {/* SAPLING, TREE, AND ABOVE - Realistic tree, strictly grounded at y=groundY, with more detail */}
+            {(stage === 'sapling' || stage === 'tree' || stage === 'youngTree' || stage === 'matureTree' || stage === 'ancientTree' || stage === 'legendaryTree') && (
               <g>
                 {/* Trunk */}
                 <rect
@@ -452,24 +458,48 @@ export default function MindGardenPage() {
                     opacity="0.6"
                   />
                 ))}
-                {/* Branches */}
+                {/* Branches - improved angles and base position */}
                 {Array.from({ length: tree.branches }).map((_, i) => {
-                  const angle = -35 + i * (70 / Math.max(1, tree.branches - 1));
-                  const length = 40 + tree.trunk.height * 0.25;
-                  const x2 = 200 + Math.cos((angle * Math.PI) / 180) * length;
-                  const y2 = groundY - tree.trunk.height + Math.sin((angle * Math.PI) / 180) * length * 0.7;
+                  const spread = tree.branches === 1 ? 0 : tree.branches === 2 ? 60 : 90;
+                  const baseAngle = -spread / 2;
+                  const angle = baseAngle + i * (spread / (tree.branches - 1 || 1));
+                  const length = 38 * healthScale + tree.trunk.height * 0.22;
+                  const x1 = 200;
+                  const y1 = groundY - tree.trunk.height * 0.85;
+                  const x2 = x1 + Math.cos((angle * Math.PI) / 180) * length;
+                  const y2 = y1 + Math.sin((angle * Math.PI) / 180) * length * 0.7;
                   return (
-                    <line
-                      key={i}
-                      x1={200}
-                      y1={groundY - tree.trunk.height * 0.7}
-                      x2={x2}
-                      y2={y2}
-                      stroke="#7c4a03"
-                      strokeWidth={3 - i * 0.4}
-                      opacity="0.7"
-                      strokeLinecap="round"
-                    />
+                    <g key={i}>
+                      <line
+                        x1={x1}
+                        y1={y1}
+                        x2={x2}
+                        y2={y2}
+                        stroke="#7c4a03"
+                        strokeWidth={2.2 - i * 0.3}
+                        opacity="0.7"
+                        strokeLinecap="round"
+                      />
+                      {/* Add leaves to branches */}
+                      {Array.from({ length: 2 + Math.floor(tree.canopy.size / 16) }).map((_, j) => {
+                        const leafAngle = angle + (j - 1) * 18;
+                        const leafLen = length * (0.7 + 0.15 * j);
+                        const lx = x1 + Math.cos((leafAngle * Math.PI) / 180) * leafLen;
+                        const ly = y1 + Math.sin((leafAngle * Math.PI) / 180) * leafLen * 0.7;
+                        return (
+                          <ellipse
+                            key={j}
+                            cx={lx}
+                            cy={ly}
+                            rx={6 + tree.canopy.size / 16}
+                            ry={10 + tree.canopy.size / 18}
+                            fill="#4caf50"
+                            opacity={0.7 + 0.2 * Math.random()}
+                            transform={`rotate(${leafAngle} ${lx} ${ly})`}
+                          />
+                        );
+                      })}
+                    </g>
                   );
                 })}
                 {/* Canopy */}
@@ -495,24 +525,68 @@ export default function MindGardenPage() {
                         cy={y}
                         rx={tree.canopy.size / 6}
                         ry={tree.canopy.size / 7}
-                        fill="url(#canopyGradient)"
-                        opacity="0.7"
+                        fill="#43a047"
+                        opacity="0.8"
                       />
                     );
                   })
                 )}
-                {/* Roots */}
-                {Array.from({ length: 5 + tree.branches }).map((_, i) => {
-                  const angle = 100 + i * (80 / (4 + tree.branches));
+                {/* Flowers for ancient/legendary */}
+                {(stage === 'ancientTree' || stage === 'legendaryTree') && (
+                  Array.from({ length: 6 + tree.branches }).map((_, i) => {
+                    const angle = i * (360 / (6 + tree.branches));
+                    const distance = tree.canopy.size / 2 + 18;
+                    const x = 200 + Math.cos(angle * Math.PI / 180) * distance;
+                    const y = (groundY - tree.trunk.height - tree.canopy.size / 2) + Math.sin(angle * Math.PI / 180) * (tree.canopy.size / 2);
+                    return (
+                      <circle
+                        key={i}
+                        cx={x}
+                        cy={y}
+                        r={5 + Math.random() * 2}
+                        fill={flowerColors[i % flowerColors.length]}
+                        opacity="0.85"
+                        stroke="#fff"
+                        strokeWidth="1"
+                      />
+                    );
+                  })
+                )}
+                {/* Fruits for legendary */}
+                {stage === 'legendaryTree' && (
+                  Array.from({ length: 5 + tree.branches }).map((_, i) => {
+                    const angle = i * (360 / (5 + tree.branches));
+                    const distance = tree.canopy.size / 2 + 8;
+                    const x = 200 + Math.cos(angle * Math.PI / 180) * distance;
+                    const y = (groundY - tree.trunk.height - tree.canopy.size / 2) + Math.sin(angle * Math.PI / 180) * (tree.canopy.size / 2);
+                    return (
+                      <circle
+                        key={i}
+                        cx={x}
+                        cy={y + 10}
+                        r={4 + Math.random() * 2}
+                        fill={fruitColors[i % fruitColors.length]}
+                        opacity="0.9"
+                        stroke="#fff"
+                        strokeWidth="0.7"
+                      />
+                    );
+                  })
+                )}
+                {/* Roots - always start at groundY and curve downward */}
+                {Array.from({ length: 5 + tree.branches }).map((_, i, arr) => {
+                  const spread = 120;
+                  const baseAngle = -spread / 2;
+                  const angle = baseAngle + i * (spread / (arr.length - 1));
                   const length = tree.roots.spread;
-                  const x = 200 + Math.cos(angle * Math.PI / 180) * length;
-                  const y = groundY + Math.sin(angle * Math.PI / 180) * (tree.roots.depth);
+                  const x = 200 + Math.cos((angle * Math.PI) / 180) * length;
+                  const y = groundY + Math.abs(Math.sin((angle * Math.PI) / 180)) * (tree.roots.depth + 10);
                   return (
                     <path
                       key={i}
-                      d={`M200 ${groundY} Q${200 + (x - 200) * 0.5} ${groundY + (y - groundY) * 0.7} ${x} ${y}`}
+                      d={`M200 ${groundY} Q${200 + (x - 200) * 0.4} ${groundY + 18} ${x} ${y}`}
                       stroke="#8b4513"
-                      strokeWidth={2 - i * 0.2}
+                      strokeWidth={1.7 - i * 0.13}
                       fill="none"
                       opacity="0.7"
                     />
@@ -694,7 +768,7 @@ export default function MindGardenPage() {
           </div>
           <div className="text-slate-900 font-bold text-lg mb-2">{title}</div>
           <div className="text-slate-700 text-sm mb-2">{description}</div>
-          <div className="text-green-700 text-xs font-bold">+{points} vitality</div>
+          <div className="text-green-700 text-xs font-bold">+{points} points</div>
           <div className="absolute top-2 right-2 w-3 h-3 bg-green-200 rounded-full animate-pulse" />
         </div>
       </div>
@@ -702,20 +776,8 @@ export default function MindGardenPage() {
   );
 
   // Removed loading spinner and blue background for instant display
-  if (message) {
-    // Only block page if it's a true error, not just missing garden
-    if (message && !message.includes('Garden data missing')) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-          <div className="text-center">
-            <p className="text-red-400 text-lg font-bold">{message}</p>
-          </div>
-        </div>
-      );
-    }
-  }
+  // Only show error if truly no garden and no stats
   if (!garden || !stats) {
-    // If message is already set, show it, else show a default error
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         <div className="text-center">
@@ -725,12 +787,45 @@ export default function MindGardenPage() {
     );
   }
 
-  // Use backend values directly for stage and health
-  const treeStage = garden.treeStage || 'seed';
-  const health = typeof garden.treeHealth === 'number' ? garden.treeHealth : 0;
-
-  // Show recent activities with type and points
-  const recentActivities = Array.isArray(garden.activities) ? garden.activities : [];
+  // --- Growth stage thresholds and health calculation ---
+  const stageThresholds = [
+    { stage: 'seed', min: 0, max: 50 },
+    { stage: 'sprout', min: 50, max: 200 },
+    { stage: 'sapling', min: 200, max: 600 },
+    { stage: 'youngTree', min: 600, max: 1500 },
+    { stage: 'matureTree', min: 1500, max: 4000 },
+    { stage: 'ancientTree', min: 4000, max: 10000 },
+    { stage: 'legendaryTree', min: 10000, max: 10000 }
+  ];
+  // Find current stage and next threshold
+  const points = garden.totalPoints || 0;
+  let treeStage = 'seed';
+  let stageIdx = 0;
+  for (let i = 0; i < stageThresholds.length; i++) {
+    if (points >= stageThresholds[i].min) {
+      treeStage = stageThresholds[i].stage;
+      stageIdx = i;
+    }
+  }
+  // Health is percent progress toward 10,000 points (Legendary Tree)
+  let health = Math.floor((points / 10000) * 100);
+  if (health > 100) health = 100;
+  // --- Activity point allocation logic ---
+  const activityPointsMap: Record<string, { points: number; label: string }> = {
+    journal: { points: 25, label: 'Journal written' },
+    mood: { points: 20, label: 'Mood checked' },
+    game: { points: 5, label: 'Played game' },
+    resource: { points: 15, label: 'Read resource' },
+    checkin: { points: 10, label: 'Daily check-in' },
+    water: { points: 5, label: 'Tree watered' },
+  };
+  // Ensure all activities have correct points and label
+  const recentActivities = Array.isArray(garden.activities)
+    ? garden.activities.map((a) => {
+      const base = activityPointsMap[a.type] || { points: a.points || 0, label: a.type };
+      return { ...a, points: base.points, label: base.label };
+    })
+    : [];
 
   // Optionally, fetch and show daily progress using stats if not already present
   // ...existing code...
@@ -783,7 +878,7 @@ export default function MindGardenPage() {
               <EnhancedStatCard
                 icon={Droplets}
                 value={`${garden.soilQuality}%`}
-                label="Soil Vitality"
+                label="Soil Health"
                 color="text-blue-700"
                 gradient="from-blue-300 via-cyan-200 to-teal-200"
               />
@@ -884,34 +979,34 @@ export default function MindGardenPage() {
           <ActionCard
             href="/journal"
             icon={BookOpen}
-            title="Reflect & Record"
+            title="Write Journal"
             points={25}
             color="from-orange-500 to-yellow-200"
-            description="Document your thoughts"
+            description="Write your thoughts"
           />
           <ActionCard
             href="/mood"
             icon={Heart}
-            title="Emotional Check-in"
+            title="Mood Check"
             points={20}
             color="from-pink-500 to-rose-200"
-            description="Track your wellbeing"
+            description="Log your mood"
           />
           <ActionCard
             href="/games"
             icon={Gamepad2}
-            title="Mental Training"
-            points={30}
+            title="Play Game"
+            points={5}
             color="from-indigo-500 to-blue-200"
-            description="Cognitive exercises"
+            description="Play a game"
           />
           <ActionCard
             href="/resources"
             icon={Library}
-            title="Knowledge Base"
+            title="Read Resource"
             points={15}
             color="from-cyan-500 to-teal-200"
-            description="Expand your understanding"
+            description="Read and learn"
           />
         </div>
         {/* Advanced Growth Metrics & Achievements */}
@@ -925,7 +1020,7 @@ export default function MindGardenPage() {
             <div className="space-y-6">
               {/* Show how points are earned and real milestones */}
               <div className="mb-4 text-blue-800 text-sm font-medium">
-                <span className="font-bold">How points are earned:</span> Journaling (+25), Mood Check-in (+20), Playing a Game (+30), Reading a Resource (+15), Daily Check-in (+10). Points are added to your total and help your plant grow. Inactivity causes health decay.
+                <span className="font-bold">How points are earned:</span> Journal (+25), Mood Check (+20), Play Game (+5), Read Resource (+15), Daily Check-in (+10). Points are added to your total and help your plant grow. Inactivity causes health decay.
               </div>
               {[
                 { stage: 'Seed', completed: garden.totalPoints >= 0, points: 0, description: 'Beginning of your journey', reward: '🌱 Welcome Badge' },
@@ -974,18 +1069,18 @@ export default function MindGardenPage() {
               </div>
               {/* Real activity data for today */}
               <div className="space-y-4">
-                {garden.activities && garden.activities.filter(a => {
+                {recentActivities.filter(a => {
                   const today = new Date();
                   const ts = new Date(a.timestamp);
                   return ts.toDateString() === today.toDateString();
                 }).length > 0 ? (
-                  garden.activities.filter(a => {
+                  recentActivities.filter(a => {
                     const today = new Date();
                     const ts = new Date(a.timestamp);
                     return ts.toDateString() === today.toDateString();
                   }).map((activity, idx) => (
                     <div key={idx} className="flex justify-between items-center">
-                      <span className="text-pink-700 font-bold capitalize">{activity.type.replace('checkin', 'Check-in')}</span>
+                      <span className="text-pink-700 font-bold capitalize">{activity.label}</span>
                       <span className="text-pink-700 font-bold">+{activity.points}</span>
                     </div>
                   ))
@@ -996,7 +1091,7 @@ export default function MindGardenPage() {
               <div className="pt-4 border-t border-pink-200">
                 <div className="flex justify-between items-center text-lg font-extrabold">
                   <span className="text-pink-900">Potential Total</span>
-                  <span className="text-pink-700">+{garden.activities && garden.activities.filter(a => {
+                  <span className="text-pink-700">+{recentActivities.filter(a => {
                     const today = new Date();
                     const ts = new Date(a.timestamp);
                     return ts.toDateString() === today.toDateString();
@@ -1038,19 +1133,19 @@ export default function MindGardenPage() {
             Recent Growth Activity
           </h3>
           <div className="space-y-4">
-            {garden?.activities && garden.activities.length > 0 ? (
-              garden.activities.map((activity, index) => {
-                let icon = BookOpen, color = 'text-slate-400', action = '';
+            {recentActivities.length > 0 ? (
+              recentActivities.map((activity, index) => {
+                let icon = BookOpen, color = 'text-slate-400';
                 if (activity.type === 'journal') {
-                  icon = BookOpen; color = 'text-slate-400'; action = 'Completed daily reflection';
+                  icon = BookOpen; color = 'text-slate-400';
                 } else if (activity.type === 'mood') {
-                  icon = Heart; color = 'text-red-400'; action = 'Logged emotional state';
+                  icon = Heart; color = 'text-red-400';
                 } else if (activity.type === 'game') {
-                  icon = Gamepad2; color = 'text-purple-400'; action = 'Finished cognitive training';
+                  icon = Gamepad2; color = 'text-purple-400';
                 } else if (activity.type === 'resource') {
-                  icon = Library; color = 'text-cyan-400'; action = 'Read mental health article';
+                  icon = Library; color = 'text-cyan-400';
                 } else if (activity.type === 'checkin') {
-                  icon = Calendar; color = 'text-indigo-400'; action = 'Checked in';
+                  icon = Calendar; color = 'text-indigo-400';
                 }
                 // Format time (simple)
                 const timeAgo = (() => {
@@ -1070,7 +1165,7 @@ export default function MindGardenPage() {
                       {icon && React.createElement(icon, { className: `w-6 h-6 ${color}` })}
                     </div>
                     <div className="flex-1">
-                      <div className="text-blue-900 font-semibold">{action}</div>
+                      <div className="text-blue-900 font-semibold">{activity.label}</div>
                       <div className="text-blue-500 text-sm">{timeAgo}</div>
                     </div>
                     <div className="text-right">

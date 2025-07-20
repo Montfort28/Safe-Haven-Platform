@@ -22,54 +22,38 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { searchParams } = new URL(request.url);
-    const gameId = searchParams.get('gameId');
-
-    if (gameId && validGames.includes(gameId)) {
-      const sessions = await prisma.gameSession.findMany({
-        where: { gameId },
-        orderBy: { score: 'desc' },
-        take: 10,
-        include: {
-          user: {
-            select: { id: true, username: true }
-          }
-        }
-      });
-
+    // Only return stats for the current user
+    const stats = await prisma.gameProgress.findUnique({
+      where: { userId: payload.userId },
+    });
+    // Calculate totalPoints from ActivityLog (sum of all 'game' activity points)
+    const totalPoints = await prisma.activityLog.aggregate({
+      where: { userId: payload.userId, activityType: 'game' },
+      _sum: { points: true }
+    });
+    if (!stats) {
       return NextResponse.json({
-        success: true,
-        data: sessions.map(session => ({
-          username: session.user?.username || '',
-          score: session.score,
-          duration: session.duration,
-          difficulty: session.difficulty,
-          date: session.createdAt
-        }))
-      });
-    } else {
-      // Overall leaderboard
-      const topPlayers = await prisma.gameProgress.findMany({
-        orderBy: { totalTime: 'desc' },
-        take: 10,
-        include: {
-          user: {
-            select: { id: true, username: true }
-          }
-        }
-      });
-
-      return NextResponse.json({
-        success: true,
-        data: topPlayers.map(progress => ({
-          username: progress.user?.username || '',
-          totalTime: progress.totalTime,
-          gamesPlayed: progress.gamesPlayed,
-          achievements: progress.achievements.length,
-          streak: progress.streak
-        }))
+        success: true, data: [{
+          username: '',
+          totalTime: 0,
+          gamesPlayed: 0,
+          totalPoints: 0,
+          streak: 0
+        }]
       });
     }
+    // Remove achievements from stats, add totalPoints
+    const { achievements, ...restStats } = stats;
+    return NextResponse.json({
+      success: true,
+      data: [{
+        username: '',
+        totalTime: restStats.totalTime || 0,
+        gamesPlayed: restStats.gamesPlayed || 0,
+        totalPoints: totalPoints._sum.points || 0,
+        streak: restStats.streak || 0
+      }]
+    });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }

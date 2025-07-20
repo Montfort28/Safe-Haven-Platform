@@ -522,6 +522,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+        
 
         {/* Enhanced Daily Affirmation */}
         <div className="relative bg-gradient-to-br from-yellow-100 via-purple-100 to-blue-100 rounded-3xl p-8 shadow-2xl border border-purple-200 text-center mb-8 transition-all duration-500 hover:shadow-3xl hover:scale-[1.03] overflow-hidden">

@@ -16,12 +16,17 @@ export async function GET(request: NextRequest) {
         const stats = await prisma.gameProgress.findUnique({
             where: { userId: payload.userId },
         });
+        // Calculate totalPoints from ActivityLog (sum of all 'game' activity points)
+        const totalPoints = await prisma.activityLog.aggregate({
+            where: { userId: payload.userId, activityType: 'game' },
+            _sum: { points: true }
+        });
         if (!stats) {
             return NextResponse.json({
                 success: true, data: {
                     gamesPlayed: 0,
                     totalTime: 0,
-                    achievements: [],
+                    totalPoints: totalPoints._sum.points || 0,
                     streak: 0,
                     favoriteGames: [],
                     skillLevels: {},
@@ -30,7 +35,10 @@ export async function GET(request: NextRequest) {
                 }
             });
         }
-        return NextResponse.json({ success: true, data: stats });
+        // Remove achievements from stats, add totalPoints
+        // Also remove achievements from the returned object if present
+        const { achievements, ...restStats } = stats;
+        return NextResponse.json({ success: true, data: { ...restStats, totalPoints: totalPoints._sum.points || 0 } });
     } catch (error) {
         return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
     }

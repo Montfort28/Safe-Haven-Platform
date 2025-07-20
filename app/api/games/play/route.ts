@@ -12,9 +12,21 @@ const gamePlaySchema = z.object({
 });
 
 const validGames = [
-  'breathing-exercise', 'progressive-relaxation', 'mindful-coloring',
-  'memory-garden', 'emotion-regulation', 'gratitude-flow',
-  'anxiety-tamer', 'focus-builder', 'stress-sculptor', 'mood-mixer'
+  'puzzle-game',
+  'breathing-exercise',
+  'progressive-relaxation',
+  'mindful-coloring',
+  'memory-garden',
+  'emotion-regulation',
+  'gratitude-flow',
+  'anxiety-tamer',
+  'focus-builder',
+  'stress-sculptor',
+  'mood-mixer',
+  'positivity-puzzle',
+  'anxiety-breather',
+  'mindful-memory',
+  'gratitude-builder'
 ];
 
 export async function POST(request: NextRequest) {
@@ -141,22 +153,27 @@ export async function POST(request: NextRequest) {
     });
 
     // --- Mind Garden Growth: Add activity and points for playing a game ---
-    // Log activity
-    await prisma.activityLog.create({
-      data: {
-        userId: payload.userId,
-        activityType: 'game_played',
-        points: 8, // You can adjust the points for game play
-      }
-    });
+
+    // Only count a game as played if a level is won (for games with levels) or the game is completed (for games without levels)
+    // This is determined by 'completed' being true and (if levels exist) only for the first level won per play
+    // Award 5 points per valid play
+    if (completed) {
+      await prisma.activityLog.create({
+        data: {
+          userId: payload.userId,
+          activityType: 'game',
+          points: 5,
+        }
+      });
+    }
 
     // Update Mind Garden growthScore and lastActivity
     const garden = await prisma.mindGarden.findUnique({ where: { userId: payload.userId } });
-    if (garden) {
+    if (garden && completed) {
       await prisma.mindGarden.update({
         where: { userId: payload.userId },
         data: {
-          growthScore: Math.min(100, garden.growthScore + 8),
+          growthScore: Math.min(100, garden.growthScore + 5),
           totalInteractions: garden.totalInteractions + 1,
           lastActivity: new Date(),
         },

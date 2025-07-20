@@ -25,19 +25,48 @@ const recordGameStart = async (gameId: string) => {
       .split('; ')
       .find(row => row.startsWith('token='))
       ?.split('=')[1];
+    // Map frontend gameId to backend validGames
+    const idMap: Record<string, string> = {
+      'puzzle-game': 'puzzle-game',
+      'breathing-exercise': 'breathing-exercise',
+      'progressive-relaxation': 'progressive-relaxation',
+      'mindful-coloring': 'mindful-coloring',
+      'memory-garden': 'memory-garden',
+      'emotion-regulation': 'emotion-regulation',
+      'gratitude-flow': 'gratitude-flow',
+      'anxiety-tamer': 'anxiety-tamer',
+      'focus-builder': 'focus-builder',
+      'stress-sculptor': 'stress-sculptor',
+      'mood-mixer': 'mood-mixer',
+      'positivity-puzzle': 'emotion-regulation',
+      'anxiety-breather': 'breathing-exercise',
+      'mindful-memory': 'memory-garden',
+      'gratitude-builder': 'gratitude-flow',
+    };
+    const backendGameId = idMap[gameId] || gameId;
     if (token) {
-      await fetch('/api/games/play', {
+      const res = await fetch('/api/games/play', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          gameId,
+          gameId: backendGameId,
           started: true,
-          timestamp: Date.now()
+          completed: false,
+          score: 0,
+          duration: 1, // Always send at least 1 second
+          timestamp: Date.now(),
         }),
       });
+      if (res.status === 400) {
+        const data = await res.json();
+        if (data && data.error && data.error.includes('Invalid game')) {
+          alert('Error: Invalid game. Please contact support.');
+          console.error('Invalid game error:', backendGameId);
+        }
+      }
     }
   } catch (error) {
     console.error('Failed to record game start:', error);
@@ -79,10 +108,14 @@ const PuzzleGame = ({ onGameComplete }: { onGameComplete: GameCompleteHandler })
         setCurrentIndex(currentIndex + 1);
         setUserInput('');
         setShowCongrats(false);
+        // Award 5 points for winning a level (not for every question)
+        // Only if this is the last question of the level
       } else {
         // Level complete
         setCompletedLevels(prev => [...prev, level]);
         setShowCongrats(true);
+        // Award 5 points for winning a level
+        onGameComplete('puzzle-game', 5, 30 * level);
         if (level < 3) {
           setTimeout(() => {
             setLevel(level + 1);
@@ -93,8 +126,8 @@ const PuzzleGame = ({ onGameComplete }: { onGameComplete: GameCompleteHandler })
           const achievement = 'Puzzle Master: Beat all levels!';
           setAchievements(prev => prev.includes(achievement) ? prev : [...prev, achievement]);
           setGameComplete(true);
-          // Save to backend
-          onGameComplete('puzzle-game', score + 50 * level, 30 * level, achievement);
+          // Save to backend (also award 5 points for completing the last level)
+          onGameComplete('puzzle-game', 5, 30 * level, achievement);
         }
       }
     }
@@ -168,7 +201,7 @@ const AnxietyBreather = ({ onGameComplete }: { onGameComplete: GameCompleteHandl
   const phases = [
     { name: 'inhale', duration: 4000, instruction: 'Breathe In', color: 'bg-blue-400' },
     { name: 'hold', duration: 4000, instruction: 'Hold', color: 'bg-purple-400' },
-    { name: 'exhale', duration: 6000, instruction: 'Breathe Out', color: 'bg-green-400' }
+    { name: 'exhale', duration: 4000, instruction: 'Breathe Out', color: 'bg-green-400' }
   ];
 
   const startBreathing = () => {
@@ -198,7 +231,8 @@ const AnxietyBreather = ({ onGameComplete }: { onGameComplete: GameCompleteHandl
                 setGameActive(false);
                 setPhase('complete');
                 const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-                onGameComplete('anxiety-breather', newCycle * 10, duration);
+                // Award 5 points for completing the game
+                onGameComplete('anxiety-breather', 5, duration);
               }
               return newCycle;
             });
@@ -299,6 +333,7 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
   };
 
   const handleSubmit = () => {
+    if (!puzzles.length || !puzzles[currentPuzzle]) return;
     const puzzle = puzzles[currentPuzzle];
     if (userInput.toUpperCase() === puzzle.answer) {
       setScore(score + 20 * level);
@@ -309,6 +344,9 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
           setUserInput('');
           setFeedback('');
         } else {
+          // Level complete
+          // Award 5 points for winning a level
+          onGameComplete('positivity-puzzle', 5, startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0);
           if (level < 3) {
             setLevel(level + 1);
             setCurrentPuzzle(0);
@@ -320,7 +358,8 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
             const achievement = 'Positivity Champion: Beat all levels!';
             setAchievements((prev) => [...prev, achievement]);
             const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-            onGameComplete('positivity-puzzle', score + 20 * level, duration, achievement);
+            // Award 5 points for completing the last level
+            onGameComplete('positivity-puzzle', 5, duration, achievement);
           }
         }
       }, 1500);
@@ -358,30 +397,34 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
 
       {gameActive && (
         <div className="text-center">
-          <div className="mb-6">
-            <p className="text-2xl font-bold text-gray-800 mb-4">{puzzles[currentPuzzle].question}</p>
-            <input
-              type="text"
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              placeholder="Enter your answer..."
-              className="w-full max-w-md mx-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-            />
-          </div>
-
-          <button
-            onClick={handleSubmit}
-            disabled={!userInput.trim()}
-            className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors disabled:opacity-50"
-          >
-            Submit Answer
-          </button>
-
-          {feedback && (
-            <div className={`mt-4 p-3 rounded-lg ${feedback.includes('Correct') ? 'bg-green-100 text-green-700' : feedback.includes('Level up!') ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
-              {feedback}
-            </div>
+          {(!puzzles.length || !puzzles[currentPuzzle]) ? (
+            <div className="mb-6 text-red-600 font-bold">No puzzles available for this level. Please try another game or level.</div>
+          ) : (
+            <>
+              <div className="mb-6">
+                <p className="text-2xl font-bold text-gray-800 mb-4">{puzzles[currentPuzzle].question}</p>
+                <input
+                  type="text"
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  placeholder="Enter your answer..."
+                  className="w-full max-w-md mx-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+                />
+              </div>
+              <button
+                onClick={handleSubmit}
+                disabled={!userInput.trim()}
+                className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors disabled:opacity-50"
+              >
+                Submit Answer
+              </button>
+              {feedback && (
+                <div className={`mt-4 p-3 rounded-lg ${feedback.includes('Correct') ? 'bg-green-100 text-green-700' : feedback.includes('Level up!') ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                  {feedback}
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
@@ -401,24 +444,41 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
   const [sequence, setSequence] = useState<number[]>([]);
   const [userSequence, setUserSequence] = useState<number[]>([]);
   const [showSequence, setShowSequence] = useState<boolean>(false);
+  const [currentShowIndex, setCurrentShowIndex] = useState<number>(-1); // NEW: index of sequence being shown
   const [gameActive, setGameActive] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [showTutorial, setShowTutorial] = useState(true);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
   const [achievements, setAchievements] = useState<string[]>([]);
-
   const colors = ['bg-red-400', 'bg-blue-400', 'bg-green-400', 'bg-yellow-400', 'bg-purple-400', 'bg-pink-400'];
   const colorNames = ['Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Pink'];
-
-  // Level settings from central bank (for demo, use as instructions)
   const levelSettings: { [key: number]: { length: number; rounds: number } } = {
     1: { length: 3, rounds: 2 },
     2: { length: 5, rounds: 3 },
     3: { length: 7, rounds: 4 },
   };
   const [round, setRound] = useState<number>(1);
-  // Optionally, you could use PUZZLES for instructions/tasks
+
+  // Show sequence one by one
+  useEffect(() => {
+    if (showSequence && sequence.length > 0) {
+      setCurrentShowIndex(0);
+      let i = 0;
+      const interval = setInterval(() => {
+        setCurrentShowIndex(i);
+        i++;
+        if (i >= sequence.length) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setShowSequence(false);
+            setCurrentShowIndex(-1);
+          }, 500);
+        }
+      }, 800);
+      return () => clearInterval(interval);
+    }
+  }, [showSequence, sequence]);
 
   const startGame = () => {
     setGameActive(true);
@@ -438,9 +498,7 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
     setSequence(newSequence);
     setUserSequence([]);
     setShowSequence(true);
-    setTimeout(() => {
-      setShowSequence(false);
-    }, length * 1000 + 1000);
+    setCurrentShowIndex(-1);
   };
 
   const handleColorClick = (colorIndex: number) => {
@@ -453,8 +511,11 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
         if (round < levelSettings[level].rounds) {
           setRound(round + 1);
           setTimeout(() => generateSequence(levelSettings[level].length), 1000);
+          // Award 5 points for winning a round (level) only if this is the last round of the level
         } else if (level < 3) {
           setCompletedLevels([...completedLevels, level]);
+          // Award 5 points for winning a level
+          onGameComplete('mindful-memory', 5, startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0);
           setLevel(level + 1);
           setRound(1);
           setTimeout(() => generateSequence(levelSettings[level + 1].length), 1000);
@@ -464,12 +525,14 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
           setAchievements((prev) => [...prev, achievement]);
           setGameActive(false);
           const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-          onGameComplete('mindful-memory', score + 10 * level, duration, achievement);
+          // Award 5 points for completing the last level
+          onGameComplete('mindful-memory', 5, duration, achievement);
         }
       } else {
         setGameActive(false);
         const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-        onGameComplete('mindful-memory', score, duration);
+        // No points for failing
+        onGameComplete('mindful-memory', 0, duration);
       }
     }
   };
@@ -506,19 +569,25 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
               {showSequence ? 'Watch the sequence...' : 'Repeat the sequence'}
             </p>
             <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
-              {colors.map((color, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleColorClick(index)}
-                  className={`
-                    w-20 h-20 rounded-lg cursor-pointer transition-all duration-300
-                    ${color} hover:scale-105
-                    ${showSequence && sequence.includes(index) ? 'ring-4 ring-white animate-pulse' : ''}
-                  `}
-                >
-                  <span className="sr-only">{colorNames[index]}</span>
-                </div>
-              ))}
+              {colors.map((color, index) => {
+                let highlight = false;
+                if (showSequence && currentShowIndex !== -1 && sequence[currentShowIndex] === index) {
+                  highlight = true;
+                }
+                return (
+                  <div
+                    key={index}
+                    onClick={() => handleColorClick(index)}
+                    className={`
+                      w-20 h-20 rounded-lg cursor-pointer transition-all duration-300
+                      ${color} hover:scale-105
+                      ${highlight ? 'ring-4 ring-white animate-pulse' : ''}
+                    `}
+                  >
+                    <span className="sr-only">{colorNames[index]}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
           <div className="text-sm text-gray-600">
@@ -587,6 +656,8 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
         console.error('Failed to log gratitude activity:', err);
       }
       if (gratitudeItems.length + 1 >= levelSettings[level].count) {
+        // Award 5 points for winning a level
+        onGameComplete('gratitude-builder', 5, startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0);
         if (level < 3) {
           setCompletedLevels([...completedLevels, level]);
           setLevel(level + 1);
@@ -597,7 +668,8 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
           setAchievements((prev) => [...prev, achievement]);
           setGameActive(false);
           const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-          onGameComplete('gratitude-builder', score + 15 * level, duration, achievement);
+          // Award 5 points for completing the last level
+          onGameComplete('gratitude-builder', 5, duration, achievement);
         }
       }
     }
@@ -670,8 +742,8 @@ const AchievementsModal = ({ achievements, onClose }: { achievements: string[]; 
       <button onClick={onClose} className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl">&times;</button>
       <h2 className="text-2xl font-bold mb-4 text-purple-700">Your Achievements</h2>
       <ul className="list-disc list-inside text-gray-700 space-y-2">
-        {achievements.length === 0 && <li>No achievements yet.</li>}
-        {achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+        {(!achievements || !Array.isArray(achievements) || achievements.length === 0) && <li>No achievements yet.</li>}
+        {Array.isArray(achievements) && achievements.map((ach, i) => <li key={i}>{ach}</li>)}
       </ul>
     </div>
   </div>
@@ -681,12 +753,7 @@ const AchievementsModal = ({ achievements, onClose }: { achievements: string[]; 
 export default function GamesPage() {
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   // Persistent stats from backend
-  const [gameStats, setGameStats] = useState<any>({
-    gamesPlayed: 0,
-    totalTime: 0,
-    achievements: [],
-    streak: 0,
-  });
+  const [userStats, setUserStats] = useState<any>({ gamesPlayed: 0, totalTime: 0, totalPoints: 0, streak: 0 });
   // Fetch persistent stats from backend
   const fetchGameStats = async () => {
     try {
@@ -700,17 +767,29 @@ export default function GamesPage() {
         });
         if (res.ok) {
           const data = await res.json();
-          if (data.success && data.data) setGameStats(data.data);
+          if (data.success && data.data) {
+            // If backend returns an array, pick the first with nonzero stats, else fallback to first
+            let stats = Array.isArray(data.data)
+              ? data.data.find((s: any) => (s.gamesPlayed || s.totalTime || s.totalPoints || s.streak)) || data.data[0]
+              : data.data;
+            setUserStats({
+              gamesPlayed: stats.gamesPlayed || 0,
+              totalTime: stats.totalTime || 0,
+              totalPoints: stats.totalPoints || 0,
+              streak: stats.streak || 0,
+            });
+          }
         }
       }
-    } catch (error) { }
+    } catch (e) {
+      setUserStats({ gamesPlayed: 0, totalTime: 0, totalPoints: 0, streak: 0 });
+    }
   };
 
   useEffect(() => {
     fetchGameStats();
   }, []);
   const [showStats, setShowStats] = useState<boolean>(false);
-  const [showAchievements, setShowAchievements] = useState<boolean>(false);
 
   const games = [
     {
@@ -755,8 +834,7 @@ export default function GamesPage() {
     }
   ];
 
-  // Achievements are now always fetched from backend (gameStats.achievements)
-  const allAchievements = gameStats.achievements || [];
+  // Remove achievements logic, only use totalPoints
 
   const handleGameComplete = useCallback(async (gameId: string, score: number, duration: number, achievement?: string) => {
     try {
@@ -764,24 +842,50 @@ export default function GamesPage() {
         .split('; ')
         .find(row => row.startsWith('token='))
         ?.split('=')[1];
+      // Map frontend gameId to backend validGames
+      const idMap: Record<string, string> = {
+        'puzzle-game': 'puzzle-game',
+        'breathing-exercise': 'breathing-exercise',
+        'progressive-relaxation': 'progressive-relaxation',
+        'mindful-coloring': 'mindful-coloring',
+        'memory-garden': 'memory-garden',
+        'emotion-regulation': 'emotion-regulation',
+        'gratitude-flow': 'gratitude-flow',
+        'anxiety-tamer': 'anxiety-tamer',
+        'focus-builder': 'focus-builder',
+        'stress-sculptor': 'stress-sculptor',
+        'mood-mixer': 'mood-mixer',
+        'positivity-puzzle': 'emotion-regulation',
+        'anxiety-breather': 'breathing-exercise',
+        'mindful-memory': 'memory-garden',
+        'gratitude-builder': 'gratitude-flow',
+      };
+      const backendGameId = idMap[gameId] || gameId;
       if (token) {
-        await fetch('/api/games/play', {
+        const res = await fetch('/api/games/play', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            gameId,
-            duration,
-            score,
+            gameId: backendGameId,
+            duration: duration || 1,
+            score: score || 0,
             completed: true,
             timestamp: Date.now(),
-            achievement,
+            achievement: achievement || undefined,
           }),
         });
+        if (res.status === 400) {
+          const data = await res.json();
+          if (data && data.error && data.error.includes('Invalid game')) {
+            alert('Error: Invalid game. Please contact support.');
+            console.error('Invalid game error:', backendGameId);
+          }
+        }
         // After saving, fetch persistent stats again
-        fetchGameStats();
+        await fetchGameStats();
       }
     } catch (error) {
       console.error('Failed to save game progress:', error);
@@ -792,9 +896,6 @@ export default function GamesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
-      {showAchievements && (
-        <AchievementsModal achievements={allAchievements} onClose={() => setShowAchievements(false)} />
-      )}
       <EmergencySupport />
       <Navbar />
       <div className="w-full px-2 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-6 mx-auto">
@@ -810,33 +911,25 @@ export default function GamesPage() {
 
         {/* Enhanced Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-          <div className="col-span-2 md:col-span-4 flex justify-end mb-2">
-            <button
-              className="bg-purple-500 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition-colors"
-              onClick={() => setShowAchievements(true)}
-            >
-              View Achievements
-            </button>
-          </div>
           <div className="bg-gradient-to-br from-blue-200 to-blue-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <Trophy className="h-10 w-10 text-yellow-500 mb-2" />
-            <div className="text-3xl font-extrabold text-blue-900">{gameStats.gamesPlayed}</div>
+            <div className="text-3xl font-extrabold text-blue-900">{userStats.gamesPlayed}</div>
             <div className="text-base text-blue-700 font-medium mt-1">Games Played</div>
           </div>
           <div className="bg-gradient-to-br from-pink-200 to-pink-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <Star className="h-10 w-10 text-pink-500 mb-2" />
-            <div className="text-3xl font-extrabold text-pink-900">{gameStats.streak || 0}</div>
+            <div className="text-3xl font-extrabold text-pink-900">{userStats.streak || 0}</div>
             <div className="text-base text-pink-700 font-medium mt-1">Streak</div>
           </div>
           <div className="bg-gradient-to-br from-green-200 to-green-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <Clock className="h-10 w-10 text-green-500 mb-2" />
-            <div className="text-3xl font-extrabold text-green-900">{Math.floor((gameStats.totalTime || 0) / 60)}m</div>
+            <div className="text-3xl font-extrabold text-green-900">{Math.floor((userStats.totalTime || 0) / 60)}m</div>
             <div className="text-base text-green-700 font-medium mt-1">Time Played</div>
           </div>
           <div className="bg-gradient-to-br from-purple-200 to-purple-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <User className="h-10 w-10 text-purple-500 mb-2" />
-            <div className="text-3xl font-extrabold text-purple-900">{gameStats.achievements?.length || 0}</div>
-            <div className="text-base text-purple-700 font-medium mt-1">Achievements</div>
+            <div className="text-3xl font-extrabold text-purple-900">{userStats.totalPoints}</div>
+            <div className="text-base text-purple-700 font-medium mt-1">Total Points</div>
           </div>
         </div>
 
