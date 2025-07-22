@@ -29,6 +29,14 @@ export async function POST(request: NextRequest) {
 
     const token = generateToken(user.id);
 
+    // Create a check-in record for this login
+    await prisma.checkIn.create({
+      data: {
+        userId: user.id,
+        type: 'login',
+      },
+    });
+
     return NextResponse.json({
       success: true,
       user: { id: user.id, name: user.name, email: user.email },

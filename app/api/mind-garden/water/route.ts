@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     // Check if already watered today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const todayWater = await prisma.activityLog.findFirst({
       where: {
         userId: payload.userId,
@@ -61,8 +61,8 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Update garden
-    const newGrowthScore = Math.min(100, garden.growthScore + 5);
+    // Update garden (remove artificial cap, allow unlimited growth)
+    const newGrowthScore = garden.growthScore + 5;
     const updatedGarden = await prisma.mindGarden.update({
       where: { userId: payload.userId },
       data: {
@@ -73,6 +73,8 @@ export async function POST(request: NextRequest) {
     });
 
     // Get updated stats
+    // Import getGrowthStats from stats route
+    const { getGrowthStats } = await import('../stats/route');
     const stats = await getGrowthStats(payload.userId);
 
     return NextResponse.json({
@@ -87,6 +89,4 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function getGrowthStats(userId: string) {
-  throw new Error('Function not implemented.');
-}
+// getGrowthStats is imported from stats/route

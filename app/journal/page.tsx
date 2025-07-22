@@ -103,6 +103,8 @@ export default function JournalPage() {
   const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showAllModal, setShowAllModal] = useState(false);
+  // Hydration fix: only show time after mount
+  const [lastUpdated, setLastUpdated] = useState<string>('');
 
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -126,6 +128,16 @@ export default function JournalPage() {
   useEffect(() => {
     setWordCount(content.split(/\s+/).filter(word => word.length > 0).length);
   }, [content]);
+
+  // Hydration fix: update last updated time on mount and every minute
+  useEffect(() => {
+    function updateTime() {
+      setLastUpdated(getCurrentTime('CAT'));
+    }
+    updateTime();
+    const interval = setInterval(updateTime, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (breathingMode) {
@@ -608,9 +620,12 @@ export default function JournalPage() {
                     <p className="text-sm text-blue-600">
                       Words: {wordCount} | Characters: {content.length}
                     </p>
-                    <p className="text-xs text-blue-400">
-                      Last updated: {getCurrentTime('CAT')}
-                    </p>
+                    {/* Hydration fix: only render after mount */}
+                    {lastUpdated && (
+                      <p className="text-xs text-blue-400">
+                        Last updated: {lastUpdated}
+                      </p>
+                    )}
                   </div>
                   <div className="absolute bottom-2 right-2 text-xs text-purple-400 font-semibold">
                     {isSaving ? 'Auto-saving...' : autoSave ? 'Auto-save enabled' : 'Manual save'}

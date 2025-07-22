@@ -52,23 +52,25 @@ export async function GET(request: NextRequest) {
       take: 10
     });
 
-    // Calculate tree properties
-    const growthScore = garden.growthScore; // Use full value for stage
-    const treeHealth = Math.min(100, growthScore); // Health is capped at 100
-    const treeStage = getTreeStage(growthScore); // Stage uses full growthScore
+    // Calculate tree properties - let growth score grow unlimited
+    const growthScore = garden.growthScore;
+    // Health is percent progress toward 10,000 points (Legendary Tree)
+    const treeHealth = Math.min(100, Math.floor((growthScore / 10000) * 100));
+    const treeStage = getTreeStage(growthScore); // Use new stage system
     const soilQuality = Math.min(100, garden.totalInteractions * 2);
     const sunlightHours = Math.min(24, garden.streak * 2);
 
     // Get weekly growth data
     const weeklyGrowth = await getWeeklyGrowthData(payload.userId);
 
-
-    // Only award milestone achievements for growthScore milestones
+    // Updated milestone achievements for new point system
     const milestoneAchievements = [];
-    if (growthScore >= 10) milestoneAchievements.push('energy_emerging');
-    if (growthScore >= 30) milestoneAchievements.push('energy_growing');
-    if (growthScore >= 60) milestoneAchievements.push('energy_flourishing');
-    if (growthScore >= 90) milestoneAchievements.push('energy_mastery');
+    if (growthScore >= 50) milestoneAchievements.push('energy_emerging');
+    if (growthScore >= 200) milestoneAchievements.push('energy_growing');
+    if (growthScore >= 600) milestoneAchievements.push('energy_flourishing');
+    if (growthScore >= 1500) milestoneAchievements.push('energy_mastery');
+    if (growthScore >= 4000) milestoneAchievements.push('energy_ancient');
+    if (growthScore >= 10000) milestoneAchievements.push('energy_legendary');
     if (garden.streak >= 3) milestoneAchievements.push('streak_starter');
     if (garden.streak >= 7) milestoneAchievements.push('week_warrior');
     if (garden.streak >= 30) milestoneAchievements.push('month_master');
@@ -87,7 +89,7 @@ export async function GET(request: NextRequest) {
       treeHealth, // for health bar (0-100)
       treeStage,  // for stage (seed, sprout, etc.)
       streak: garden.streak,
-      totalPoints: growthScore, // show real points
+      totalPoints: growthScore, // show real points from DB
       lastWatered: garden.lastActivity.toISOString(),
       soilQuality,
       sunlightHours,
@@ -102,39 +104,54 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
-// --- Helper functions copied from /api/mind-garden/route.ts for reuse ---
-function getTreeStage(growthScore: number): string {
-  if (growthScore < 10) return 'seed';
-  if (growthScore < 30) return 'sprout';
-  if (growthScore < 60) return 'sapling';
-  if (growthScore < 90) return 'tree';
-  return 'ancient';
+
+// --- Helper functions updated for new tree stage system ---
+function getTreeStage(points: number): string {
+  if (points < 50) return 'seed';
+  if (points < 200) return 'sprout';
+  if (points < 600) return 'sapling';
+  if (points < 1500) return 'youngTree';
+  if (points < 4000) return 'matureTree';
+  if (points < 10000) return 'ancientTree';
+  return 'legendaryTree';
 }
 
 function formatAchievements(achievementCodes: string[]) {
   const achievementData: Record<string, any> = {
     'energy_emerging': {
       title: 'Energy Emerging',
-      description: 'Reached 25 growth points',
+      description: 'Reached 50 growth points',
       icon: '🌱',
       rarity: 'common'
     },
     'energy_growing': {
       title: 'Energy Growing',
-      description: 'Reached 50 growth points',
+      description: 'Reached 200 growth points',
       icon: '🌿',
       rarity: 'rare'
     },
     'energy_flourishing': {
       title: 'Energy Flourishing',
-      description: 'Reached 75 growth points',
+      description: 'Reached 600 growth points',
       icon: '🌳',
       rarity: 'epic'
     },
     'energy_mastery': {
       title: 'Energy Mastery',
-      description: 'Reached 100 growth points',
+      description: 'Reached 1,500 growth points',
       icon: '✨',
+      rarity: 'legendary'
+    },
+    'energy_ancient': {
+      title: 'Energy Ancient',
+      description: 'Reached 4,000 growth points',
+      icon: '🏛️',
+      rarity: 'mythic'
+    },
+    'energy_legendary': {
+      title: 'Energy Legendary',
+      description: 'Reached 10,000 growth points',
+      icon: '👑',
       rarity: 'legendary'
     },
     'streak_starter': {
@@ -256,19 +273,21 @@ export async function getGrowthStats(userId: string) {
       todayPoints: 0,
       weekPoints: 0,
       monthPoints: 0,
-      nextMilestone: { points: 25, reward: 'First Sprout' }
+      nextMilestone: { points: 50, reward: 'First Sprout' }
     };
   }
 }
 
 function getNextMilestone(currentPoints: number) {
   const milestones = [
-    { points: 25, reward: 'First Sprout' },
-    { points: 50, reward: 'Growing Strong' },
-    { points: 75, reward: 'Flourishing Tree' },
-    { points: 100, reward: 'Ancient Wisdom' },
+    { points: 50, reward: 'First Sprout' },
+    { points: 200, reward: 'Growing Strong' },
+    { points: 600, reward: 'Flourishing Sapling' },
+    { points: 1500, reward: 'Young Tree' },
+    { points: 4000, reward: 'Mature Tree' },
+    { points: 10000, reward: 'Ancient Wisdom' },
   ];
 
   return milestones.find(milestone => milestone.points > currentPoints) ||
-    { points: 100, reward: 'Master Gardener' };
+    { points: 10000, reward: 'Legendary Master' };
 }

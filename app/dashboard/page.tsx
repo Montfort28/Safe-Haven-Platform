@@ -57,6 +57,48 @@ export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [showWelcome, setShowWelcome] = useState(true);
   const [moodData, setMoodData] = useState<MoodData[]>([]);
+  const getLast7DaysMoodData = () => {
+    const today = new Date();
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      days.push({
+        day: formatDate(d.toISOString()),
+        date: d.toISOString().split('T')[0],
+      });
+    }
+    // Map moodData by date for quick lookup
+    const moodByDate = Object.fromEntries(moodData.map(entry => [entry.date.split('T')[0], entry]));
+    // Fill days with mood if exists, else use previous mood value
+    interface Last7DaysMoodDay {
+      day: string;
+      date: string;
+    }
+    interface Last7DaysMoodEntry {
+      day: string;
+      date: string;
+      mood: number | null;
+    }
+    let lastMood: number | null = null;
+    return days.map(dayObj => {
+      const moodEntry = moodByDate[dayObj.date];
+      if (moodEntry) {
+        lastMood = moodEntry.mood;
+        return {
+          day: dayObj.day,
+          date: dayObj.date,
+          mood: moodEntry.mood,
+        };
+      } else {
+        return {
+          day: dayObj.day,
+          date: dayObj.date,
+          mood: lastMood,
+        };
+      }
+    });
+  };
   const [recentEntries, setRecentEntries] = useState<JournalEntry[]>([]);
   const [activityStats, setActivityStats] = useState<ActivityStats>({
     totalMoodEntries: 0,
@@ -171,7 +213,7 @@ export default function DashboardPage() {
         }
       }
 
-      // Fetch journal entries (for stats and recent)
+      // Fetch journal entries (for recent display)
       const journalResponse = await fetch('/api/journal?limit=3', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -182,19 +224,24 @@ export default function DashboardPage() {
         setRecentEntries(journalEntries);
       }
 
-      // Fetch streak and stats (from games/stats or mood/analytics)
+      // Fetch total journal entries count
+      let totalJournalEntries = 0;
+      const allJournalResponse = await fetch('/api/journal?limit=1000', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (allJournalResponse.ok) {
+        const allJournalData = await allJournalResponse.json();
+        totalJournalEntries = Array.isArray(allJournalData.data) ? allJournalData.data.length : 0;
+      }
+
+      // Fetch streak from journal backend
       let streak = 0;
-      if (moodAnalytics && typeof moodAnalytics.streak === 'number') {
-        streak = moodAnalytics.streak;
-      } else {
-        // fallback to games stats if available
-        const statsResponse = await fetch('/api/games/stats', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (statsResponse.ok) {
-          const statsData = await statsResponse.json();
-          streak = statsData.data.streak || 0;
-        }
+      const streakResponse = await fetch('/api/journal/streak', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (streakResponse.ok) {
+        const streakData = await streakResponse.json();
+        streak = streakData.data?.streak || 0;
       }
 
       // Calculate average mood
@@ -203,9 +250,9 @@ export default function DashboardPage() {
         : 0;
 
       setActivityStats({
-        streak: moodEntries.length > 0 && streak === 0 && moodAnalytics && typeof moodAnalytics.streak !== 'number' ? 1 : streak,
+        streak,
         totalMoodEntries: moodEntries.length,
-        totalJournalEntries: journalEntries.length,
+        totalJournalEntries,
         averageMood,
       });
 
@@ -343,7 +390,7 @@ export default function DashboardPage() {
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={moodData}>
+                <AreaChart data={getLast7DaysMoodData()}>
                   <defs>
                     <linearGradient id="moodGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
@@ -371,6 +418,7 @@ export default function DashboardPage() {
                     fill="url(#moodGradient)"
                     dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
                     activeDot={{ r: 8, fill: '#1d4ed8' }}
+                    connectNulls={true}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -402,11 +450,12 @@ export default function DashboardPage() {
                 <BookOpen className="w-5 h-5 group-hover:animate-pulse" />
                 <span className="font-medium">Write Journal</span>
               </Link>
-              <Link href="/mind-garden" className="group w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-lg transform">
+              <Link href="/profile?tab=daily-activity" className="group w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-lg transform">
                 <svg className="w-5 h-5 group-hover:animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 2s-6 3-6 10c0 3.3 2.7 6 6 6s6-2.7 6-6c0-7-6-10-6-10z" />
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M8 12h8M12 8v8" />
                 </svg>
-                <span className="font-medium">Nurture Garden</span>
+                <span className="font-medium">Complete Daily Activities</span>
               </Link>
               <Link href="/games" className="group w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white p-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-lg transform">
                 <Gamepad2 className="w-5 h-5 group-hover:animate-pulse" />
@@ -522,7 +571,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-        
+
 
         {/* Enhanced Daily Affirmation */}
         <div className="relative bg-gradient-to-br from-yellow-100 via-purple-100 to-blue-100 rounded-3xl p-8 shadow-2xl border border-purple-200 text-center mb-8 transition-all duration-500 hover:shadow-3xl hover:scale-[1.03] overflow-hidden">

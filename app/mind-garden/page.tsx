@@ -67,6 +67,7 @@ export default function MindGardenPage() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showActivities, setShowActivities] = useState(false);
   const [selectedTimeframe, setSelectedTimeframe] = useState('week');
   const [environmentState, setEnvironmentState] = useState({
     timeOfDay: 'day',
@@ -194,8 +195,28 @@ export default function MindGardenPage() {
     setIsLoading(false);
   };
 
+  // --- Milestone logic ---
+  const milestoneStages = [
+    { points: 50, reward: 'Seed' },
+    { points: 200, reward: 'Sprout' },
+    { points: 600, reward: 'Sapling' },
+    { points: 1500, reward: 'Young Tree' },
+    { points: 4000, reward: 'Mature Tree' },
+    { points: 10000, reward: 'Ancient Tree' },
+    { points: 10000, reward: 'Legendary Tree' },
+  ];
+
+  // Helper to get completed milestones
+  const getCompletedMilestones = (totalPoints: number) => {
+    return milestoneStages.filter(m => totalPoints >= m.points);
+  };
+
+  // Helper to get next milestone
+  const getNextMilestone = (totalPoints: number) => {
+    return milestoneStages.find(m => m.points > totalPoints) || { points: 10000, reward: 'Legendary Tree' };
+  };
+
   // --- Helper: determine tree stage based on points ---
-  // More gradual, realistic growth stages
   const getTreeStage = (points: number) => {
     if (points < 50) return 'seed';
     if (points < 200) return 'sprout';
@@ -205,6 +226,12 @@ export default function MindGardenPage() {
     if (points < 10000) return 'ancientTree';
     return 'legendaryTree';
   };
+
+  // --- UI rendering helpers ---
+  // Use garden and stats state
+  const gardenData = garden;
+  const statsData = stats;
+  const rawRecentActivities: ActivityLog[] = gardenData?.activities || [];
 
   // EnhancedStatCard: use bright gradients for day, muted for night
   const getCardGradient = (key: string) => {
@@ -658,8 +685,8 @@ export default function MindGardenPage() {
             </div>
           )}
 
-          {/* Butterflies for healthy trees */}
-          {health > 70 && !isNight && (stage === 'tree' || stage === 'ancient') && (
+          {/* Butterflies for healthy trees: show for matureTree, ancientTree, legendaryTree, and tree */}
+          {health > 70 && !isNight && (stage === 'tree' || stage === 'ancient' || stage === 'matureTree' || stage === 'ancientTree' || stage === 'legendaryTree') && (
             <div className="absolute inset-0">
               {Array.from({ length: 3 }).map((_, i) => (
                 <div
@@ -778,13 +805,8 @@ export default function MindGardenPage() {
   // Removed loading spinner and blue background for instant display
   // Only show error if truly no garden and no stats
   if (!garden || !stats) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="text-center">
-          <p className="text-red-400 text-lg font-bold">{message || 'No Mind Garden data found. Please complete activities (journal, mood, games, resources) to start growing your garden!'}</p>
-        </div>
-      </div>
-    );
+    // Remove the error message and blue background, just render nothing
+    return null;
   }
 
   // --- Growth stage thresholds and health calculation ---
@@ -812,27 +834,24 @@ export default function MindGardenPage() {
   if (health > 100) health = 100;
   // --- Activity point allocation logic ---
   const activityPointsMap: Record<string, { points: number; label: string }> = {
-    journal: { points: 25, label: 'Journal written' },
-    mood: { points: 20, label: 'Mood checked' },
+    journal: { points: 10, label: 'Journal written' },
+    mood: { points: 10, label: 'Mood checked' },
     game: { points: 5, label: 'Played game' },
     resource: { points: 15, label: 'Read resource' },
     checkin: { points: 10, label: 'Daily check-in' },
     water: { points: 5, label: 'Tree watered' },
   };
   // Ensure all activities have correct points and label
-  const recentActivities = Array.isArray(garden.activities)
-    ? garden.activities.map((a) => {
+  const recentActivities: (ActivityLog & { label: string })[] = Array.isArray(rawRecentActivities)
+    ? rawRecentActivities.map((a: ActivityLog) => {
       const base = activityPointsMap[a.type] || { points: a.points || 0, label: a.type };
       return { ...a, points: base.points, label: base.label };
     })
     : [];
 
-  // Optionally, fetch and show daily progress using stats if not already present
-  // ...existing code...
-
   // Only the garden area changes night/day, the rest of the page is always light
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100">
+    <div className="min-h-screen bg-white">
       <EmergencySupport />
       <Navbar />
       <div className="max-w-7xl mx-auto p-6 space-y-8">
@@ -904,11 +923,7 @@ export default function MindGardenPage() {
               </div>
             </button>
 
-            {message && (
-              <div className="mt-6 p-4 rounded-2xl text-center font-medium bg-green-500/20 text-green-300 border border-green-500/30 backdrop-blur-sm">
-                {message}
-              </div>
-            )}
+            {/* Message display removed as requested */}
           </div>
         </div>
 
@@ -980,7 +995,7 @@ export default function MindGardenPage() {
             href="/journal"
             icon={BookOpen}
             title="Write Journal"
-            points={25}
+            points={10}
             color="from-orange-500 to-yellow-200"
             description="Write your thoughts"
           />
@@ -988,7 +1003,7 @@ export default function MindGardenPage() {
             href="/mood"
             icon={Heart}
             title="Mood Check"
-            points={20}
+            points={5}
             color="from-pink-500 to-rose-200"
             description="Log your mood"
           />
@@ -1109,7 +1124,7 @@ export default function MindGardenPage() {
             </h3>
             <div className="space-y-4">
               {garden.achievements && garden.achievements.length > 0 ? (
-                garden.achievements.map((ach, idx) => (
+                garden.achievements.slice(0, 3).map((ach, idx) => (
                   <div key={idx} className="flex items-center gap-4 p-3 rounded-xl bg-white/70 border border-yellow-100 shadow">
                     <span className="text-2xl">{ach.icon || '🏅'}</span>
                     <div className="flex-1">
@@ -1122,7 +1137,35 @@ export default function MindGardenPage() {
               ) : (
                 <div className="text-yellow-400 text-center">No achievements yet. Keep growing your garden to unlock rewards!</div>
               )}
+              {garden.achievements && garden.achievements.length > 3 && (
+                <button className="mt-4 px-4 py-2 bg-yellow-200 text-yellow-900 rounded-lg font-semibold" onClick={() => setShowAchievements(true)}>
+                  View All
+                </button>
+              )}
             </div>
+            {/* Modal for all achievements */}
+            {showAchievements && (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div className="bg-white rounded-2xl p-8 max-h-[80vh] w-full max-w-xl overflow-y-auto shadow-2xl">
+                  <h2 className="text-2xl font-bold mb-4 text-yellow-900">All Achievements & Rewards</h2>
+                  <div className="space-y-2">
+                    {garden.achievements.map((ach, idx) => (
+                      <div key={idx} className="flex items-center gap-4 p-2 rounded-xl bg-yellow-50">
+                        <span className="text-2xl">{ach.icon || '🏅'}</span>
+                        <div className="flex-1">
+                          <div className="font-bold text-yellow-900">{ach.title}</div>
+                          <div className="text-yellow-700 text-xs">{ach.description}</div>
+                          <div className="text-yellow-500 text-xs">{(ach.rarity ? ach.rarity.charAt(0).toUpperCase() + ach.rarity.slice(1) : 'Common')} • {new Date(ach.unlockedAt).toLocaleDateString()}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <button className="mt-6 px-4 py-2 bg-yellow-200 text-yellow-900 rounded-lg font-semibold w-full" onClick={() => setShowAchievements(false)}>
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -1134,7 +1177,7 @@ export default function MindGardenPage() {
           </h3>
           <div className="space-y-4">
             {recentActivities.length > 0 ? (
-              recentActivities.map((activity, index) => {
+              recentActivities.slice(0, 3).map((activity, index) => {
                 let icon = BookOpen, color = 'text-slate-400';
                 if (activity.type === 'journal') {
                   icon = BookOpen; color = 'text-slate-400';
@@ -1147,7 +1190,6 @@ export default function MindGardenPage() {
                 } else if (activity.type === 'checkin') {
                   icon = Calendar; color = 'text-indigo-400';
                 }
-                // Format time (simple)
                 const timeAgo = (() => {
                   const now = new Date();
                   const ts = new Date(activity.timestamp);
@@ -1178,7 +1220,64 @@ export default function MindGardenPage() {
             ) : (
               <div className="text-blue-400 text-center py-8">No recent activity yet.</div>
             )}
+            {recentActivities.length > 3 && (
+              <button className="mt-4 px-4 py-2 bg-blue-200 text-blue-900 rounded-lg font-semibold" onClick={() => setShowActivities(true)}>
+                View All
+              </button>
+            )}
           </div>
+          {/* Modal for all activities */}
+          {showActivities && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backdropFilter: 'blur(8px)', background: 'rgba(0,0,0,0.4)' }}>
+              <div className="bg-white rounded-2xl p-8 max-h-[80vh] w-full max-w-xl overflow-y-auto shadow-2xl">
+                <h2 className="text-2xl font-bold mb-4 text-blue-900 text-center">All Growth Activities</h2>
+                <div className="space-y-2">
+                  {recentActivities.map((activity, index) => {
+                    let icon = BookOpen, color = 'text-slate-400';
+                    if (activity.type === 'journal') {
+                      icon = BookOpen; color = 'text-slate-400';
+                    } else if (activity.type === 'mood') {
+                      icon = Heart; color = 'text-red-400';
+                    } else if (activity.type === 'game') {
+                      icon = Gamepad2; color = 'text-purple-400';
+                    } else if (activity.type === 'resource') {
+                      icon = Library; color = 'text-cyan-400';
+                    } else if (activity.type === 'checkin') {
+                      icon = Calendar; color = 'text-indigo-400';
+                    }
+                    const timeAgo = (() => {
+                      const now = new Date();
+                      const ts = new Date(activity.timestamp);
+                      const diffMs = now.getTime() - ts.getTime();
+                      const diffMins = Math.floor(diffMs / 60000);
+                      if (diffMins < 60) return `${diffMins} min ago`;
+                      const diffHours = Math.floor(diffMins / 60);
+                      if (diffHours < 24) return `${diffHours} hr ago`;
+                      const diffDays = Math.floor(diffHours / 24);
+                      return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+                    })();
+                    return (
+                      <div key={index} className="flex items-center gap-4 p-4 rounded-xl bg-blue-50">
+                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-br from-white/40 to-white/20 flex items-center justify-center`}>
+                          {icon && React.createElement(icon, { className: `w-5 h-5 ${color}` })}
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-blue-900 font-semibold">{activity.label}</div>
+                          <div className="text-blue-500 text-xs">{timeAgo}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-green-600 font-bold">+{activity.points}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <button className="mt-6 px-4 py-2 bg-blue-200 text-blue-900 rounded-lg font-semibold w-full" onClick={() => setShowActivities(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Home, BarChart3, Gamepad2, Library, BookOpen, User, LogOut, Shield, Sparkles, TrendingUp, Calendar, Award, Settings, Camera, Edit3, Check, X, Upload, Image as ImageIcon, Trophy, Target, Flame, Star, Heart, Brain, Zap, Sun, Moon, Crown, Medal } from 'lucide-react';
+import { Home, BarChart3, Gamepad2, Library, BookOpen, User, LogOut, Shield, Sparkles, TrendingUp, Calendar, Award, Settings, Camera, Edit3, Check, X, Upload, Image as ImageIcon, Trophy, Target, Flame, Star, Heart, Brain, Zap, Sun, Moon, Crown, Medal, ClipboardCheck, ClipboardList } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import EmergencySupport from '@/components/EmergencySupport';
 
@@ -42,6 +42,18 @@ interface Achievement {
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
 }
 
+// Daily Activity type
+interface DailyActivity {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  progress: number;
+  requirement: number;
+  completed: boolean;
+  link?: string;
+}
+
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [garden, setGarden] = useState<GardenState | null>(null);
@@ -54,14 +66,171 @@ export default function ProfilePage() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [dailyActivities, setDailyActivities] = useState<DailyActivity[]>([]);
+  const [activityDate, setActivityDate] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
 
   useEffect(() => {
     fetchProfileData();
     fetchGardenState();
-    generateAchievements();
+    fetchAchievements();
+    generateDailyActivities();
   }, []);
+  // Generate daily activities (reset every day)
+  const generateDailyActivities = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    if (activityDate === today && dailyActivities.length > 0) return;
+    setActivityDate(today);
+    // Example activities, can be randomized or fetched from backend
+    const activities: DailyActivity[] = [
+      {
+        id: 'log-mood',
+        name: 'Log Your Mood',
+        description: 'Record your mood for today.',
+        icon: <TrendingUp className="w-6 h-6" />,
+        progress: user?.totalCheckIns ? 1 : 0,
+        requirement: 1,
+        completed: false,
+        link: '/mood',
+      },
+      {
+        id: 'journal-entry',
+        name: 'Write a Journal Entry',
+        description: 'Reflect and write in your journal.',
+        icon: <BookOpen className="w-6 h-6" />,
+        progress: user?.journalEntries ? 1 : 0,
+        requirement: 1,
+        completed: false,
+        link: '/journal',
+      },
+      {
+        id: 'play-game',
+        name: 'Play 3 Games',
+        description: 'Play any 3 games today.',
+        icon: <Gamepad2 className="w-6 h-6" />,
+        progress: user?.totalCheckIns ? Math.min(user.totalCheckIns % 3, 3) : 0,
+        requirement: 3,
+        completed: false,
+        link: '/games',
+      },
+      {
+        id: 'read-resource',
+        name: 'Read an Article',
+        description: 'Read a resource or story.',
+        icon: <Library className="w-6 h-6" />,
+        progress: user?.coursesCompleted ? 1 : 0,
+        requirement: 1,
+        completed: false,
+        link: '/resources',
+      },
+    ];
+    // Simulate completion based on user data
+    const updated = activities.map(act => ({
+      ...act,
+      completed: act.progress >= act.requirement
+    }));
+    setDailyActivities(updated);
+  };
+
+  // Fetch achievements from backend and set state
+  // Fetch achievements from backend and merge with templates for progress
+  const fetchAchievements = async () => {
+    try {
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('token='))
+        ?.split('=')[1];
+
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      // Fetch user achievement progress from backend
+      const response = await fetch('/api/user/achievements', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      let userAchievements = [];
+      if (response.ok) {
+        const data = await response.json();
+        userAchievements = data.achievements || [];
+      }
+
+      // Achievement templates (should match backend and all shown in profile page)
+      const achievementTemplates = [
+        { id: 'first-checkin', name: 'First Steps', description: 'Complete your first check-in', icon: <Star className="w-6 h-6" />, category: 'daily', requirement: 1, rarity: 'common' },
+        { id: '3-day-streak', name: 'Getting Started', description: 'Check in for 3 days straight', icon: <Calendar className="w-6 h-6" />, category: 'daily', requirement: 3, rarity: 'common' },
+        { id: '7-day-streak', name: '7-Day Warrior', description: 'Check in for 7 days straight', icon: <Flame className="w-6 h-6" />, category: 'daily', requirement: 7, rarity: 'rare' },
+        { id: '14-day-streak', name: 'Fortnight Fighter', description: 'Maintain a 14-day check-in streak', icon: <Zap className="w-6 h-6" />, category: 'daily', requirement: 14, rarity: 'rare' },
+        { id: '30-day-streak', name: 'Consistency Master', description: 'Maintain a 30-day check-in streak', icon: <Crown className="w-6 h-6" />, category: 'daily', requirement: 30, rarity: 'legendary' },
+        { id: 'journal-journey', name: 'Journal Journey', description: 'Write 10 journal entries', icon: <BookOpen className="w-6 h-6" />, category: 'self-care', requirement: 10, rarity: 'rare' },
+        { id: 'meditation-novice', name: 'Meditation Novice', description: 'Complete 5 meditation sessions', icon: <Sparkles className="w-6 h-6" />, category: 'self-care', requirement: 5, rarity: 'common' },
+        // Add all other templates you want to support, matching those in the profile page
+        { id: 'gratitude-guardian', name: 'Gratitude Guardian', description: 'Record 30 gratitudes', icon: <Heart className="w-6 h-6" />, category: 'self-care', requirement: 30, rarity: 'epic' },
+        { id: 'mood-tracker', name: 'Mood Master', description: 'Track mood for 20 days', icon: <TrendingUp className="w-6 h-6" />, category: 'progress', requirement: 20, rarity: 'rare' },
+        { id: 'achievement-hunter', name: 'Achievement Hunter', description: 'Unlock 10 achievements', icon: <Trophy className="w-6 h-6" />, category: 'progress', requirement: 10, rarity: 'epic' },
+        { id: 'legend-status', name: 'Legend Status', description: 'Unlock 25 achievements', icon: <Medal className="w-6 h-6" />, category: 'progress', requirement: 25, rarity: 'legendary' },
+        // ...add more as needed...
+      ];
+
+      // Merge backend progress with templates, using real stats for progress
+      const mergedAchievements: Achievement[] = achievementTemplates.map(template => {
+        let currentProgress = 0;
+        switch (template.id) {
+          case 'first-checkin':
+            currentProgress = user?.totalCheckIns || 0;
+            break;
+          case '3-day-streak':
+            currentProgress = user?.checkInStreak || 0;
+            break;
+          case '7-day-streak':
+            currentProgress = user?.checkInStreak || 0;
+            break;
+          case '14-day-streak':
+            currentProgress = user?.checkInStreak || 0;
+            break;
+          case '30-day-streak':
+            currentProgress = user?.checkInStreak || 0;
+            break;
+          case 'journal-journey':
+            currentProgress = user?.journalEntries || 0;
+            break;
+          case 'meditation-novice':
+            currentProgress = user?.meditationSessions || 0;
+            break;
+          case 'gratitude-guardian':
+            currentProgress = user?.gratitudeCount || 0;
+            break;
+          case 'mood-tracker':
+            currentProgress = user?.totalCheckIns || 0;
+            break;
+          case 'achievement-hunter':
+            currentProgress = achievements.filter(a => a.completed).length;
+            break;
+          case 'legend-status':
+            currentProgress = achievements.filter(a => a.completed).length;
+            break;
+          default:
+            currentProgress = 0;
+        }
+        const completed = currentProgress >= template.requirement;
+        return {
+          ...template,
+          currentProgress: Math.min(currentProgress, template.requirement),
+          completed,
+          completedAt: completed ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString() : undefined,
+          category: template.category as 'daily' | 'self-care' | 'progress' | 'learning',
+          rarity: template.rarity as 'common' | 'rare' | 'epic' | 'legendary',
+        };
+      });
+      setAchievements(mergedAchievements);
+    } catch (error) {
+      console.error('Error fetching achievements:', error);
+    }
+  };
 
   const fetchProfileData = async () => {
     try {
@@ -81,21 +250,9 @@ export default function ProfilePage() {
 
       if (response.ok) {
         const data = await response.json();
-        // Simulate additional data for achievements
-        const userData = {
-          ...data.data,
-          checkInStreak: Math.floor(Math.random() * 15) + 1,
-          totalCheckIns: Math.floor(Math.random() * 50) + 5,
-          journalEntries: Math.floor(Math.random() * 25) + 2,
-          gratitudeCount: Math.floor(Math.random() * 40) + 3,
-          meditationSessions: Math.floor(Math.random() * 20) + 1,
-          moodImprovement: Math.floor(Math.random() * 30) + 10,
-          coursesCompleted: Math.floor(Math.random() * 8) + 1,
-          crisisNavigated: Math.floor(Math.random() * 3)
-        };
-        setUser(userData);
-        setFormData({ name: userData.name, email: userData.email });
-        setProfileImage(userData.profilePicture || null);
+        setUser(data.data);
+        setFormData({ name: data.data.name, email: data.data.email });
+        setProfileImage(data.data.profilePicture || null);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -165,26 +322,6 @@ export default function ProfilePage() {
       { id: 'goal-getter', name: 'Goal Getter', description: 'Complete 5 personal goals', icon: <Target className="w-6 h-6" />, category: 'progress', requirement: 5, rarity: 'rare' },
       { id: 'achievement-hunter', name: 'Achievement Hunter', description: 'Unlock 10 achievements', icon: <Trophy className="w-6 h-6" />, category: 'progress', requirement: 10, rarity: 'epic' },
       { id: 'legend-status', name: 'Legend Status', description: 'Unlock 25 achievements', icon: <Medal className="w-6 h-6" />, category: 'progress', requirement: 25, rarity: 'legendary' },
-
-      // Progress & Growth - Habits & Lifestyle
-      { id: 'habit-builder', name: 'Habit Builder', description: 'Maintain 3 healthy habits for a week', icon: <Zap className="w-6 h-6" />, category: 'progress', requirement: 3, rarity: 'rare' },
-      { id: 'lifestyle-architect', name: 'Lifestyle Architect', description: 'Maintain 5 healthy habits for a month', icon: <Crown className="w-6 h-6" />, category: 'progress', requirement: 5, rarity: 'epic' },
-      { id: 'balance-master', name: 'Balance Master', description: 'Achieve work-life balance for 30 days', icon: <Target className="w-6 h-6" />, category: 'progress', requirement: 30, rarity: 'epic' },
-      { id: 'energy-optimizer', name: 'Energy Optimizer', description: 'Track energy levels for 30 days', icon: <Flame className="w-6 h-6" />, category: 'progress', requirement: 30, rarity: 'rare' },
-
-      // Learning & Skills - Coping & Resilience
-      { id: 'skill-seeker', name: 'Skill Seeker', description: 'Learn 3 coping techniques', icon: <Brain className="w-6 h-6" />, category: 'learning', requirement: 3, rarity: 'common' },
-      { id: 'coping-champion', name: 'Coping Champion', description: 'Master 10 coping strategies', icon: <Shield className="w-6 h-6" />, category: 'learning', requirement: 10, rarity: 'rare' },
-      { id: 'resilience-builder', name: 'Resilience Builder', description: 'Navigate through a crisis successfully', icon: <Shield className="w-6 h-6" />, category: 'learning', requirement: 1, rarity: 'legendary' },
-      { id: 'stress-slayer', name: 'Stress Slayer', description: 'Complete stress management course', icon: <Zap className="w-6 h-6" />, category: 'learning', requirement: 1, rarity: 'epic' },
-      { id: 'anxiety-warrior', name: 'Anxiety Warrior', description: 'Complete anxiety management course', icon: <Heart className="w-6 h-6" />, category: 'learning', requirement: 1, rarity: 'epic' },
-
-      // Learning & Skills - Education & Growth
-      { id: 'course-champion', name: 'Course Champion', description: 'Complete 5 courses', icon: <Medal className="w-6 h-6" />, category: 'learning', requirement: 5, rarity: 'epic' },
-      { id: 'knowledge-seeker', name: 'Knowledge Seeker', description: 'Complete 10 courses', icon: <BookOpen className="w-6 h-6" />, category: 'learning', requirement: 10, rarity: 'legendary' },
-      { id: 'wisdom-keeper', name: 'Wisdom Keeper', description: 'Complete all available courses', icon: <Crown className="w-6 h-6" />, category: 'learning', requirement: 20, rarity: 'legendary' },
-      { id: 'mentor-ready', name: 'Mentor Ready', description: 'Help another user with their journey', icon: <Heart className="w-6 h-6" />, category: 'learning', requirement: 1, rarity: 'epic' },
-      { id: 'community-leader', name: 'Community Leader', description: 'Support 10 community members', icon: <Star className="w-6 h-6" />, category: 'learning', requirement: 10, rarity: 'legendary' },
 
       // Special & Seasonal Achievements
       { id: 'new-year-resolution', name: 'New Year\'s Resolution', description: 'Start your journey in January', icon: <Sparkles className="w-6 h-6" />, category: 'progress', requirement: 1, rarity: 'rare' },
@@ -333,6 +470,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (user) {
       generateAchievements();
+      generateDailyActivities();
     }
   }, [user, garden]);
 
@@ -385,20 +523,62 @@ export default function ProfilePage() {
     setError('');
 
     try {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('image', file);
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('token='))
+        ?.split('=')[1];
 
-      if (user) {
-        setUser({ ...user, profilePicture: reader.result as string });
+      const response = await fetch('/api/user/profile-image', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProfileImage(data.url);
+        setUser(prev => prev ? { ...prev, profilePicture: data.url } : prev);
+        // Immediately update profile image in UI
+        fetchProfileData();
+      } else {
+        setError('Failed to upload image.');
       }
     } catch (error) {
       setError('Failed to upload image. Please try again.');
       console.error('Upload error:', error);
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = async () => {
+    setError('');
+    setIsUploadingImage(true);
+    try {
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('token='))
+        ?.split('=')[1];
+
+      const response = await fetch('/api/user/profile-image', {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        setProfileImage(null);
+        setUser(prev => prev ? { ...prev, profilePicture: undefined } : prev);
+      } else {
+        setError('Failed to remove image.');
+      }
+    } catch (error) {
+      setError('Failed to remove image. Please try again.');
     } finally {
       setIsUploadingImage(false);
     }
@@ -456,7 +636,6 @@ export default function ProfilePage() {
         <div className="absolute bottom-20 left-20 w-72 h-72 bg-gradient-to-r from-pink-200 to-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
       </div>
 
-
       <div className="relative z-10 w-full px-2 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-6 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Sidebar - Now on the Left */}
@@ -479,17 +658,28 @@ export default function ProfilePage() {
                       </div>
                     )}
                   </div>
-                  <button
-                    onClick={handleCameraClick}
-                    disabled={isUploadingImage}
-                    className="absolute bottom-0 right-0 p-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full shadow-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300 hover:scale-110 disabled:opacity-50"
-                  >
-                    {isUploadingImage ? (
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <Camera className="w-5 h-5" />
+                  <div className="absolute bottom-0 right-0 flex gap-2">
+                    <button
+                      onClick={handleCameraClick}
+                      disabled={isUploadingImage}
+                      className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full shadow-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300 hover:scale-110 disabled:opacity-50"
+                    >
+                      {isUploadingImage ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Camera className="w-5 h-5" />
+                      )}
+                    </button>
+                    {getProfileImageSrc() && (
+                      <button
+                        onClick={handleRemoveImage}
+                        disabled={isUploadingImage}
+                        className="p-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full shadow-lg hover:from-red-600 hover:to-pink-600 transition-all duration-300 hover:scale-110 disabled:opacity-50"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
                     )}
-                  </button>
+                  </div>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -516,7 +706,7 @@ export default function ProfilePage() {
                     </div>
                     <span className="text-gray-700">Current Streak</span>
                   </div>
-                  <span className="font-bold text-orange-600">{user?.checkInStreak || 0} days</span>
+                  <span className="font-bold text-orange-600">{user?.quickStats?.checkInStreak ?? 0} days</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -525,7 +715,7 @@ export default function ProfilePage() {
                     </div>
                     <span className="text-gray-700">Gratitude Count</span>
                   </div>
-                  <span className="font-bold text-green-600">{user?.gratitudeCount || 0}</span>
+                  <span className="font-bold text-green-600">{user?.quickStats?.gratitudeCount ?? 0}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -534,7 +724,7 @@ export default function ProfilePage() {
                     </div>
                     <span className="text-gray-700">Meditations</span>
                   </div>
-                  <span className="font-bold text-purple-600">{user?.meditationSessions || 0}</span>
+                  <span className="font-bold text-purple-600">{user?.quickStats?.meditationSessions ?? 0}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -603,6 +793,16 @@ export default function ProfilePage() {
                 Account
               </button>
               <button
+                onClick={() => setActiveTab('activities')}
+                className={`flex-1 px-6 py-4 rounded-xl font-medium transition-all duration-300 ${activeTab === 'activities'
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transform scale-105'
+                  : 'text-blue-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-100 hover:to-purple-100'
+                  }`}
+              >
+                <ClipboardList className="w-5 h-5 inline mr-2" />
+                Daily Activities
+              </button>
+              <button
                 onClick={() => setActiveTab('achievements')}
                 className={`flex-1 px-6 py-4 rounded-xl font-medium transition-all duration-300 ${activeTab === 'achievements'
                   ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transform scale-105'
@@ -624,6 +824,85 @@ export default function ProfilePage() {
               </button>
             </div>
             {/* ...existing code for tabs and content, using real backend data for all stats and achievements... */}
+            {activeTab === 'activities' && (
+              <div className="space-y-6">
+                <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-green-100 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-green-100/30 to-teal-100/30 rounded-full -translate-x-48 -translate-y-48"></div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl shadow-lg">
+                        <ClipboardCheck className="w-8 h-8 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                          Daily Activities
+                        </h2>
+                        <p className="text-gray-600 text-lg">
+                          {dailyActivities.filter(a => a.completed).length} of {dailyActivities.length} completed
+                        </p>
+                      </div>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden shadow-inner">
+                      <div
+                        className="bg-gradient-to-r from-blue-500 to-purple-500 h-4 rounded-full transition-all duration-1000 shadow-lg relative overflow-hidden"
+                        style={{ width: `${(dailyActivities.filter(a => a.completed).length / dailyActivities.length) * 100}%` }}
+                      >
+                        <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {dailyActivities.map(activity => (
+                    <div
+                      key={activity.id}
+                      className={`relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border-2 border-blue-300 shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl ${activity.completed ? 'ring-2 ring-blue-300' : ''}`}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-10 rounded-2xl"></div>
+                      {activity.completed && (
+                        <div className="absolute top-4 right-4">
+                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center animate-pulse">
+                            <Check className="w-5 h-5 text-white" />
+                          </div>
+                        </div>
+                      )}
+                      <div className="relative z-10">
+                        <div className="flex items-center gap-4 mb-4">
+                          <div className={`p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white shadow-lg ${activity.completed ? 'animate-pulse' : ''}`}>{activity.icon}</div>
+                          <div className="flex-1">
+                            <h3 className={`text-xl font-bold ${activity.completed ? 'text-blue-700' : 'text-gray-700'}`}>{activity.name}</h3>
+                          </div>
+                        </div>
+                        <p className="text-gray-600 mb-4">{activity.description}</p>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Progress</span>
+                            <span className={`font-medium ${activity.completed ? 'text-teal-600' : 'text-blue-600'}`}>{activity.progress}/{activity.requirement}</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                            <div className={`h-3 rounded-full transition-all duration-1000 ${activity.completed ? 'bg-gradient-to-r from-blue-400 to-teal-600' : 'bg-gradient-to-r from-blue-400 to-teal-400'}`} style={{ width: `${(activity.progress / activity.requirement) * 100}%` }}></div>
+                          </div>
+                        </div>
+                        {activity.link && (
+                          <Link
+                            href={activity.link}
+                            className="block w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-center py-2 rounded-xl font-semibold hover:from-blue-600 hover:to-teal-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                          >
+                            Go to Activity
+                          </Link>
+                        )}
+                        {activity.completed && (
+                          <div className="mt-4 text-sm text-green-600 font-medium">
+                            Completed for today!
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* ...existing code for other tabs... */}
             {activeTab === 'account' && (
               <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-blue-100 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-100/50 to-purple-100/50 rounded-full translate-x-32 -translate-y-32"></div>
@@ -717,14 +996,14 @@ export default function ProfilePage() {
                           Achievements
                         </h2>
                         <p className="text-gray-600 text-lg">
-                          {completedAchievements} of {totalAchievements} unlocked
+                          {achievements?.filter(a => a.completed).length ?? 0} of {achievements?.length ?? 0} unlocked
                         </p>
                       </div>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden shadow-inner">
                       <div
                         className="bg-gradient-to-r from-yellow-500 to-orange-500 h-4 rounded-full transition-all duration-1000 shadow-lg relative overflow-hidden"
-                        style={{ width: `${(completedAchievements / totalAchievements) * 100}%` }}
+                        style={{ width: `${((achievements?.filter(a => a.completed).length ?? 0) / (achievements?.length ?? 1)) * 100}%` }}
                       >
                         <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
                       </div>
@@ -746,7 +1025,7 @@ export default function ProfilePage() {
                   ))}
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
-                  {filteredAchievements.map((achievement) => (
+                  {(selectedCategory === 'all' ? achievements : achievements.filter(a => a.category === selectedCategory)).map((achievement) => (
                     <div
                       key={achievement.id}
                       className={`relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border-2 ${getRarityBorder(achievement.rarity)} shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl ${achievement.completed ? 'ring-2 ring-green-300' : ''}`}
@@ -798,7 +1077,7 @@ export default function ProfilePage() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-700">Check-in Streak</h3>
-                        <p className="text-3xl font-bold text-blue-600">{user?.checkInStreak || 0}</p>
+                        <p className="text-3xl font-bold text-blue-600">{user?.quickStats?.checkInStreak ?? 0}</p>
                         <p className="text-sm text-gray-500">days</p>
                       </div>
                     </div>
@@ -810,7 +1089,7 @@ export default function ProfilePage() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-700">Journal Entries</h3>
-                        <p className="text-3xl font-bold text-green-600">{user?.journalEntries || 0}</p>
+                        <p className="text-3xl font-bold text-green-600">{user?.quickStats?.journalEntries ?? 0}</p>
                         <p className="text-sm text-gray-500">written</p>
                       </div>
                     </div>
@@ -822,7 +1101,7 @@ export default function ProfilePage() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-700">Meditation Sessions</h3>
-                        <p className="text-3xl font-bold text-purple-600">{user?.meditationSessions || 0}</p>
+                        <p className="text-3xl font-bold text-purple-600">{user?.quickStats?.meditationSessions ?? 0}</p>
                         <p className="text-sm text-gray-500">completed</p>
                       </div>
                     </div>
@@ -843,10 +1122,10 @@ export default function ProfilePage() {
                         <div className="space-y-2">
                           <div className="flex justify-between">
                             <span className="text-gray-600">Overall Progress</span>
-                            <span className="font-bold text-green-600">{user?.moodImprovement || 0}%</span>
+                            <span className="font-bold text-green-600">{user?.quickStats?.moodImprovement ?? 0}%</span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-4">
-                            <div className="bg-gradient-to-r from-green-400 to-teal-500 h-4 rounded-full transition-all duration-1000" style={{ width: `${user?.moodImprovement || 0}%` }}></div>
+                            <div className="bg-gradient-to-r from-green-400 to-teal-500 h-4 rounded-full transition-all duration-1000" style={{ width: `${user?.quickStats?.moodImprovement ?? 0}%` }}></div>
                           </div>
                         </div>
                       </div>
@@ -858,15 +1137,15 @@ export default function ProfilePage() {
                         <div className="space-y-3">
                           <div className="flex justify-between items-center">
                             <span className="text-gray-600">Courses Completed</span>
-                            <span className="font-bold text-purple-600">{user?.coursesCompleted || 0}</span>
+                            <span className="font-bold text-purple-600">{user?.quickStats?.coursesCompleted ?? 0}</span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-gray-600">Total Check-ins</span>
-                            <span className="font-bold text-blue-600">{user?.totalCheckIns || 0}</span>
+                            <span className="font-bold text-blue-600">{user?.quickStats?.totalCheckIns ?? 0}</span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-gray-600">Gratitude Entries</span>
-                            <span className="font-bold text-pink-600">{user?.gratitudeCount || 0}</span>
+                            <span className="font-bold text-pink-600">{user?.quickStats?.gratitudeCount ?? 0}</span>
                           </div>
                         </div>
                       </div>

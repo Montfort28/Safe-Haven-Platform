@@ -10,7 +10,7 @@ export async function logMindGardenActivity(type: 'journal' | 'mood' | 'game' | 
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: JSON.stringify({ type, points }),
+      body: JSON.stringify({ activityType: type, points }),
     });
   } catch (err) {
     // Optionally handle/log error

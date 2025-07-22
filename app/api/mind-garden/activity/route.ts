@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
       'resource': 8,
       'game': 5,
       'checkin': 5,
-      'tree_watered': 5
+      'tree_watered': 5,
+      'gratitude': 10 // Added support for gratitude activity
     };
 
     if (!validActivities[activityType as keyof typeof validActivities]) {
@@ -91,14 +92,41 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Update garden
-    const newGrowthScore = Math.min(100, garden.growthScore + activityPoints);
+    // --- Streak logic ---
+    let newStreak = garden.streak;
+    // Support streak for checkin, journal, journal_written, mood, mood_logged
+    const streakEligible = ['checkin', 'journal', 'journal_written', 'mood', 'mood_logged'];
+    if (streakEligible.includes(activityType)) {
+      // Improved streak logic: increment if last activity was yesterday, keep streak if today, reset if not consecutive
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(0, 0, 0, 0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const lastActivityDate = garden.lastActivity ? new Date(garden.lastActivity) : null;
+      if (lastActivityDate) {
+        lastActivityDate.setHours(0, 0, 0, 0);
+        if (lastActivityDate.getTime() === yesterday.getTime()) {
+          newStreak = garden.streak + 1;
+        } else if (lastActivityDate.getTime() === today.getTime()) {
+          newStreak = garden.streak;
+        } else {
+          newStreak = 1;
+        }
+      } else {
+        newStreak = 1;
+      }
+    }
+
+    // Update garden - Remove artificial cap, let growth score grow unlimited
+    const newGrowthScore = garden.growthScore + activityPoints;
     const updatedGarden = await prisma.mindGarden.update({
       where: { userId: payload.userId },
       data: {
         growthScore: newGrowthScore,
         totalInteractions: garden.totalInteractions + 1,
         lastActivity: new Date(),
+        streak: newStreak,
       },
     });
 
@@ -142,18 +170,24 @@ async function checkAndGrantAchievements(userId: string, garden: any): Promise<s
     const newAchievements: string[] = [];
     const currentAchievements = gameProgress.achievements || [];
 
-    // Growth Score Achievements
-    if (garden.growthScore >= 25 && !currentAchievements.includes('energy_emerging')) {
+    // Updated Growth Score Achievements for new point system
+    if (garden.growthScore >= 50 && !currentAchievements.includes('energy_emerging')) {
       newAchievements.push('energy_emerging');
     }
-    if (garden.growthScore >= 50 && !currentAchievements.includes('energy_growing')) {
+    if (garden.growthScore >= 200 && !currentAchievements.includes('energy_growing')) {
       newAchievements.push('energy_growing');
     }
-    if (garden.growthScore >= 75 && !currentAchievements.includes('energy_flourishing')) {
+    if (garden.growthScore >= 600 && !currentAchievements.includes('energy_flourishing')) {
       newAchievements.push('energy_flourishing');
     }
-    if (garden.growthScore >= 100 && !currentAchievements.includes('energy_mastery')) {
+    if (garden.growthScore >= 1500 && !currentAchievements.includes('energy_mastery')) {
       newAchievements.push('energy_mastery');
+    }
+    if (garden.growthScore >= 4000 && !currentAchievements.includes('energy_ancient')) {
+      newAchievements.push('energy_ancient');
+    }
+    if (garden.growthScore >= 10000 && !currentAchievements.includes('energy_legendary')) {
+      newAchievements.push('energy_legendary');
     }
 
     // Streak Achievements

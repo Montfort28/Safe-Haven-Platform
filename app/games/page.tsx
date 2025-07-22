@@ -45,6 +45,10 @@ const recordGameStart = async (gameId: string) => {
     };
     const backendGameId = idMap[gameId] || gameId;
     if (token) {
+      // Save the start time globally for duration tracking
+      if (typeof window !== 'undefined') {
+        (window as any).gameStartTime = Date.now();
+      }
       const res = await fetch('/api/games/play', {
         method: 'POST',
         headers: {
@@ -81,7 +85,7 @@ const PuzzleGame = ({ onGameComplete }: { onGameComplete: GameCompleteHandler })
   const [userInput, setUserInput] = useState<string>('');
   const [score, setScore] = useState<number>(0);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
-  const [showCongrats, setShowCongrats] = useState<boolean>(false);
+  const [showCongratsModal, setShowCongratsModal] = useState<boolean>(false);
   const [achievements, setAchievements] = useState<string[]>([]);
   const [gameComplete, setGameComplete] = useState<boolean>(false);
 
@@ -91,7 +95,7 @@ const PuzzleGame = ({ onGameComplete }: { onGameComplete: GameCompleteHandler })
     setQuestions(levelQuestions.sort(() => Math.random() - 0.5));
     setCurrentIndex(0);
     setUserInput('');
-    setShowCongrats(false);
+    setShowCongratsModal(false);
     setGameComplete(false);
   }, [level]);
 
@@ -107,26 +111,22 @@ const PuzzleGame = ({ onGameComplete }: { onGameComplete: GameCompleteHandler })
       if (currentIndex < questions.length - 1) {
         setCurrentIndex(currentIndex + 1);
         setUserInput('');
-        setShowCongrats(false);
-        // Award 5 points for winning a level (not for every question)
-        // Only if this is the last question of the level
+        setShowCongratsModal(false);
       } else {
         // Level complete
         setCompletedLevels(prev => [...prev, level]);
-        setShowCongrats(true);
-        // Award 5 points for winning a level
+        setShowCongratsModal(true);
         onGameComplete('puzzle-game', 5, 30 * level);
         if (level < 3) {
           setTimeout(() => {
             setLevel(level + 1);
-            setShowCongrats(false);
+            setShowCongratsModal(false);
           }, 1200);
         } else {
           // All levels complete
           const achievement = 'Puzzle Master: Beat all levels!';
           setAchievements(prev => prev.includes(achievement) ? prev : [...prev, achievement]);
           setGameComplete(true);
-          // Save to backend (also award 5 points for completing the last level)
           onGameComplete('puzzle-game', 5, 30 * level, achievement);
         }
       }
@@ -134,11 +134,25 @@ const PuzzleGame = ({ onGameComplete }: { onGameComplete: GameCompleteHandler })
   };
 
   return (
-    <div className="p-6 bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl">
+    <div className="p-6 bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl relative">
+      {/* Animated Congrats Modal for Level Completion */}
+      {showCongratsModal && !gameComplete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
+          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full relative text-center">
+            <div className="text-3xl font-bold text-green-600 mb-2">Level Complete!</div>
+            <div className="text-lg text-purple-700 mb-4">Get ready for the next level!</div>
+            <div className="flex justify-center">
+              <svg className="h-16 w-16 text-pink-500 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-bold text-gray-800">Puzzle Game (Level {level === 1 ? 'Easy' : level === 2 ? 'Medium' : 'Hard'})</h3>
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-600">Score: {score}</span>
+          {/* Removed Score label as requested */}
         </div>
       </div>
       {questions.length > 0 && !gameComplete && (
@@ -166,12 +180,6 @@ const PuzzleGame = ({ onGameComplete }: { onGameComplete: GameCompleteHandler })
             </button>
           </div>
         </>
-      )}
-      {showCongrats && !gameComplete && (
-        <div className="text-center mt-4">
-          <div className="text-2xl font-bold text-green-600 mb-2">Level Complete!</div>
-          <div className="text-lg text-purple-700">Get ready for the next level!</div>
-        </div>
       )}
       {gameComplete && (
         <div className="text-center mt-4">
@@ -251,7 +259,7 @@ const AnxietyBreather = ({ onGameComplete }: { onGameComplete: GameCompleteHandl
         <h3 className="text-xl font-bold text-gray-800">Anxiety Breather</h3>
         <div className="flex items-center space-x-4">
           <span className="text-sm text-gray-600">Cycle: {cycle}/5</span>
-          <span className="text-sm text-gray-600">Score: {score}</span>
+          {/* Removed Score label as requested */}
         </div>
       </div>
       {showInstructions && (
@@ -317,6 +325,8 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
   const [showInstructions, setShowInstructions] = useState(true);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
   const [achievements, setAchievements] = useState<string[]>([]);
+  const [showCongratsModal, setShowCongratsModal] = useState<boolean>(false);
+  const [congratsLevel, setCongratsLevel] = useState<number | null>(null);
 
   // Load positivity puzzles from central bank
   const puzzles = PUZZLES.filter(q => q.level === level && q.game === 'positivity-puzzle');
@@ -345,22 +355,9 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
           setFeedback('');
         } else {
           // Level complete
-          // Award 5 points for winning a level
+          setCongratsLevel(level);
+          setShowCongratsModal(true);
           onGameComplete('positivity-puzzle', 5, startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0);
-          if (level < 3) {
-            setLevel(level + 1);
-            setCurrentPuzzle(0);
-            setCompletedLevels([...completedLevels, level]);
-            setFeedback('Level up!');
-          } else {
-            setGameActive(false);
-            setCompletedLevels([...completedLevels, level]);
-            const achievement = 'Positivity Champion: Beat all levels!';
-            setAchievements((prev) => [...prev, achievement]);
-            const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-            // Award 5 points for completing the last level
-            onGameComplete('positivity-puzzle', 5, duration, achievement);
-          }
         }
       }, 1500);
     } else {
@@ -369,12 +366,31 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
   };
 
   return (
-    <div className="p-6 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl">
+    <div className="p-6 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl relative">
+      {/* Animated Congrats Modal */}
+      {showCongratsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
+          <div className="bg-gradient-to-br from-yellow-300 to-orange-400 rounded-3xl shadow-2xl p-10 max-w-md w-full border-4 border-yellow-600 relative animate-bounce-in">
+            <button onClick={() => setShowCongratsModal(false)} className="absolute top-2 right-2 text-yellow-700 hover:text-yellow-900 text-2xl font-bold">&times;</button>
+            <div className="flex flex-col items-center">
+              <Sparkles className="h-16 w-16 text-yellow-400 animate-spin mb-4" />
+              <h2 className="text-3xl font-extrabold text-yellow-800 mb-2 drop-shadow-lg">Level {congratsLevel} Complete!</h2>
+              <p className="text-lg text-orange-900 mb-4 font-semibold">You passed this level! Keep going or return to the game selection.</p>
+              <div className="flex gap-4 mt-2">
+                {congratsLevel && congratsLevel < 3 && (
+                  <button onClick={() => { setShowCongratsModal(false); setLevel(congratsLevel + 1); setCurrentPuzzle(0); setUserInput(''); setFeedback(''); }} className="bg-yellow-600 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:bg-yellow-700 transition-all animate-pop">Next Level</button>
+                )}
+                <button onClick={() => { setShowCongratsModal(false); setGameActive(false); setLevel(1); setCurrentPuzzle(0); setUserInput(''); setFeedback(''); }} className="bg-white text-yellow-700 px-6 py-2 rounded-lg font-bold shadow-lg border border-yellow-400 hover:bg-yellow-100 transition-all animate-pop">Back to Game</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-bold text-gray-800">Positivity Puzzle (Level {level === 1 ? 'Easy' : level === 2 ? 'Medium' : 'Hard'})</h3>
         <div className="flex items-center space-x-4">
           <span className="text-sm text-gray-600">Puzzle: {currentPuzzle + 1}/{puzzles.length}</span>
-          <span className="text-sm text-gray-600">Score: {score}</span>
+          {/* Removed Score label as requested */}
         </div>
       </div>
       {showInstructions && (
@@ -451,6 +467,8 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
   const [showTutorial, setShowTutorial] = useState(true);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
   const [achievements, setAchievements] = useState<string[]>([]);
+  const [showCongratsModal, setShowCongratsModal] = useState<boolean>(false);
+  const [congratsLevel, setCongratsLevel] = useState<number | null>(null);
   const colors = ['bg-red-400', 'bg-blue-400', 'bg-green-400', 'bg-yellow-400', 'bg-purple-400', 'bg-pink-400'];
   const colorNames = ['Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Pink'];
   const levelSettings: { [key: number]: { length: number; rounds: number } } = {
@@ -511,39 +529,63 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
         if (round < levelSettings[level].rounds) {
           setRound(round + 1);
           setTimeout(() => generateSequence(levelSettings[level].length), 1000);
-          // Award 5 points for winning a round (level) only if this is the last round of the level
-        } else if (level < 3) {
-          setCompletedLevels([...completedLevels, level]);
-          // Award 5 points for winning a level
-          onGameComplete('mindful-memory', 5, startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0);
-          setLevel(level + 1);
-          setRound(1);
-          setTimeout(() => generateSequence(levelSettings[level + 1].length), 1000);
         } else {
           setCompletedLevels([...completedLevels, level]);
-          const achievement = 'Memory Master: Beat all levels!';
-          setAchievements((prev) => [...prev, achievement]);
-          setGameActive(false);
-          const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-          // Award 5 points for completing the last level
-          onGameComplete('mindful-memory', 5, duration, achievement);
+          setCongratsLevel(level);
+          setShowCongratsModal(true);
+          onGameComplete('mindful-memory', 5, startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0);
         }
       } else {
         setGameActive(false);
         const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-        // No points for failing
         onGameComplete('mindful-memory', 0, duration);
       }
     }
   };
 
   return (
-    <div className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl">
+    <div className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl relative">
+      {/* Animated Congrats Modal */}
+      {showCongratsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
+          <div className="bg-gradient-to-br from-indigo-300 to-purple-400 rounded-3xl shadow-2xl p-10 max-w-md w-full border-4 border-indigo-600 relative animate-bounce-in">
+            <button onClick={() => setShowCongratsModal(false)} className="absolute top-2 right-2 text-indigo-700 hover:text-indigo-900 text-2xl font-bold">&times;</button>
+            <div className="flex flex-col items-center">
+              <Sparkles className="h-16 w-16 text-yellow-400 animate-spin mb-4" />
+              <h2 className="text-3xl font-extrabold text-indigo-800 mb-2 drop-shadow-lg">Level {congratsLevel} Complete!</h2>
+              <p className="text-lg text-purple-900 mb-4 font-semibold">You passed this level! Keep going or return to the game selection.</p>
+              <div className="flex gap-4 mt-2">
+                {congratsLevel && congratsLevel < 3 && (
+                  <button onClick={() => {
+                    setShowCongratsModal(false);
+                    setLevel(congratsLevel + 1);
+                    setRound(1);
+                    setUserSequence([]);
+                    setShowSequence(false);
+                    setCurrentShowIndex(-1);
+                    generateSequence(levelSettings[congratsLevel + 1].length);
+                  }} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:bg-indigo-700 transition-all animate-pop">Next Level</button>
+                )}
+                <button onClick={() => {
+                  setShowCongratsModal(false);
+                  setGameActive(false);
+                  setLevel(1);
+                  setRound(1);
+                  setUserSequence([]);
+                  setShowTutorial(true);
+                  setShowSequence(false);
+                  setCurrentShowIndex(-1);
+                }} className="bg-white text-indigo-700 px-6 py-2 rounded-lg font-bold shadow-lg border border-indigo-400 hover:bg-indigo-100 transition-all animate-pop">Back to Game</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-bold text-gray-800">Mindful Memory (Level {level === 1 ? 'Easy' : level === 2 ? 'Medium' : 'Hard'})</h3>
         <div className="flex items-center space-x-4">
           <span className="text-sm text-gray-600">Round: {round}/{levelSettings[level].rounds}</span>
-          <span className="text-sm text-gray-600">Score: {score}</span>
+          {/* Removed Score label as requested */}
         </div>
       </div>
       {showTutorial && (
@@ -615,6 +657,9 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
   const [level, setLevel] = useState<number>(1); // 1: Easy, 2: Medium, 3: Hard
   const [gratitudeItems, setGratitudeItems] = useState<string[]>([]);
   const [currentInput, setCurrentInput] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [showCongratsModal, setShowCongratsModal] = useState<boolean>(false);
+  const [congratsLevel, setCongratsLevel] = useState<number | null>(null);
   const [score, setScore] = useState<number>(0);
   const [gameActive, setGameActive] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -642,46 +687,80 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
   };
 
   const addGratitude = async () => {
-    if (currentInput.trim()) {
-      setGratitudeItems([...gratitudeItems, currentInput.trim()]);
-      setScore(score + 15 * level);
-      setCurrentInput('');
-      // Log gratitude activity to Mind Garden for plant growth
-      try {
-        // Use the same points as score increment, or adjust as needed
-        const { logMindGardenActivity } = await import('@/lib/utils');
-        await logMindGardenActivity('journal', 15 * level);
-      } catch (err) {
-        // Optionally handle/log error
-        console.error('Failed to log gratitude activity:', err);
+    const wordCount = currentInput.trim().split(/\s+/).length;
+    setError('');
+    let errorMsg = '';
+    if (level === 1) {
+      if (!currentInput.trim()) {
+        errorMsg = 'Please enter something you are grateful for.';
       }
-      if (gratitudeItems.length + 1 >= levelSettings[level].count) {
-        // Award 5 points for winning a level
-        onGameComplete('gratitude-builder', 5, startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0);
-        if (level < 3) {
-          setCompletedLevels([...completedLevels, level]);
-          setLevel(level + 1);
-          setGratitudeItems([]);
-        } else {
-          setCompletedLevels([...completedLevels, level]);
-          const achievement = 'Gratitude Guru: Beat all levels!';
-          setAchievements((prev) => [...prev, achievement]);
-          setGameActive(false);
-          const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
-          // Award 5 points for completing the last level
-          onGameComplete('gratitude-builder', 5, duration, achievement);
-        }
+    } else if (level === 2) {
+      if (wordCount < 20) {
+        errorMsg = 'Please write at least 20 words explaining what and why you are grateful.';
+      }
+    } else if (level === 3) {
+      if (wordCount < 40) {
+        errorMsg = 'Please write at least 40 words for a deeper reflection.';
+      }
+    }
+    if (errorMsg) {
+      setError(errorMsg);
+      setTimeout(() => setError(''), 3000);
+      return;
+    }
+    setGratitudeItems([...gratitudeItems, currentInput.trim()]);
+    setScore(score + 15 * level);
+    setCurrentInput('');
+    try {
+      const { logMindGardenActivity } = await import('@/lib/utils');
+      await logMindGardenActivity('journal', 15 * level);
+    } catch (err) {
+      console.error('Failed to log gratitude activity:', err);
+    }
+    if (gratitudeItems.length + 1 >= levelSettings[level].count) {
+      onGameComplete('gratitude-builder', 5, startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0);
+      setCongratsLevel(level);
+      setShowCongratsModal(true);
+      if (level < 3) {
+        setCompletedLevels([...completedLevels, level]);
+      } else {
+        setCompletedLevels([...completedLevels, level]);
+        const achievement = 'Gratitude Guru: Beat all levels!';
+        setAchievements((prev) => [...prev, achievement]);
+        setGameActive(false);
+        const duration = startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0;
+        onGameComplete('gratitude-builder', 5, duration, achievement);
       }
     }
   };
 
   return (
-    <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl">
+    <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl relative">
+      {/* Animated Congrats Modal */}
+      {showCongratsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
+          <div className="bg-gradient-to-br from-green-300 to-emerald-400 rounded-3xl shadow-2xl p-10 max-w-md w-full border-4 border-green-600 relative animate-bounce-in">
+            <button onClick={() => setShowCongratsModal(false)} className="absolute top-2 right-2 text-green-700 hover:text-green-900 text-2xl font-bold">&times;</button>
+            <div className="flex flex-col items-center">
+              <Sparkles className="h-16 w-16 text-yellow-400 animate-spin mb-4" />
+              <h2 className="text-3xl font-extrabold text-green-800 mb-2 drop-shadow-lg">Level {congratsLevel} Complete!</h2>
+              <p className="text-lg text-emerald-900 mb-4 font-semibold">You passed this level! Keep going or return to the game selection.</p>
+              <div className="flex gap-4 mt-2">
+                {congratsLevel && congratsLevel < 3 && (
+                  <button onClick={() => { setShowCongratsModal(false); setLevel(congratsLevel + 1); setGratitudeItems([]); }} className="bg-green-600 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:bg-green-700 transition-all animate-pop">Next Level</button>
+                )}
+                <button onClick={() => { setShowCongratsModal(false); setGameActive(false); }} className="bg-white text-green-700 px-6 py-2 rounded-lg font-bold shadow-lg border border-green-400 hover:bg-green-100 transition-all animate-pop">Back to Game</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ...existing code... */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-bold text-gray-800">Gratitude Builder (Level {level === 1 ? 'Easy' : level === 2 ? 'Medium' : 'Hard'})</h3>
         <div className="flex items-center space-x-4">
           <span className="text-sm text-gray-600">Items: {gratitudeItems.length}/{levelSettings[level].count}</span>
-          <span className="text-sm text-gray-600">Score: {score}</span>
+          {/* Removed Score label as requested */}
         </div>
       </div>
       {!gameActive && (
@@ -689,7 +768,11 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
           <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-200 to-emerald-200 flex items-center justify-center">
             <Heart className="h-16 w-16 text-green-600" />
           </div>
-          <p className="text-gray-600 mb-4">List things you're grateful for at each level!</p>
+          <p className="text-gray-600 mb-4">
+            {level === 1 && 'List things you are grateful for.'}
+            {level === 2 && 'Write a short paragraph (at least 20 words) about what and why you are grateful.'}
+            {level === 3 && 'Write a longer reflection (at least 40 words) about gratitude, with deeper thought.'}
+          </p>
           <button onClick={startGame} className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors">
             Start Gratitude List
           </button>
@@ -698,14 +781,23 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
       {gameActive && (
         <div>
           <div className="mb-6">
-            <input
-              type="text"
-              value={currentInput}
-              onChange={(e) => setCurrentInput(e.target.value)}
-              placeholder="I'm grateful for..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              onKeyPress={(e) => e.key === 'Enter' && addGratitude()}
-            />
+            {level === 1 ? (
+              <input
+                type="text"
+                value={currentInput}
+                onChange={(e) => setCurrentInput(e.target.value)}
+                placeholder="I'm grateful for..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                onKeyPress={(e) => e.key === 'Enter' && addGratitude()}
+              />
+            ) : (
+              <textarea
+                value={currentInput}
+                onChange={(e) => setCurrentInput(e.target.value)}
+                placeholder={level === 2 ? 'Write a short paragraph about what and why you are grateful...' : 'Write a longer reflection about gratitude...'}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 min-h-[80px]"
+              />
+            )}
             <button
               onClick={addGratitude}
               disabled={!currentInput.trim()}
@@ -713,6 +805,7 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
             >
               Add to List
             </button>
+            {error && <div className="mt-2 text-red-600 text-sm animate-fade-in">{error}</div>}
           </div>
           <div className="space-y-2">
             {gratitudeItems.map((item, index) => (
@@ -861,7 +954,15 @@ export default function GamesPage() {
         'gratitude-builder': 'gratitude-flow',
       };
       const backendGameId = idMap[gameId] || gameId;
+      // Only increment gamesPlayed when the user completes the final level of a game (not per level)
+      // This is determined by the presence of an achievement (which only happens on final level)
+      let realDuration = duration;
+      if (!realDuration && typeof window !== 'undefined' && (window as any).gameStartTime) {
+        realDuration = Math.max(1, Math.floor((Date.now() - (window as any).gameStartTime) / 1000));
+      }
       if (token) {
+        // Only send completed=true and increment gamesPlayed if achievement is present (final level)
+        const isFinalLevel = !!achievement;
         const res = await fetch('/api/games/play', {
           method: 'POST',
           headers: {
@@ -870,9 +971,9 @@ export default function GamesPage() {
           },
           body: JSON.stringify({
             gameId: backendGameId,
-            duration: duration || 1,
+            duration: realDuration || 1,
             score: score || 0,
-            completed: true,
+            completed: isFinalLevel,
             timestamp: Date.now(),
             achievement: achievement || undefined,
           }),
@@ -923,7 +1024,14 @@ export default function GamesPage() {
           </div>
           <div className="bg-gradient-to-br from-green-200 to-green-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <Clock className="h-10 w-10 text-green-500 mb-2" />
-            <div className="text-3xl font-extrabold text-green-900">{Math.floor((userStats.totalTime || 0) / 60)}m</div>
+            <div className="text-3xl font-extrabold text-green-900">{
+              (() => {
+                const totalSeconds = userStats.totalTime || 0;
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                return `${hours}h ${minutes}m`;
+              })()
+            }</div>
             <div className="text-base text-green-700 font-medium mt-1">Time Played</div>
           </div>
           <div className="bg-gradient-to-br from-purple-200 to-purple-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
