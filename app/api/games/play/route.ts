@@ -142,21 +142,15 @@ export async function POST(request: NextRequest) {
     const updatedProgress = await prisma.gameProgress.update({
       where: { userId: payload.userId },
       data: {
-        gamesPlayed: gameProgress.gamesPlayed + 1,
+        gamesPlayed: completed ? gameProgress.gamesPlayed + 1 : gameProgress.gamesPlayed,
         totalTime: newTotalTime,
         achievements: [...new Set(newAchievements)],
-        streak: gameProgress.streak + 1,
+        streak: completed ? gameProgress.streak + 1 : gameProgress.streak,
         favoriteGames: favoriteGames.slice(0, 5), // Keep top 5
         skillLevels,
         currentWeekMinutes: gameProgress.currentWeekMinutes + duration,
       },
     });
-
-    // --- Mind Garden Growth: Add activity and points for playing a game ---
-
-    // Only count a game as played if a level is won (for games with levels) or the game is completed (for games without levels)
-    // This is determined by 'completed' being true and (if levels exist) only for the first level won per play
-    // Award 5 points per valid play
     if (completed) {
       await prisma.activityLog.create({
         data: {

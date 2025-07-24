@@ -94,7 +94,6 @@ export default function JournalPage() {
   const [wordCount, setWordCount] = useState(0);
   const [streak, setStreak] = useState(0);
   const [currentPrompt, setCurrentPrompt] = useState<JournalPrompt | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [autoSave, setAutoSave] = useState(true);
   const [showMoodSelector, setShowMoodSelector] = useState(false);
@@ -108,7 +107,7 @@ export default function JournalPage() {
 
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const recognitionRef = useRef<any>(null);
+  // Removed voice recognition ref
 
   useEffect(() => {
     fetchJournalEntries();
@@ -280,52 +279,7 @@ export default function JournalPage() {
     }
   };
 
-  const handleVoiceInput = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      alert('Voice input not supported in this browser.');
-      return;
-    }
-
-    if (isRecording) {
-      recognitionRef.current?.stop();
-      setIsRecording(false);
-      return;
-    }
-
-    try {
-      const recognition = new (window as any).webkitSpeechRecognition();
-      recognitionRef.current = recognition;
-
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
-
-      recognition.onstart = () => {
-        setIsRecording(true);
-      };
-
-      recognition.onresult = (event: any) => {
-        let transcript = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-        }
-        setContent(prev => prev + ' ' + transcript);
-      };
-
-      recognition.onerror = () => {
-        setIsRecording(false);
-        setError('Voice recognition error. Please try again.');
-      };
-
-      recognition.onend = () => {
-        setIsRecording(false);
-      };
-
-      recognition.start();
-    } catch (error) {
-      setError('Failed to start voice recognition');
-    }
-  };
+  // Removed handleVoiceInput and all related logic
 
   const handleEmotionToggle = (emotion: string) => {
     setSelectedEmotions(prev =>
@@ -605,16 +559,7 @@ export default function JournalPage() {
                       spellCheck={true}
                       autoCorrect="on"
                     />
-                    <button
-                      type="button"
-                      onClick={handleVoiceInput}
-                      className={`absolute top-2 right-2 p-2 rounded-full transition-all ${isRecording
-                        ? 'bg-red-500 text-white animate-pulse'
-                        : 'bg-blue-500 text-white hover:bg-blue-600'
-                        }`}
-                    >
-                      {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                    </button>
+                    {/* Voice recognition button removed */}
                   </div>
                   <div className="flex justify-between items-center mt-2">
                     <p className="text-sm text-blue-600">

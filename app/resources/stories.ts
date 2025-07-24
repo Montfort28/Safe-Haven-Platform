@@ -2,124 +2,56 @@
 // Exported stories array for mental health resources
 
 const stories = [
-    {
-        id: 'story-1',
-        title: 'From Panic Attacks to Peace: My Journey Through Anxiety',
-        author: 'Marcus, 28, Software Engineer',
-        readTime: '8 min',
-        tags: ['anxiety', 'recovery', 'panic attacks'],
-        excerpt: 'How I went from having daily panic attacks that nearly cost me my job to finding genuine peace and confidence.',
-        content: `# From Panic Attacks to Peace: My Journey Through Anxiety
+  {
+    id: 'story-1',
+    title: 'Mental Fog, Sleepless Nights, and a Silent Battle',
+    author: 'Anonymous, 24, Final Year Student at INES Ruhengeri',
+    readTime: '6 min',
+    tags: ['anxiety', 'burnout', 'university', 'mental health'],
+    excerpt: 'I stopped going to class, thinking it was just stress. But I was battling something deeper, and I didn’t know how to talk about it.',
+    content: `# Mental Fog, Sleepless Nights, and a Silent Battle
 
-*Marcus, 28, Software Engineer from Seattle*
+*Anonymous, 24, Final Year Student at INES Ruhengeri*
 
-Two years ago, I was having panic attacks so severe that I couldn't drive to work. The attacks started during a particularly stressful product launch—sudden chest tightness, racing heart, and the overwhelming feeling that I was going to die or completely lose control.
+I never thought I'd deal with depression. I'm the kind of guy who always laughs with people, always keeps it moving. But somewhere between deadlines, noisy roommates in the ghetto, and pressure from all sides — something cracked.
 
-## The Breaking Point
+## When Normal Got Too Heavy
 
-The worst attack happened during a team meeting. I was presenting our sprint review when suddenly I couldn't breathe. My vision started tunneling, my hands were shaking uncontrollably, and I had to leave the room. I spent 20 minutes in the bathroom trying to calm down, convinced I was having a heart attack.
+In my third year, I started skipping lectures. I wasn’t partying or being lazy. I just couldn’t concentrate anymore. Even reading a paragraph was too much. Nights became longer, sleep became rare, and I felt like I was running on fumes. I would stay silent around people, but inside I was screaming.
 
-That night, I went to the ER. After running tests, the doctor told me it was anxiety. I felt embarrassed and frustrated. "How could my mind do this to my body?"
+## Realizing Something Was Wrong
 
-## The Turning Point
+One day, after failing to present in class because I froze, I overheard a classmate saying, “He’s falling off hard.” That hit me. I knew I needed help, but didn’t know where to begin. Therapy felt out of reach. So I started researching ways to understand what was going on inside me.
 
-My girlfriend at the time gave me an ultimatum: get help or she was leaving. I was angry at first, but I realized she was right. I was becoming someone I didn't recognize—irritable, withdrawn, and constantly on edge.
+## How This Platform Could Have Helped
 
-I started with my primary care doctor, who referred me to a therapist specializing in anxiety disorders. Dr. Sarah Chen changed my life.
+If **Safe Haven** had been around then, it could’ve changed everything. Here's how:
+- **Journaling privately** would’ve helped me release what I couldn't say to anyone.
+- The **mood tracker** could've shown me that this wasn’t "just stress" — it was a pattern.
+- **Real stories** from other students would've reminded me I’m not alone.
+- Watching my **mind garden grow** as I took small steps like logging moods or writing would’ve encouraged me to keep going.
 
-## What Actually Worked
+## Why Platforms Like This Matter
 
-### 1. Understanding My Triggers
-We identified that my anxiety spiked around:
-- Performance situations (presentations, deadlines)
-- Feeling trapped (elevators, traffic, long meetings)
-- Uncertainty about the future
-- Conflict with colleagues or friends
+We don’t talk about mental health at INES — not really. Most people are scared to say they’re struggling. This platform gives us quiet tools to heal in private. And that’s powerful.
 
-### 2. Cognitive Behavioral Therapy (CBT)
-I learned to challenge catastrophic thoughts:
-- **Old thought**: "This presentation will be a disaster and everyone will think I'm incompetent"
-- **New thought**: "I'm prepared, and even if it's not perfect, that's normal and okay"
-
-### 3. Exposure Therapy
-Gradually facing my fears in controlled ways:
-- Week 1: Attended a small team meeting
-- Week 3: Gave a 5-minute presentation to my immediate team
-- Week 6: Presented to the entire department
-- Week 10: Led a client presentation
-
-### 4. Practical Tools That Saved Me
-
-**Box Breathing** (4-4-4-4 pattern):
-This became my go-to during meetings. Nobody could tell I was doing it, and it worked almost immediately.
-
-**The 5-4-3-2-1 Grounding Technique**:
-When panic started, I'd identify 5 things I could see, 4 I could touch, 3 I could hear, 2 I could smell, 1 I could taste. It pulled me back to the present.
-
-**Progressive Muscle Relaxation**:
-I'd do this every night before bed. Tense each muscle group for 5 seconds, then release. It helped me sleep and reduced overall tension.
-
-### 5. Lifestyle Changes
-
-**Exercise**: Started with 15-minute walks, built up to running 3 miles, 4 times a week. This was huge for managing baseline anxiety.
-
-**Sleep hygiene**: No screens 1 hour before bed, consistent sleep schedule, blackout curtains. Better sleep meant better emotional regulation.
-
-**Caffeine reduction**: Cut from 4 cups of coffee to 1 cup before 10 AM. This alone reduced my daily anxiety by 30%.
-
-**Mindfulness**: Used the Headspace app for 10 minutes daily. It taught me to observe anxious thoughts without being controlled by them.
-
-## The Medication Decision
-
-After six months of therapy, I was better but still struggling. Dr. Chen suggested considering medication. I was resistant at first—I wanted to "beat this naturally."
-
-I started on a low dose of sertraline (Zoloft). The side effects sucked for the first two weeks (nausea, weird dreams), but then something shifted. The constant background anxiety that I'd lived with for years just... lifted.
-
-I'm still on medication two years later, and I'm okay with that. It's like wearing glasses—it helps me function at my best.
+> “Sometimes, we need a place that listens, even if no one else does. That’s what Safe Haven feels like.”
 
 ## Where I Am Now
 
-I still get anxious sometimes, but it's normal anxiety, not the overwhelming panic that used to control my life. I can:
-- Give presentations without fear
-- Handle conflict calmly
-- Drive anywhere without worry
-- Sleep through the night consistently
-- Enjoy social situations again
+I'm still on my journey. I journal more now. I track my moods. I understand myself better. And I know when it's time to rest.
 
-## What I Wish I'd Known Earlier
-
-1. **Anxiety is medical, not weakness**: You wouldn't judge someone for taking insulin for diabetes.
-
-2. **Therapy isn't just talking**: CBT gave me actual tools and strategies.
-
-3. **Medication can be temporary**: I initially saw it as a lifelong commitment, but many people use it as a bridge while building coping skills.
-
-4. **Your body keeps the score**: Physical symptoms are real and need physical solutions too (exercise, sleep, nutrition).
-
-5. **Recovery isn't linear**: I had bad days even after months of improvement. That's normal.
-
-## Advice for Others
-
-If you're struggling with anxiety:
-- Start with one small change (therapy, exercise, cutting caffeine)
-- Track your triggers and patterns
-- Don't isolate yourself—tell someone you trust
-- Consider all treatment options without judgment
-- Be patient with the process
-
-Getting help was the best decision I ever made. I'm not just managing my anxiety now—I'm thriving despite it. You can too.
-
-*If you're having thoughts of self-harm, please reach out to the National Suicide Prevention Lifeline: 988 or text HOME to 741741 for the Crisis Text Line.*`,
-        verified: true
-    },
-    {
-  id: 'story-3',
-  title: 'College Burnout and the Road to Rediscovery',
-  author: 'Elijah, 23, Final Year University Student',
-  readTime: '7 min',
-  tags: ['burnout', 'college', 'anxiety', 'identity'],
-  excerpt: 'My mental health started crashing during my final year. I thought I was lazy or weak—turns out I was completely burned out.',
-  content: `# College Burnout and the Road to Rediscovery
+To anyone going through it — your mind matters. You’re not weak. You’re just carrying more than most can see.`,
+    verified: true
+  },
+  {
+    id: 'story-2',
+    title: 'College Burnout and the Road to Rediscovery',
+    author: 'Elijah, 23, Final Year University Student',
+    readTime: '7 min',
+    tags: ['burnout', 'college', 'anxiety', 'identity'],
+    excerpt: 'My mental health started crashing during my final year. I thought I was lazy or weak—turns out I was completely burned out.',
+    content: `# College Burnout and the Road to Rediscovery
 
 *Elijah, 23, Final Year Student from Johannesburg*
 
@@ -163,16 +95,16 @@ I’m finishing my degree, but on my terms. I’ve dropped the need to prove mys
 - Grades third
 
 If you’re a student struggling, know this: You’re not broken. You’re human. Ask for help. Life gets better when you stop carrying it all alone.`,
-  verified: true
-},
-{
-  id: 'story-4',
-  title: 'Becoming My Own Safe Space After Years of Hiding',
-  author: 'Jayden, 25, Freelance Videographer',
-  readTime: '6 min',
-  tags: ['anxiety', 'self-esteem', 'healing', 'loneliness'],
-  excerpt: 'I spent years pretending everything was okay—smiling in public and breaking down alone. Here’s how I stopped hiding and started healing.',
-  content: `# Becoming My Own Safe Space After Years of Hiding
+    verified: true
+  },
+  {
+    id: 'story-3',
+    title: 'Becoming My Own Safe Space After Years of Hiding',
+    author: 'Jayden, 25, Freelance Videographer',
+    readTime: '6 min',
+    tags: ['anxiety', 'self-esteem', 'healing', 'loneliness'],
+    excerpt: 'I spent years pretending everything was okay—smiling in public and breaking down alone. Here’s how I stopped hiding and started healing.',
+    content: `# Becoming My Own Safe Space After Years of Hiding
 
 *Jayden, 25, Freelance Videographer from Kigali*
 
@@ -218,8 +150,8 @@ I still have tough days, but now I:
 - Talk to friends with depth, not just updates
 
 If you’re in a dark place, know this: You don’t have to pretend. Find one person. Say one real thing. That’s how healing starts.`,
-  verified: true
-}
+    verified: true
+  }
 
 ];
 

@@ -278,17 +278,42 @@ export default function DashboardPage() {
 
   const startRelaxation = () => {
     setIsRelaxationActive(true);
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       setRelaxationTime(prev => {
         if (prev <= 1) {
           setIsRelaxationActive(false);
           clearInterval(timer);
+          // Record meditation session when relaxation completes
+          recordMeditationSession(300, 'breathing');
           return 300;
         }
         return prev - 1;
       });
     }, 1000);
     setRelaxationTimer(timer);
+  };
+
+  // Record meditation session (breathing exercise)
+  const recordMeditationSession = async (duration: number, type: string) => {
+    try {
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('token='))
+        ?.split('=')[1];
+      if (!token) return;
+      await fetch('/api/meditation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ duration, type }),
+      });
+      // Optionally refresh dashboard data to update stats
+      fetchDashboardData();
+    } catch (error) {
+      console.error('Failed to record meditation session:', error);
+    }
   };
 
   const pauseRelaxation = () => {
@@ -450,12 +475,12 @@ export default function DashboardPage() {
                 <BookOpen className="w-5 h-5 group-hover:animate-pulse" />
                 <span className="font-medium">Write Journal</span>
               </Link>
-              <Link href="/profile?tab=daily-activity" className="group w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-lg transform">
+              <Link href="/mind-garden" className="group w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-lg transform">
                 <svg className="w-5 h-5 group-hover:animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
                   <path d="M8 12h8M12 8v8" />
                 </svg>
-                <span className="font-medium">Complete Daily Activities</span>
+                <span className="font-medium">Nurture your Garden</span>
               </Link>
               <Link href="/games" className="group w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white p-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-lg transform">
                 <Gamepad2 className="w-5 h-5 group-hover:animate-pulse" />
@@ -724,7 +749,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      <SoundPlayer src="/sounds/paper-rustle.mp3" />
+      {/* Removed paper-rustle sound. Only ambient rain is used. */}
       <style jsx>{`
         @keyframes breath-expand {
           0% { transform: scale(0.9); }

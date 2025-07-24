@@ -111,6 +111,7 @@ model Meditation {
   userId    String
   createdAt DateTime @default(now())
   type      String // breathing, mindfulness, etc.
+  duration  Int // duration in seconds
 }
 
 // Mood tracking model

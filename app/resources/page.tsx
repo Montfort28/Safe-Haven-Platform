@@ -170,30 +170,42 @@ export default function ResourcesPage() {
 
   // ...existing code...
 
-  const mappedStories: Story[] = stories.map((s, idx) => {
-    let name = '', age = 0, issue: 'anxiety' | 'depression' = 'anxiety';
-    if (s.author) {
-      const match = s.author.match(/([A-Za-z]+), (\d+)/);
-      if (match) {
-        name = match[1];
-        age = parseInt(match[2], 10);
-      } else {
-        name = s.author.split(',')[0];
-        age = 0;
+  // Place the new story first and ensure its details are shown correctly
+  const mappedStories: Story[] = [
+    {
+      id: 'story-4',
+      name: 'Anonymous',
+      age: 24,
+      title: 'Mental Fog, Sleepless Nights, and a Silent Battle',
+      summary: 'I stopped going to class, thinking it was just stress. But I was battling something deeper, and I didn’t know how to talk about it.',
+      content: `# Mental Fog, Sleepless Nights, and a Silent Battle\n\n*Anonymous, 24, Final Year Student at INES Ruhengeri*\n\nI never thought I'd deal with depression. I'm the kind of guy who always laughs with people, always keeps it moving. But somewhere between deadlines, noisy roommates in the ghetto, and pressure from all sides — something cracked.\n\n## When Normal Got Too Heavy\n\nIn my third year, I started skipping lectures. I wasn’t partying or being lazy. I just couldn’t concentrate anymore. Even reading a paragraph was too much. Nights became longer, sleep became rare, and I felt like I was running on fumes. I would stay silent around people, but inside I was screaming.\n\n## Realizing Something Was Wrong\n\nOne day, after failing to present in class because I froze, I overheard a classmate saying, “He’s falling off hard.” That hit me. I knew I needed help, but didn’t know where to begin. Therapy felt out of reach. So I started researching ways to understand what was going on inside me.\n\n## How This Platform Could Have Helped\n\nIf **Safe Haven** had been around then, it could’ve changed everything. Here's how:\n- **Journaling privately** would’ve helped me release what I couldn't say to anyone.\n- The **mood tracker** could've shown me that this wasn’t "just stress" — it was a pattern.\n- **Real stories** from other students would've reminded me I’m not alone.\n- Watching my **mind garden grow** as I took small steps like logging moods or writing would’ve encouraged me to keep going.\n\n## Why Platforms Like This Matter\n\nWe don’t talk about mental health at INES — not really. Most people are scared to say they’re struggling. This platform gives us quiet tools to heal in private. And that’s powerful.\n\n> “Sometimes, we need a place that listens, even if no one else does. That’s what Safe Haven feels like.”\n\n## Where I Am Now\n\nI'm still on my journey. I journal more now. I track my moods. I understand myself better. And I know when it's time to rest.\n\nTo anyone going through it — your mind matters. You’re not weak. You’re just carrying more than most can see.`,
+      issue: 'depression',
+    },
+    ...stories.slice(1).map((s) => {
+      let name = '', age = 0, issue: 'anxiety' | 'depression' = 'anxiety';
+      if (s.author) {
+        const match = s.author.match(/([A-Za-z]+), (\d+)/);
+        if (match) {
+          name = match[1];
+          age = parseInt(match[2], 10);
+        } else {
+          name = s.author.split(',')[0];
+          age = 0;
+        }
       }
-    }
-    if (s.tags && s.tags.some(t => t.toLowerCase().includes('depress'))) issue = 'depression';
-    else issue = 'anxiety';
-    return {
-      id: s.id,
-      name,
-      age,
-      title: s.title,
-      summary: s.excerpt,
-      content: s.content,
-      issue,
-    };
-  });
+      if (s.tags && s.tags.some(t => t.toLowerCase().includes('depress'))) issue = 'depression';
+      else issue = 'anxiety';
+      return {
+        id: s.id,
+        name,
+        age,
+        title: s.title,
+        summary: s.excerpt,
+        content: s.content,
+        issue,
+      };
+    })
+  ];
 
   const extraStories = [
     {
