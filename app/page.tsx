@@ -3,14 +3,11 @@ import Image from 'next/image';
 import {
   ArrowRight,
   BookOpen,
-  Check,
   Heart,
   Leaf,
   LockKeyhole,
-  MessageCircle,
   Play,
   Sprout,
-  Sun,
 } from 'lucide-react';
 import BrandLogo from '@/components/BrandLogo';
 
@@ -69,13 +66,16 @@ export default function HomePage() {
             Mental wellness, your way
           </span>
           <h1 id="hero-title">
-            Stronger mind.
+            A stronger mind
             <br />
-            <span>Better you.</span>
+            starts with
+            <br />
+            <span>feeling good within.</span>
           </h1>
           <p className="home-hero-description">
-            Compassionate care and practical, science-informed tools to help
-            you feel more grounded in every part of life.
+            Find more calm in everyday life with private check-ins, thoughtful
+            reflection and gentle, science-informed tools for building habits
+            that feel right for you.
           </p>
 
           <div className="home-hero-actions">
@@ -91,16 +91,6 @@ export default function HomePage() {
             </a>
           </div>
 
-          <div className="home-trust-note">
-            <span className="home-trust-mark" aria-hidden="true">
-              <Check size={15} />
-            </span>
-            <p>
-              A private space to pause, reflect
-              <br />
-              and take your next small step.
-            </p>
-          </div>
         </div>
 
         <div className="home-hero-art" aria-label="A calm space for your wellbeing">
@@ -130,16 +120,16 @@ export default function HomePage() {
         <p className="home-platforms-heading">Other platforms in mental wellness</p>
         <div className="home-platform-logos" aria-label="BetterHelp, Talkspace, and Headspace">
           <span className="home-platform-logo home-platform-betterhelp">
-            <Leaf aria-hidden="true" size={22} strokeWidth={2.2} />
-            <span>betterhelp</span>
+            <Image src="/images/BetterHelp.png" alt="" width={40} height={40} />
+            <span>BetterHelp</span>
           </span>
           <span className="home-platform-logo home-platform-talkspace">
-            <MessageCircle aria-hidden="true" size={23} strokeWidth={2.2} />
-            <span>talkspace</span>
+            <Image src="/images/talkspace.png" alt="" width={40} height={40} />
+            <span>Talkspace</span>
           </span>
           <span className="home-platform-logo home-platform-headspace">
-            <Sun aria-hidden="true" size={23} strokeWidth={2.1} />
-            <span>headspace</span>
+            <Image src="/images/Headspace.png" alt="" width={40} height={40} />
+            <span>Headspace</span>
           </span>
         </div>
       </section>

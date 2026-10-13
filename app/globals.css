@@ -315,7 +315,7 @@ button[class*="bg-"]:hover {
 .home-section h2 {
   margin: 25px 0 16px;
   color: var(--brand-ink);
-  font-size: clamp(3rem, 4.5vw, 4.1rem);
+  font-size: clamp(3rem, 4.5vw, 4.3rem);
   font-weight: 700;
   letter-spacing: -0.065em;
   line-height: 1.04;
@@ -327,11 +327,11 @@ button[class*="bg-"]:hover {
 }
 
 .home-hero-description {
-  max-width: 450px;
+  max-width: 500px;
   margin: 0;
   color: var(--brand-ink);
-  font-size: 1.05rem;
-  line-height: 1.75;
+  font-size: 1.1rem;
+  line-height: 1.8;
   opacity: 0.82;
 }
 
@@ -409,12 +409,13 @@ button[class*="bg-"]:hover {
 .home-manifest-image {
   object-fit: cover;
   object-position: 62% center;
+  transform: translateX(-24px);
   -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 24%, #000 100%),
+    linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-image:
-    linear-gradient(to right, transparent 0%, #000 24%, #000 100%),
+    linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
   mask-composite: intersect;
 }
@@ -494,7 +495,7 @@ button[class*="bg-"]:hover {
 .home-platforms-heading {
   max-width: 220px;
   margin: 0;
-  font-family: Georgia, serif !important;
+  font-family: inherit;
   font-size: 1.05rem;
   line-height: 1.45;
 }
@@ -510,32 +511,32 @@ button[class*="bg-"]:hover {
 .home-platform-logo {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   color: var(--brand-cream);
-  font-size: clamp(1rem, 1.4vw, 1.28rem);
+  font-size: 0.95rem;
   font-weight: 600;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
-.home-platform-betterhelp svg {
-  color: var(--brand-sage-light);
+.home-platform-logo img {
+  width: 34px;
+  height: 34px;
+  padding: 3px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: var(--brand-cream);
 }
 
-.home-platform-talkspace {
-  font-weight: 500;
+.home-platform-betterhelp img {
+  background: var(--brand-sage);
 }
 
-.home-platform-talkspace svg {
-  color: var(--brand-primary);
-}
-
-.home-platform-headspace {
-  font-weight: 500;
-}
-
-.home-platform-headspace svg {
-  color: var(--brand-sage-light);
+.home-platform-talkspace img,
+.home-platform-headspace img {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .home-color-band {
@@ -1200,11 +1201,12 @@ button[class*="bg-"]:hover {
 
   .home-hero h1 {
     margin-top: 22px;
-    font-size: clamp(3.1rem, 13vw, 4.25rem);
+    font-size: clamp(2.25rem, 10vw, 3.2rem);
   }
 
   .home-hero-description {
-    font-size: 0.98rem;
+    max-width: 100%;
+    font-size: 1rem;
   }
 
   .home-hero-actions {
@@ -1232,12 +1234,13 @@ button[class*="bg-"]:hover {
   }
 
   .home-manifest-image {
+    transform: none;
     object-position: 62% center;
     -webkit-mask-image:
-      linear-gradient(to right, transparent 0%, #000 18%, #000 100%),
+      linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%),
       linear-gradient(to bottom, transparent 0%, #000 8%, #000 90%, transparent 100%);
     mask-image:
-      linear-gradient(to right, transparent 0%, #000 18%, #000 100%),
+      linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%),
       linear-gradient(to bottom, transparent 0%, #000 8%, #000 90%, transparent 100%);
   }
 
@@ -1259,13 +1262,13 @@ button[class*="bg-"]:hover {
   }
 
   .home-platform-logo {
-    gap: 6px;
-    font-size: clamp(0.82rem, 4vw, 1rem);
+    gap: 7px;
+    font-size: clamp(0.74rem, 3.2vw, 0.9rem);
   }
 
-  .home-platform-logo svg {
-    width: 18px;
-    height: 18px;
+  .home-platform-logo img {
+    width: 28px;
+    height: 28px;
   }
 
   .home-art-card {
