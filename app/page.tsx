@@ -116,20 +116,23 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-platforms" aria-label="Other mental wellness platforms">
-        <p className="home-platforms-heading">Other platforms in mental wellness</p>
-        <div className="home-platform-logos" aria-label="BetterHelp, Talkspace, and Headspace">
+      <section className="home-platforms" aria-label="Mental health platforms">
+        <div className="home-platform-logos" aria-label="BetterHelp, Talkspace, Headspace, and 7 Cups">
           <span className="home-platform-logo home-platform-betterhelp">
-            <Image src="/images/BetterHelp.png" alt="" width={40} height={40} />
+            <Image src="/images/BetterHelp.png" alt="" width={52} height={52} />
             <span>BetterHelp</span>
           </span>
           <span className="home-platform-logo home-platform-talkspace">
-            <Image src="/images/talkspace.png" alt="" width={40} height={40} />
+            <Image src="/images/talkspace.png" alt="" width={52} height={52} />
             <span>Talkspace</span>
           </span>
           <span className="home-platform-logo home-platform-headspace">
-            <Image src="/images/Headspace.png" alt="" width={40} height={40} />
+            <Image src="/images/Headspace.png" alt="" width={52} height={52} />
             <span>Headspace</span>
+          </span>
+          <span className="home-platform-logo home-platform-seven-cups">
+            <Image src="/images/7%20cups.png" alt="" width={52} height={52} />
+            <span>7 Cups</span>
           </span>
         </div>
       </section>

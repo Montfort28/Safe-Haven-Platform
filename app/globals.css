@@ -277,7 +277,7 @@ button[class*="bg-"]:hover {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
-  gap: clamp(32px, 4.5vw, 68px);
+  gap: clamp(12px, 1.4vw, 18px);
 }
 
 .home-hero-copy {
@@ -409,7 +409,7 @@ button[class*="bg-"]:hover {
 .home-manifest-image {
   object-fit: cover;
   object-position: 62% center;
-  transform: translateX(-24px);
+  transform: translateX(-112px);
   -webkit-mask-image:
     linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
@@ -486,42 +486,33 @@ button[class*="bg-"]:hover {
   padding: 22px max(24px, calc((100% - 1210px) / 2));
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 32px;
+  justify-content: center;
   color: var(--brand-cream);
   background: #203b31;
 }
 
-.home-platforms-heading {
-  max-width: 220px;
-  margin: 0;
-  font-family: inherit;
-  font-size: 1.05rem;
-  line-height: 1.45;
-}
-
 .home-platform-logos {
-  flex: 1;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  gap: clamp(20px, 4vw, 56px);
+  gap: clamp(16px, 3vw, 42px);
 }
 
 .home-platform-logo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: var(--brand-cream);
-  font-size: 0.95rem;
+  font-size: 1.22rem;
   font-weight: 600;
   letter-spacing: 0;
   white-space: nowrap;
 }
 
 .home-platform-logo img {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   padding: 3px;
   border-radius: 50%;
   object-fit: contain;
@@ -534,6 +525,17 @@ button[class*="bg-"]:hover {
 
 .home-platform-talkspace img,
 .home-platform-headspace img {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.home-platform-headspace img {
+  width: 56px;
+  height: 56px;
+}
+
+.home-platform-seven-cups img {
   padding: 0;
   border-radius: 0;
   background: transparent;
@@ -1251,24 +1253,25 @@ button[class*="bg-"]:hover {
     gap: 20px;
   }
 
-  .home-platforms-heading {
-    max-width: none;
-  }
-
   .home-platform-logos {
     width: 100%;
     justify-content: space-between;
-    gap: 12px;
+    gap: 8px;
   }
 
   .home-platform-logo {
-    gap: 7px;
-    font-size: clamp(0.74rem, 3.2vw, 0.9rem);
+    gap: 6px;
+    font-size: clamp(0.78rem, 3.2vw, 0.94rem);
   }
 
   .home-platform-logo img {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .home-platform-headspace img {
+    width: 40px;
+    height: 40px;
   }
 
   .home-art-card {
