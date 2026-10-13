@@ -122,16 +122,16 @@ const MoodPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const moodEmojis = [
-    { value: 1, emoji: '😭', label: 'Terrible', color: '#ef4444', className: '' },
-    { value: 2, emoji: '😢', label: 'Very Sad', color: '#f97316', className: '' },
-    { value: 3, emoji: '😔', label: 'Sad', color: '#eab308', className: '' },
-    { value: 4, emoji: '😕', label: 'Down', color: '#84cc16', className: '' },
-    { value: 5, emoji: '😐', label: 'Neutral', color: '#06b6d4', className: '' },
-    { value: 6, emoji: '🙂', label: 'Okay', color: '#3b82f6', className: '' },
-    { value: 7, emoji: '😊', label: 'Good', color: '#8b5cf6', className: '' },
-    { value: 8, emoji: '😄', label: 'Great', color: '#10b981', className: '' },
-    { value: 9, emoji: '😃', label: 'Amazing', color: '#059669', className: '' },
-    { value: 10, emoji: '🤩', label: 'Incredible', color: '#047857', className: '' },
+    { value: 1, emoji: '😭', label: 'Terrible', color: '#DB9558', className: '' },
+    { value: 2, emoji: '😢', label: 'Very Sad', color: '#DB9558', className: '' },
+    { value: 3, emoji: '😔', label: 'Sad', color: '#A8BBA3', className: '' },
+    { value: 4, emoji: '😕', label: 'Down', color: '#97A87A', className: '' },
+    { value: 5, emoji: '😐', label: 'Neutral', color: '#A8BBA3', className: '' },
+    { value: 6, emoji: '🙂', label: 'Okay', color: '#97A87A', className: '' },
+    { value: 7, emoji: '😊', label: 'Good', color: '#97A87A', className: '' },
+    { value: 8, emoji: '😄', label: 'Great', color: '#97A87A', className: '' },
+    { value: 9, emoji: '😃', label: 'Amazing', color: '#97A87A', className: '' },
+    { value: 10, emoji: '🤩', label: 'Incredible', color: '#97A87A', className: '' },
   ];
 
   const commonTriggers = [
@@ -263,8 +263,8 @@ const MoodPage = () => {
 
     // Draw background gradient
     const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.1)');
-    gradient.addColorStop(1, 'rgba(147, 197, 253, 0.1)');
+    gradient.addColorStop(0, 'rgba(219, 149, 88, 0.1)');
+    gradient.addColorStop(1, 'rgba(168, 187, 163, 0.1)');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
 
@@ -275,7 +275,7 @@ const MoodPage = () => {
     const yScale = (height - 2 * padding) / 9;
 
     // Draw grid lines
-    ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+    ctx.strokeStyle = 'rgba(151, 168, 122, 0.3)';
     ctx.lineWidth = 1;
     for (let i = 1; i <= 9; i++) {
       const y = height - padding - (i * yScale);
@@ -286,7 +286,7 @@ const MoodPage = () => {
     }
 
     // Draw smooth mood curve (Bezier)
-    ctx.strokeStyle = '#3b82f6';
+    ctx.strokeStyle = '#DB9558';
     ctx.lineWidth = 3;
     ctx.beginPath();
     for (let i = 0; i < data.length; i++) {
@@ -311,13 +311,13 @@ const MoodPage = () => {
     data.forEach((point, index) => {
       const x = padding + (index * xStep);
       const y = height - padding - ((point.mood - 1) * yScale);
-      ctx.fillStyle = moodEmojis.find(e => e.value === Math.round(point.mood))?.color || '#3b82f6';
+      ctx.fillStyle = moodEmojis.find(e => e.value === Math.round(point.mood))?.color || '#DB9558';
       ctx.beginPath();
       ctx.arc(x, y, 6, 0, 2 * Math.PI);
       ctx.fill();
       // Add mood emoji (no animation)
       const emoji = moodEmojis.find(e => e.value === Math.round(point.mood))?.emoji || '😐';
-      ctx.font = '16px sans-serif';
+      ctx.font = '16px "Poppins", sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(emoji, x, y - 15);
     });

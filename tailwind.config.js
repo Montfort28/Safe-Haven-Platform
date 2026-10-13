@@ -1,4 +1,47 @@
 /** @type {import('tailwindcss').Config} */
+const primaryScale = {
+  50: '#FCF9EA',
+  100: '#FCF9EA',
+  200: '#A8BBA3',
+  300: '#A8BBA3',
+  400: '#DB9558',
+  500: '#DB9558',
+  600: '#97A87A',
+  700: '#44513D',
+  800: '#44513D',
+  900: '#44513D',
+  950: '#44513D',
+};
+
+const sageScale = {
+  ...primaryScale,
+  400: '#97A87A',
+  500: '#97A87A',
+  600: '#97A87A',
+};
+
+const neutralScale = {
+  ...primaryScale,
+  400: '#A8BBA3',
+  500: '#97A87A',
+  600: '#97A87A',
+};
+
+const themeColors = {
+  ...Object.fromEntries(
+    ['amber', 'blue', 'indigo', 'orange', 'pink', 'purple', 'red', 'rose', 'violet', 'yellow']
+      .map((name) => [name, primaryScale])
+  ),
+  ...Object.fromEntries(
+    ['cyan', 'emerald', 'green', 'sky', 'teal']
+      .map((name) => [name, sageScale])
+  ),
+  ...Object.fromEntries(
+    ['gray', 'slate', 'zinc']
+      .map((name) => [name, neutralScale])
+  ),
+};
+
 module.exports = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,47 +51,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        blue: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+        ...themeColors,
+        black: '#44513D',
+        white: '#FCF9EA',
+        brand: {
+          primary: '#DB9558',
+          cream: '#FCF9EA',
+          sage: '#97A87A',
+          'sage-light': '#A8BBA3',
+          ink: '#44513D',
         },
-        slate: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-        },
-        indigo: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-        },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -77,6 +89,14 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+      },
+      fontFamily: {
+        sans: ['"Solitus Sans Serif"', 'Solitus', 'Arial', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

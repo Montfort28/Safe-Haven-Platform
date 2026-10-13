@@ -292,10 +292,10 @@ export default function MindGardenPage() {
     }, [stage, prevStage]);
 
     const healthScale = 0.7 + 0.45 * Math.max(0, Math.min(health, 100)) / 100;
-    const healthColor = health > 80 ? '#22c55e' : health > 60 ? '#84cc16' : health > 40 ? '#eab308' : '#ef4444';
+    const healthColor = health > 80 ? '#97A87A' : health > 60 ? '#A8BBA3' : health > 40 ? '#DB9558' : '#DB9558';
     // Helper for extra details
-    const flowerColors = ['#fbbf24', '#f472b6', '#a3e635', '#f87171', '#60a5fa'];
-    const fruitColors = ['#f87171', '#fbbf24', '#a3e635', '#f472b6'];
+    const flowerColors = ['#DB9558', '#A8BBA3', '#97A87A', '#FCF9EA'];
+    const fruitColors = ['#DB9558', '#A8BBA3', '#97A87A', '#FCF9EA'];
     // ...existing getTreeElements logic...
     const stages = {
       seed: { trunk: 0, canopy: 0, roots: 0, branches: 0 },
@@ -317,7 +317,7 @@ export default function MindGardenPage() {
       trunk: {
         height: currentStage.trunk * healthScale,
         width: Math.max(6, currentStage.trunk * 0.13 * healthScale),
-        color: '#8b4513',
+        color: '#DB9558',
       },
       canopy: {
         size: currentStage.canopy * healthScale,
@@ -344,10 +344,10 @@ export default function MindGardenPage() {
         {/* Ground Layer as a styled div */}
         <div className="absolute left-0 right-0" style={{
           bottom: 0, height: 64, zIndex: 20,
-          background: 'linear-gradient(to bottom, #4a7c59 0%, #3a5a47 20%, #8b4513 50%, #a0522d 80%, #654321 100%)',
+          background: 'linear-gradient(to bottom, #97A87A 0%, #A8BBA3 20%, #DB9558 50%, #DB9558 80%, #97A87A 100%)',
           borderTopLeftRadius: '1.5rem',
           borderTopRightRadius: '1.5rem',
-          boxShadow: '0 -4px 24px 0 rgba(60,40,20,0.15)'
+          boxShadow: '0 -4px 24px 0 rgba(151,168,122,0.15)'
         }}>
           {/* Grass surface */}
           <div style={{
@@ -356,7 +356,7 @@ export default function MindGardenPage() {
             left: 0,
             width: '100%',
             height: '12px',
-            background: '#4a7c59',
+            background: '#97A87A',
             opacity: 0.9,
             borderTopLeftRadius: '1.5rem',
             borderTopRightRadius: '1.5rem',
@@ -372,7 +372,7 @@ export default function MindGardenPage() {
                 <path
                   key={i}
                   d={`M${x} 16 Q${x + curve} ${16 - height} ${x + curve * 0.5} ${14 - height}`}
-                  stroke="#4a7c59"
+                  stroke="#97A87A"
                   strokeWidth="1"
                   fill="none"
                   opacity={opacity}
@@ -387,14 +387,14 @@ export default function MindGardenPage() {
           <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
             <defs>
               <linearGradient id="trunkGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#654321" />
-                <stop offset="30%" stopColor="#8b4513" />
-                <stop offset="70%" stopColor="#a0522d" />
-                <stop offset="100%" stopColor="#654321" />
+                <stop offset="0%" stopColor="#97A87A" />
+                <stop offset="30%" stopColor="#DB9558" />
+                <stop offset="70%" stopColor="#A8BBA3" />
+                <stop offset="100%" stopColor="#97A87A" />
               </linearGradient>
               <radialGradient id="canopyGradient" cx="0.3" cy="0.3" r="0.8">
                 <stop offset="0%" stopColor={tree.canopy.color} stopOpacity={tree.canopy.opacity} />
-                <stop offset="80%" stopColor="#1a4a2e" stopOpacity={tree.canopy.opacity * 0.7} />
+                <stop offset="80%" stopColor="#97A87A" stopOpacity={tree.canopy.opacity * 0.7} />
               </radialGradient>
             </defs>
 
@@ -410,7 +410,7 @@ export default function MindGardenPage() {
                     <path
                       key={i}
                       d={`M200 ${groundY} Q${200 + (x - 200) * 0.6} ${groundY + (y - groundY) * 0.8} ${x} ${y}`}
-                      stroke="#654321"
+                      stroke="#DB9558"
                       strokeWidth={Math.max(1, 4 - i * 0.3)}
                       fill="none"
                     />
@@ -423,8 +423,8 @@ export default function MindGardenPage() {
             {stage === 'seed' && (
               <g>
                 {/* Seed visually embedded in the ground (half above, half below ground) */}
-                <ellipse cx="200" cy={groundY + 18} rx="6" ry="9" fill="#8b4513" />
-                <ellipse cx="200" cy={groundY + 16} rx="4" ry="6" fill="#cd853f" />
+                <ellipse cx="200" cy={groundY + 18} rx="6" ry="9" fill="#DB9558" />
+                <ellipse cx="200" cy={groundY + 16} rx="4" ry="6" fill="#A8BBA3" />
               </g>
             )}
 
@@ -432,10 +432,10 @@ export default function MindGardenPage() {
             {stage === 'germination' && (
               <g>
                 {/* Seed with crack, grounded at y=groundY */}
-                <ellipse cx="200" cy={groundY} rx="6" ry="9" fill="#8b4513" />
-                <path d={`M194 ${groundY} L206 ${groundY}`} stroke="#4a7c59" strokeWidth="1" />
+                <ellipse cx="200" cy={groundY} rx="6" ry="9" fill="#DB9558" />
+                <path d={`M194 ${groundY} L206 ${groundY}`} stroke="#97A87A" strokeWidth="1" />
                 {/* Small root tip */}
-                <path d={`M200 ${groundY + 9} Q198 ${groundY + 15} 195 ${groundY + 20}`} stroke="#cd853f" strokeWidth="2" fill="none" />
+                <path d={`M200 ${groundY + 9} Q198 ${groundY + 15} 195 ${groundY + 20}`} stroke="#A8BBA3" strokeWidth="2" fill="none" />
               </g>
             )}
 
@@ -448,15 +448,15 @@ export default function MindGardenPage() {
                   y={groundY - tree.trunk.height}
                   width="4"
                   height={tree.trunk.height}
-                  fill="#4a7c59"
+                  fill="#97A87A"
                   rx="2"
                 />
                 {/* First tiny leaves */}
                 <ellipse cx="195" cy={groundY - tree.trunk.height} rx="8" ry="4" fill={tree.canopy.color} opacity="0.9" />
                 <ellipse cx="205" cy={groundY - tree.trunk.height - 2} rx="8" ry="4" fill={tree.canopy.color} opacity="0.9" />
                 {/* Visible roots */}
-                <path d={`M200 ${groundY} Q195 ${groundY + 10} 190 ${groundY + 20}`} stroke="#8b4513" strokeWidth="2" fill="none" />
-                <path d={`M200 ${groundY} Q205 ${groundY + 10} 210 ${groundY + 20}`} stroke="#8b4513" strokeWidth="2" fill="none" />
+                <path d={`M200 ${groundY} Q195 ${groundY + 10} 190 ${groundY + 20}`} stroke="#DB9558" strokeWidth="2" fill="none" />
+                <path d={`M200 ${groundY} Q205 ${groundY + 10} 210 ${groundY + 20}`} stroke="#DB9558" strokeWidth="2" fill="none" />
               </g>
             )}
 
@@ -480,7 +480,7 @@ export default function MindGardenPage() {
                     y1={groundY - i * 14}
                     x2={200 + tree.trunk.width / 2 - 1}
                     y2={groundY - i * 14}
-                    stroke="#543821"
+                    stroke="#DB9558"
                     strokeWidth="0.5"
                     opacity="0.6"
                   />
@@ -502,7 +502,7 @@ export default function MindGardenPage() {
                         y1={y1}
                         x2={x2}
                         y2={y2}
-                        stroke="#7c4a03"
+                        stroke="#DB9558"
                         strokeWidth={2.2 - i * 0.3}
                         opacity="0.7"
                         strokeLinecap="round"
@@ -520,7 +520,7 @@ export default function MindGardenPage() {
                             cy={ly}
                             rx={6 + tree.canopy.size / 16}
                             ry={10 + tree.canopy.size / 18}
-                            fill="#4caf50"
+                            fill="#97A87A"
                             opacity={0.7 + 0.2 * Math.random()}
                             transform={`rotate(${leafAngle} ${lx} ${ly})`}
                           />
@@ -536,7 +536,7 @@ export default function MindGardenPage() {
                   rx={tree.canopy.size / 2 + tree.branches * 2}
                   ry={tree.canopy.size / 2}
                   fill="url(#canopyGradient)"
-                  style={glow ? { filter: 'drop-shadow(0 0 32px #fef08a)' } : {}}
+                  style={glow ? { filter: 'drop-shadow(0 0 32px #FCF9EA)' } : {}}
                 />
                 {/* Extra foliage for mature/ancient/legendary trees */}
                 {(stage === 'matureTree' || stage === 'ancientTree' || stage === 'legendaryTree') && (
@@ -552,7 +552,7 @@ export default function MindGardenPage() {
                         cy={y}
                         rx={tree.canopy.size / 6}
                         ry={tree.canopy.size / 7}
-                        fill="#43a047"
+                        fill="#A8BBA3"
                         opacity="0.8"
                       />
                     );
@@ -573,7 +573,7 @@ export default function MindGardenPage() {
                         r={5 + Math.random() * 2}
                         fill={flowerColors[i % flowerColors.length]}
                         opacity="0.85"
-                        stroke="#fff"
+                        stroke="#FCF9EA"
                         strokeWidth="1"
                       />
                     );
@@ -594,7 +594,7 @@ export default function MindGardenPage() {
                         r={4 + Math.random() * 2}
                         fill={fruitColors[i % fruitColors.length]}
                         opacity="0.9"
-                        stroke="#fff"
+                        stroke="#FCF9EA"
                         strokeWidth="0.7"
                       />
                     );
@@ -612,7 +612,7 @@ export default function MindGardenPage() {
                     <path
                       key={i}
                       d={`M200 ${groundY} Q${200 + (x - 200) * 0.4} ${groundY + 18} ${x} ${y}`}
-                      stroke="#8b4513"
+                      stroke="#DB9558"
                       strokeWidth={1.7 - i * 0.13}
                       fill="none"
                       opacity="0.7"
@@ -656,7 +656,7 @@ export default function MindGardenPage() {
                   style={{
                     left: `${20 + Math.random() * 60}%`,
                     top: `${20 + Math.random() * 60}%`,
-                    boxShadow: '0 0 8px #fef08a',
+                    boxShadow: '0 0 8px #FCF9EA',
                     animation: `firefly ${3 + Math.random() * 2}s ease-in-out infinite`,
                     animationDelay: `${Math.random() * 3}s`
                   }}
@@ -1302,4 +1302,3 @@ export default function MindGardenPage() {
     </div>
   );
 }
-

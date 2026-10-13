@@ -291,7 +291,7 @@ export default function ResourcesPage() {
               onChange={e => setSearchTerm(e.target.value)}
               placeholder="Search resources, articles, videos..."
               className="w-full px-5 py-3 rounded-xl border-2 border-blue-300 focus:ring-4 focus:ring-blue-200 bg-white text-blue-800 text-base shadow-lg transition-all duration-200 pr-12"
-              style={{ boxShadow: '0 2px 12px 0 rgba(59,130,246,0.07)' }}
+              style={{ boxShadow: '0 2px 12px 0 rgba(219,149,88,0.07)' }}
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-400 pointer-events-none">
               <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1 0 6.5 6.5a7.5 7.5 0 0 0 10.15 10.15Z" /></svg>
@@ -304,7 +304,7 @@ export default function ResourcesPage() {
               value={activeFilter}
               onChange={e => setActiveFilter(e.target.value as any)}
               aria-label="Filter by type"
-              style={{ boxShadow: '0 2px 12px 0 rgba(59,130,246,0.07)' }}
+              style={{ boxShadow: '0 2px 12px 0 rgba(219,149,88,0.07)' }}
             >
               {filterOptions.map(option => (
                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -353,7 +353,7 @@ export default function ResourcesPage() {
                 }
               }}
               aria-label="Filter by emotion"
-              style={{ boxShadow: '0 2px 12px 0 rgba(16,185,129,0.07)' }}
+              style={{ boxShadow: '0 2px 12px 0 rgba(151,168,122,0.07)' }}
             >
               <option value="">How are you feeling?</option>
               <option value="anxious">I feel anxious</option>

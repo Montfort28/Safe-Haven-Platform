@@ -2,13 +2,14 @@
 
 import { Home, BarChart3, Gamepad2, Library, BookOpen, User, LogOut, Heart } from 'lucide-react';
 import Link from 'next/link';
+import BrandLogo from '@/components/BrandLogo';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
     return (
         <div className="min-h-screen bg-white">
             <nav className="glass-card mx-4 mt-4 px-6 py-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold text-slate-800">Safe Haven</h1>
+                    <BrandLogo className="h-12 w-[154px]" />
                     <div className="flex items-center gap-6">
                         <Link href="/dashboard" className="flex items-center gap-2 text-blue-600">
                             <Home className="w-5 h-5" />

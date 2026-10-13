@@ -418,31 +418,31 @@ export default function DashboardPage() {
                 <AreaChart data={getLast7DaysMoodData()}>
                   <defs>
                     <linearGradient id="moodGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
+                      <stop offset="5%" stopColor="#DB9558" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#DB9558" stopOpacity={0.1} />
                     </linearGradient>
                   </defs>
                   <XAxis
                     dataKey="day"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    tick={{ fill: '#44513D', fontSize: 12 }}
                   />
                   <YAxis
                     domain={[1, 10]}
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    tick={{ fill: '#44513D', fontSize: 12 }}
                   />
                   <Tooltip content={<CustomTooltip />} />
                   <Area
                     type="monotone"
                     dataKey="mood"
-                    stroke="#3b82f6"
+                    stroke="#DB9558"
                     strokeWidth={3}
                     fill="url(#moodGradient)"
-                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
-                    activeDot={{ r: 8, fill: '#1d4ed8' }}
+                    dot={{ fill: '#DB9558', strokeWidth: 2, r: 6 }}
+                    activeDot={{ r: 8, fill: '#97A87A' }}
                     connectNulls={true}
                   />
                 </AreaChart>
