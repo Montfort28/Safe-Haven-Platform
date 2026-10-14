@@ -41,7 +41,7 @@ export default function HomePage() {
       <header className="home-header">
         <div className="home-header-inner">
           <Link href="/" aria-label="Safe Haven home" className="home-brand">
-            <BrandLogo className="h-14 w-[184px] sm:w-[194px]" />
+            <BrandLogo className="h-[68px] w-[180px]" />
           </Link>
 
           <nav aria-label="Main navigation" className="home-nav">
@@ -52,9 +52,9 @@ export default function HomePage() {
             <a href="#contact">Contact</a>
           </nav>
 
-          <Link href="/register" className="home-nav-cta">
-            Start your journey
-            <ArrowRight aria-hidden="true" size={16} />
+          <Link href="/login" className="home-nav-cta">
+            Sign in
+            <span className="signin-icon" aria-hidden="true" />
           </Link>
         </div>
       </header>
@@ -117,6 +117,9 @@ export default function HomePage() {
       </section>
 
       <section className="home-platforms" aria-label="Mental health platforms">
+        <p className="home-platform-caption">
+          You can also explore these other mental health platforms.
+        </p>
         <div className="home-platform-logos" aria-label="BetterHelp, Talkspace, Headspace, and 7 Cups">
           <span className="home-platform-logo home-platform-betterhelp">
             <Image src="/images/BetterHelp.png" alt="" width={52} height={52} />
@@ -136,8 +139,6 @@ export default function HomePage() {
           </span>
         </div>
       </section>
-
-      <div className="home-color-band" aria-hidden="true" />
 
       <section id="about" className="home-section home-about">
         <div className="home-section-heading">
@@ -212,7 +213,7 @@ export default function HomePage() {
         <div className="home-footer-inner">
           <div className="home-footer-brand">
             <Link href="/" aria-label="Safe Haven home">
-              <BrandLogo className="h-12 w-[154px]" />
+              <BrandLogo className="h-[60px] w-[162px]" />
             </Link>
             <p>A quieter space to reconnect with yourself.</p>
           </div>

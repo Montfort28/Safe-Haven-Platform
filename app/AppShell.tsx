@@ -9,7 +9,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="min-h-screen bg-white">
             <nav className="glass-card mx-4 mt-4 px-6 py-4">
                 <div className="flex items-center justify-between">
-                    <BrandLogo className="h-12 w-[154px]" />
+                    <BrandLogo className="h-[60px] w-[162px]" />
                     <div className="flex items-center gap-6">
                         <Link href="/dashboard" className="flex items-center gap-2 text-blue-600">
                             <Home className="w-5 h-5" />

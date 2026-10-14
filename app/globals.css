@@ -81,11 +81,11 @@ select {
   }
 
   .btn-primary {
-    @apply bg-brand-sage text-brand-ink px-6 py-3 rounded-full hover:bg-brand-sage-light transition-all duration-200 shadow-lg hover:shadow-xl;
+    @apply bg-brand-sage text-brand-ink px-6 py-3 rounded-xl shadow-lg;
   }
 
   .btn-secondary {
-    @apply bg-brand-sage text-brand-ink border border-brand-sage px-6 py-3 rounded-full hover:bg-brand-sage-light transition-all duration-200;
+    @apply bg-brand-sage text-brand-ink px-6 py-3 rounded-xl;
   }
 
   @keyframes typewriter {
@@ -162,15 +162,15 @@ select {
 
 .btn-primary,
 .btn-secondary,
-button[class*="bg-"] {
+button[class*="bg-brand-sage"] {
   background-color: var(--brand-sage);
   color: #fff;
 }
 
 .btn-primary:hover,
 .btn-secondary:hover,
-button[class*="bg-"]:hover {
-  background-color: var(--brand-sage-light);
+button[class*="bg-brand-sage"]:hover {
+  background-color: var(--brand-sage);
 }
 
 @keyframes fadein {
@@ -183,12 +183,13 @@ button[class*="bg-"]:hover {
 }
 
 .brand-logo {
-  display: block;
+  display: inline-block;
   flex: none;
-  aspect-ratio: 2.53 / 1;
+  max-width: 100%;
+  aspect-ratio: 8 / 3;
   background-color: var(--brand-sage);
-  -webkit-mask: url("/images/Safe%20haven%20logo.png") center / 112% 212% no-repeat;
-  mask: url("/images/Safe%20haven%20logo.png") center / 112% 212% no-repeat;
+  -webkit-mask: url("/images/Safe%20haven%20logo.png") center / contain no-repeat;
+  mask: url("/images/Safe%20haven%20logo.png") center / contain no-repeat;
 }
 
 .home-page {
@@ -239,34 +240,83 @@ button[class*="bg-"]:hover {
   transition: color 160ms ease;
 }
 
+.home-nav a,
+.home-nav-cta {
+  position: relative;
+}
+
+.home-nav a::after,
+.home-nav-cta::after {
+  position: absolute;
+  right: 0;
+  bottom: -7px;
+  left: 0;
+  height: 2px;
+  background: currentColor;
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms ease;
+}
+
+.home-nav a:hover::after,
+.home-nav a:focus-visible::after,
+.home-nav-cta:hover::after,
+.home-nav-cta:focus-visible::after {
+  transform: scaleX(1);
+}
+
 .home-nav a:hover,
+.home-nav a:focus-visible,
 .home-footer a:hover {
   color: var(--brand-primary);
 }
 
-.home-nav-cta,
 .home-button {
   min-height: 46px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  border: 1px solid var(--brand-sage);
-  border-radius: 999px;
+  border: 0;
+  border-radius: 12px;
   padding: 0 22px;
   color: #fff;
   background: var(--brand-sage);
   font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
-  transition: background 160ms ease, transform 160ms ease;
+  transition: none;
 }
 
-.home-nav-cta:hover,
 .home-button:hover {
-  background: var(--brand-sage-light);
+  background: var(--brand-sage);
   color: #fff;
-  transform: translateY(-1px);
+}
+
+.home-nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--brand-ink);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.home-nav-cta:hover {
+  color: var(--brand-primary);
+}
+
+.signin-icon {
+  width: 19px;
+  height: 19px;
+  flex: none;
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask: url("/images/sign-in-alt-svgrepo-com.svg") center / contain no-repeat;
+  mask: url("/images/sign-in-alt-svgrepo-com.svg") center / contain no-repeat;
 }
 
 .home-hero {
@@ -487,8 +537,17 @@ button[class*="bg-"]:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 10px;
   color: var(--brand-cream);
   background: #203b31;
+}
+
+.home-platform-caption {
+  margin: 0;
+  color: rgba(252, 249, 234, 0.78);
+  font-size: 0.78rem;
+  text-align: center;
 }
 
 .home-platform-logos {
@@ -539,16 +598,6 @@ button[class*="bg-"]:hover {
   padding: 0;
   border-radius: 0;
   background: transparent;
-}
-
-.home-color-band {
-  height: 11px;
-  background: linear-gradient(
-    90deg,
-    var(--brand-primary) 0 33.3%,
-    var(--brand-sage-light) 33.3% 66.6%,
-    var(--brand-sage) 66.6% 100%
-  );
 }
 
 .home-section {
@@ -824,9 +873,7 @@ button[class*="bg-"]:hover {
   }
 
   .home-nav-cta {
-    min-height: 40px;
-    padding: 0 15px;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
 
   .home-hero {
@@ -869,15 +916,43 @@ button[class*="bg-"]:hover {
     justify-content: space-between;
   }
 
-  .auth-header > a:last-child {
+  .auth-back-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
     color: var(--brand-ink);
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 500;
     text-decoration: none;
+    transition: color 160ms ease;
   }
 
-  .auth-header > a:last-child:hover {
+  .auth-back-link::after {
+    position: absolute;
+    right: 0;
+    bottom: -6px;
+    left: 0;
+    height: 2px;
+    background: currentColor;
+    content: "";
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 200ms ease;
+  }
+
+  .auth-back-link:hover,
+  .auth-back-link:focus-visible {
     color: var(--brand-primary);
+  }
+
+  .auth-back-link:hover::after,
+  .auth-back-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  .auth-back-icon {
+    transform: rotate(180deg);
   }
 
   .auth-layout {
@@ -895,6 +970,7 @@ button[class*="bg-"]:hover {
     position: relative;
     min-height: 540px;
     display: flex;
+    align-items: center;
     justify-content: center;
     isolation: isolate;
   }
@@ -1039,8 +1115,7 @@ button[class*="bg-"]:hover {
   }
 
   .auth-submit:hover:not(:disabled) {
-    transform: translateY(-1px);
-    background: var(--brand-sage-light);
+    background: var(--brand-sage);
     color: #fff;
   }
 
@@ -1137,8 +1212,8 @@ button[class*="bg-"]:hover {
     }
 
     .auth-header .brand-logo {
-      width: 138px;
-      height: 42px;
+      width: 156px;
+      height: 58px;
     }
 
     .auth-layout {
@@ -1170,13 +1245,12 @@ button[class*="bg-"]:hover {
 
 @media (max-width: 650px) {
   .home-brand .brand-logo {
-    width: 164px;
-    height: 52px;
+    width: 172px;
+    height: 64px;
   }
 
   .home-header-inner > .home-nav-cta {
-    min-height: 38px;
-    padding: 0 12px;
+    font-size: 0.76rem;
   }
 
   .home-nav {

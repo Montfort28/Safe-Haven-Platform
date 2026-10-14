@@ -13,7 +13,7 @@ export default function Navbar() {
         <nav className="bg-gradient-to-br from-blue-100/80 via-indigo-100/80 to-purple-100/80 backdrop-blur-md border-b border-blue-200/40 shadow-xl sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
                 <div className="flex items-center justify-between">
-                    <BrandLogo className="h-12 w-[154px]" />
+                    <BrandLogo className="h-[60px] w-[162px]" />
                     {/* Hamburger menu for all devices except desktop */}
                     <button className="lg:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" onClick={() => setMenuOpen(!menuOpen)}>
                         <Menu className="w-7 h-7 text-blue-900" />
