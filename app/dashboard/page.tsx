@@ -165,19 +165,21 @@ export default function DashboardPage() {
         return;
       }
 
-      // Fetch user data
-      const userResponse = await fetch('/api/user/profile', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const authorization = { Authorization: `Bearer ${token}` };
+      const [userResponse, moodAnalyticsRes, journalResponse, streakResponse] = await Promise.all([
+        fetch('/api/user/profile', { headers: authorization }),
+        fetch('/api/mood/analytics', { headers: authorization }),
+        fetch('/api/journal?limit=3', { headers: authorization }),
+        fetch('/api/journal/streak', { headers: authorization }),
+      ]);
+
+      let totalJournalEntries = 0;
       if (userResponse.ok) {
         const userData = await userResponse.json();
         setUser(userData.data);
+        totalJournalEntries = userData.data?.journalEntries ?? 0;
       }
 
-      // Fetch mood analytics (for graph and stats)
-      const moodAnalyticsRes = await fetch('/api/mood/analytics', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
       let moodAnalytics = null;
       let moodEntries: any[] = [];
       if (moodAnalyticsRes.ok) {
@@ -213,10 +215,6 @@ export default function DashboardPage() {
         }
       }
 
-      // Fetch journal entries (for recent display)
-      const journalResponse = await fetch('/api/journal?limit=3', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
       let journalEntries: any[] = [];
       if (journalResponse.ok) {
         const journalData = await journalResponse.json();
@@ -224,21 +222,7 @@ export default function DashboardPage() {
         setRecentEntries(journalEntries);
       }
 
-      // Fetch total journal entries count
-      let totalJournalEntries = 0;
-      const allJournalResponse = await fetch('/api/journal?limit=1000', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (allJournalResponse.ok) {
-        const allJournalData = await allJournalResponse.json();
-        totalJournalEntries = Array.isArray(allJournalData.data) ? allJournalData.data.length : 0;
-      }
-
-      // Fetch streak from journal backend
       let streak = 0;
-      const streakResponse = await fetch('/api/journal/streak', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
       if (streakResponse.ok) {
         const streakData = await streakResponse.json();
         streak = streakData.data?.streak || 0;
@@ -256,7 +240,7 @@ export default function DashboardPage() {
         averageMood,
       });
 
-      await fetchNewAffirmation();
+      void fetchNewAffirmation();
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }

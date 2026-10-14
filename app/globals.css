@@ -899,6 +899,302 @@ button[class*="bg-brand-sage"]:hover {
   }
 }
 
+.member-app {
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif !important;
+  color: var(--brand-ink);
+  background:
+    radial-gradient(ellipse at 9% 88%, rgba(219, 149, 88, 0.16), transparent 34%),
+    radial-gradient(ellipse at 88% 10%, rgba(151, 168, 122, 0.18), transparent 34%),
+    var(--brand-cream);
+}
+
+.member-app .min-h-screen {
+  color: var(--brand-ink);
+  background:
+    radial-gradient(ellipse at 9% 88%, rgba(219, 149, 88, 0.16), transparent 34%),
+    radial-gradient(ellipse at 88% 10%, rgba(151, 168, 122, 0.18), transparent 34%),
+    var(--brand-cream) !important;
+}
+
+.member-app h1,
+.member-app h2,
+.member-app h3,
+.member-app h4 {
+  color: var(--brand-ink);
+  letter-spacing: -0.025em;
+}
+
+.member-app h1 {
+  font-weight: 700;
+}
+
+.member-app h2,
+.member-app h3,
+.member-app h4 {
+  font-weight: 600;
+}
+
+.member-app button,
+.member-app input,
+.member-app textarea,
+.member-app select {
+  font-family: "Poppins", sans-serif !important;
+}
+
+.member-app :is(
+  [class^="text-blue-"], [class*=" text-blue-"],
+  [class^="text-indigo-"], [class*=" text-indigo-"],
+  [class^="text-purple-"], [class*=" text-purple-"],
+  [class^="text-violet-"], [class*=" text-violet-"],
+  [class^="text-cyan-"], [class*=" text-cyan-"],
+  [class^="text-slate-"], [class*=" text-slate-"],
+  [class^="text-gray-"], [class*=" text-gray-"]
+) {
+  color: var(--brand-ink) !important;
+}
+
+.member-app :is([class^="text-white"], [class*=" text-white"]) {
+  color: var(--brand-ink) !important;
+}
+
+.member-app :is(
+  [class^="bg-blue-"], [class*=" bg-blue-"],
+  [class^="bg-indigo-"], [class*=" bg-indigo-"],
+  [class^="bg-purple-"], [class*=" bg-purple-"],
+  [class^="bg-violet-"], [class*=" bg-violet-"],
+  [class^="bg-cyan-"], [class*=" bg-cyan-"],
+  [class^="bg-pink-"], [class*=" bg-pink-"]
+) {
+  background-color: rgba(168, 187, 163, 0.2) !important;
+}
+
+.member-app :is(
+  [class^="border-blue-"], [class*=" border-blue-"],
+  [class^="border-indigo-"], [class*=" border-indigo-"],
+  [class^="border-purple-"], [class*=" border-purple-"],
+  [class^="border-violet-"], [class*=" border-violet-"],
+  [class^="border-cyan-"], [class*=" border-cyan-"]
+) {
+  border-color: rgba(151, 168, 122, 0.42) !important;
+}
+
+.member-app :is(
+  [class^="from-blue-"], [class*=" from-blue-"],
+  [class^="from-indigo-"], [class*=" from-indigo-"],
+  [class^="from-purple-"], [class*=" from-purple-"],
+  [class^="from-violet-"], [class*=" from-violet-"]
+) {
+  background-image: linear-gradient(
+    135deg,
+    rgba(252, 249, 234, 0.96),
+    rgba(168, 187, 163, 0.2)
+  ) !important;
+}
+
+.member-app :is(
+  [class~="bg-white"],
+  [class~="bg-white/70"],
+  [class~="bg-white/80"],
+  [class~="bg-white/90"]
+) {
+  background-color: rgba(252, 249, 234, 0.94) !important;
+}
+
+.member-app :is(button, a):is([class^="bg-"], [class*=" bg-"]) {
+  border-radius: 12px;
+  background-color: var(--brand-sage);
+  color: #fff;
+  font-weight: 600;
+  transition:
+    background-color 160ms ease,
+    background-image 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.member-app .btn-primary,
+.member-app .btn-secondary {
+  border-radius: 12px;
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 600;
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.member-app .btn-primary {
+  border-color: var(--brand-sage) !important;
+  color: #fff !important;
+  background-color: var(--brand-sage) !important;
+}
+
+.member-app .btn-secondary {
+  border-color: var(--brand-primary) !important;
+  color: #fff !important;
+  background-color: var(--brand-primary) !important;
+}
+
+.member-app :is(button, a)[class~="bg-white"],
+.member-app :is(button, a):is([class^="bg-white/"], [class*=" bg-white/"]),
+.member-app :is(button, a):is([class^="bg-gray-"], [class*=" bg-gray-"]),
+.member-app :is(button, a):is([class^="bg-slate-"], [class*=" bg-slate-"]) {
+  border-color: rgba(151, 168, 122, 0.48) !important;
+  color: var(--brand-ink) !important;
+  background-color: var(--brand-cream) !important;
+}
+
+.member-app :is(button, a):is([class^="bg-green-"], [class*=" bg-green-"]),
+.member-app :is(button, a):is([class^="bg-emerald-"], [class*=" bg-emerald-"]) {
+  border-color: var(--brand-sage) !important;
+  color: #fff !important;
+  background-color: var(--brand-sage) !important;
+}
+
+.member-app :is(button, a):is([class^="bg-orange-"], [class*=" bg-orange-"]),
+.member-app :is(button, a):is([class^="bg-amber-"], [class*=" bg-amber-"]),
+.member-app :is(button, a):is([class^="bg-yellow-"], [class*=" bg-yellow-"]),
+.member-app :is(button, a):is([class^="bg-red-"], [class*=" bg-red-"]) {
+  border-color: var(--brand-primary) !important;
+  color: #fff !important;
+  background-color: var(--brand-primary) !important;
+}
+
+.member-app :is(button, a):is([class^="bg-blue-"], [class*=" bg-blue-"]),
+.member-app :is(button, a):is([class^="bg-indigo-"], [class*=" bg-indigo-"]),
+.member-app :is(button, a):is([class^="bg-purple-"], [class*=" bg-purple-"]),
+.member-app :is(button, a):is([class^="bg-violet-"], [class*=" bg-violet-"]),
+.member-app :is(button, a):is([class^="bg-cyan-"], [class*=" bg-cyan-"]),
+.member-app :is(button, a):is([class^="bg-pink-"], [class*=" bg-pink-"]) {
+  border-color: #203b31 !important;
+  color: #fff !important;
+  background-color: #203b31 !important;
+}
+
+.member-app :is(button, a):is([class^="from-orange-"], [class*=" from-orange-"]),
+.member-app :is(button, a):is([class^="from-amber-"], [class*=" from-amber-"]),
+.member-app :is(button, a):is([class^="from-yellow-"], [class*=" from-yellow-"]) {
+  border-color: var(--brand-primary) !important;
+  color: #fff !important;
+  background-image: linear-gradient(120deg, #c77c43, var(--brand-primary)) !important;
+}
+
+.member-app :is(button, a):is([class^="from-green-"], [class*=" from-green-"]),
+.member-app :is(button, a):is([class^="from-emerald-"], [class*=" from-emerald-"]) {
+  border-color: var(--brand-sage) !important;
+  color: #fff !important;
+  background-image: linear-gradient(120deg, #7f9166, var(--brand-sage)) !important;
+}
+
+.member-app :is(button, a):is([class^="from-blue-"], [class*=" from-blue-"]),
+.member-app :is(button, a):is([class^="from-indigo-"], [class*=" from-indigo-"]),
+.member-app :is(button, a):is([class^="from-purple-"], [class*=" from-purple-"]),
+.member-app :is(button, a):is([class^="from-violet-"], [class*=" from-violet-"]),
+.member-app :is(button, a):is([class^="from-pink-"], [class*=" from-pink-"]) {
+  border-color: #203b31 !important;
+  color: #fff !important;
+  background-image: linear-gradient(120deg, #203b31, #496652) !important;
+}
+
+.member-app :is(button, a):is([class^="bg-"], [class*=" bg-"]):hover:not(:disabled) {
+  filter: brightness(0.94);
+}
+
+.member-app :is(button, a):is([class^="bg-"], [class*=" bg-"]) :is(
+  [class^="text-white"], [class*=" text-white"]
+) {
+  color: #fff !important;
+}
+
+.member-app :is(button, a):is(
+  [class~="bg-white"],
+  [class^="bg-gray-"], [class*=" bg-gray-"],
+  [class^="bg-slate-"], [class*=" bg-slate-"]
+) :is([class^="text-white"], [class*=" text-white"]) {
+  color: var(--brand-ink) !important;
+}
+
+.member-app input:focus,
+.member-app textarea:focus,
+.member-app select:focus {
+  border-color: var(--brand-primary) !important;
+  outline-color: var(--brand-primary);
+}
+
+.member-navbar {
+  border-color: rgba(151, 168, 122, 0.24);
+  background: rgba(252, 249, 234, 0.96);
+  box-shadow: 0 8px 24px rgba(68, 81, 61, 0.08);
+}
+
+.member-nav-links {
+  gap: clamp(12px, 1.8vw, 24px);
+}
+
+.member-nav-link {
+  position: relative;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--brand-ink);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.member-nav-link::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--brand-sage);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms ease;
+}
+
+.member-nav-link:hover,
+.member-nav-link:focus-visible,
+.member-nav-link.is-active,
+.member-nav-link[aria-current="page"] {
+  color: var(--brand-sage);
+}
+
+.member-nav-link:hover::after,
+.member-nav-link:focus-visible::after,
+.member-nav-link.is-active::after,
+.member-nav-link[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+.member-navbar button:focus-visible {
+  outline: 2px solid var(--brand-sage);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.member-navbar > div > div > button {
+  color: var(--brand-ink);
+  background: transparent !important;
+  box-shadow: none;
+}
+
+.member-mobile-nav {
+  border-top: 1px solid rgba(151, 168, 122, 0.24);
+  padding-top: 10px;
+}
+
+.member-mobile-nav .member-nav-link {
+  min-height: 40px;
+  padding: 0 8px;
+}
+
+@media (max-width: 1023px) {
+  .member-navbar .member-nav-link::after {
+    display: none;
+  }
+}
+
   .auth-page {
     min-height: 100vh;
     padding: 0 clamp(20px, 5vw, 76px);

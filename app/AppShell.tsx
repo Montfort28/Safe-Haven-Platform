@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, BarChart3, Gamepad2, Library, BookOpen, User, LogOut, Heart } from 'lucide-react';
+import { Home, Gamepad2, Library, BookOpen, User, LogOut, Heart } from 'lucide-react';
 import Link from 'next/link';
 import BrandLogo from '@/components/BrandLogo';
 
