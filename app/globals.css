@@ -461,11 +461,11 @@ button[class*="bg-brand-sage"]:hover {
   object-position: 62% center;
   transform: translateX(-112px);
   -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 24%, #000 94%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-image:
-    linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 24%, #000 94%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
   mask-composite: intersect;
 }
@@ -945,60 +945,132 @@ button[class*="bg-brand-sage"]:hover {
 .member-app :is(
   [class^="text-blue-"], [class*=" text-blue-"],
   [class^="text-indigo-"], [class*=" text-indigo-"],
-  [class^="text-purple-"], [class*=" text-purple-"],
-  [class^="text-violet-"], [class*=" text-violet-"],
-  [class^="text-cyan-"], [class*=" text-cyan-"],
   [class^="text-slate-"], [class*=" text-slate-"],
   [class^="text-gray-"], [class*=" text-gray-"]
 ) {
   color: var(--brand-ink) !important;
 }
 
-.member-app :is([class^="text-white"], [class*=" text-white"]) {
-  color: var(--brand-ink) !important;
+.member-app :is(
+  [class^="text-purple-"], [class*=" text-purple-"],
+  [class^="text-violet-"], [class*=" text-violet-"]
+) {
+  color: #796486 !important;
+}
+
+.member-app :is([class^="text-cyan-"], [class*=" text-cyan-"]) {
+  color: #50838a !important;
+}
+
+.member-app :is([class^="text-pink-"], [class*=" text-pink-"]) {
+  color: #a96275 !important;
 }
 
 .member-app :is(
-  [class^="bg-blue-"], [class*=" bg-blue-"],
-  [class^="bg-indigo-"], [class*=" bg-indigo-"],
-  [class^="bg-purple-"], [class*=" bg-purple-"],
-  [class^="bg-violet-"], [class*=" bg-violet-"],
-  [class^="bg-cyan-"], [class*=" bg-cyan-"],
-  [class^="bg-pink-"], [class*=" bg-pink-"]
+  [class^="text-orange-"], [class*=" text-orange-"],
+  [class^="text-amber-"], [class*=" text-amber-"],
+  [class^="text-yellow-"], [class*=" text-yellow-"]
 ) {
-  background-color: rgba(168, 187, 163, 0.2) !important;
+  color: #a86738 !important;
+}
+
+.member-app .bg-clip-text.text-transparent {
+  color: transparent !important;
+  background-image: linear-gradient(100deg, var(--brand-primary), #796486, var(--brand-ink)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+}
+
+.member-app :is([class^="bg-blue-"], [class*=" bg-blue-"], [class^="bg-cyan-"], [class*=" bg-cyan-"]) {
+  background-color: rgba(225, 239, 242, 0.88) !important;
+}
+
+.member-app :is([class^="bg-indigo-"], [class*=" bg-indigo-"], [class^="bg-purple-"], [class*=" bg-purple-"], [class^="bg-violet-"], [class*=" bg-violet-"]) {
+  background-color: rgba(239, 232, 246, 0.88) !important;
+}
+
+.member-app :is([class^="bg-pink-"], [class*=" bg-pink-"]) {
+  background-color: rgba(249, 232, 237, 0.88) !important;
+}
+
+.member-app :is([class^="bg-green-"], [class*=" bg-green-"], [class^="bg-emerald-"], [class*=" bg-emerald-"], [class^="bg-lime-"], [class*=" bg-lime-"]) {
+  background-color: rgba(232, 240, 224, 0.9) !important;
+}
+
+.member-app :is([class^="bg-orange-"], [class*=" bg-orange-"], [class^="bg-amber-"], [class*=" bg-amber-"], [class^="bg-yellow-"], [class*=" bg-yellow-"]) {
+  background-color: rgba(250, 239, 222, 0.92) !important;
+}
+
+.member-app :is([class^="bg-red-"], [class*=" bg-red-"]) {
+  background-color: rgba(249, 232, 226, 0.9) !important;
 }
 
 .member-app :is(
   [class^="border-blue-"], [class*=" border-blue-"],
+  [class^="border-cyan-"], [class*=" border-cyan-"]
+) {
+  border-color: rgba(80, 131, 138, 0.38) !important;
+}
+
+.member-app :is(
   [class^="border-indigo-"], [class*=" border-indigo-"],
   [class^="border-purple-"], [class*=" border-purple-"],
-  [class^="border-violet-"], [class*=" border-violet-"],
-  [class^="border-cyan-"], [class*=" border-cyan-"]
+  [class^="border-violet-"], [class*=" border-violet-"]
+) {
+  border-color: rgba(121, 100, 134, 0.35) !important;
+}
+
+.member-app :is([class^="border-pink-"], [class*=" border-pink-"]) {
+  border-color: rgba(169, 98, 117, 0.34) !important;
+}
+
+.member-app :is(
+  [class^="border-green-"], [class*=" border-green-"],
+  [class^="border-emerald-"], [class*=" border-emerald-"],
+  [class^="border-lime-"]
 ) {
   border-color: rgba(151, 168, 122, 0.42) !important;
 }
 
 .member-app :is(
+  [class^="border-orange-"], [class*=" border-orange-"],
+  [class^="border-amber-"], [class*=" border-amber-"],
+  [class^="border-yellow-"], [class*=" border-yellow-"]
+) {
+  border-color: rgba(219, 149, 88, 0.42) !important;
+}
+
+.member-app :is(
   [class^="from-blue-"], [class*=" from-blue-"],
+  [class^="from-cyan-"], [class*=" from-cyan-"]
+) {
+  background-image: linear-gradient(
+    135deg,
+    rgba(225, 239, 242, 0.94),
+    rgba(204, 226, 229, 0.76)
+  ) !important;
+}
+
+.member-app :is(
   [class^="from-indigo-"], [class*=" from-indigo-"],
   [class^="from-purple-"], [class*=" from-purple-"],
   [class^="from-violet-"], [class*=" from-violet-"]
 ) {
   background-image: linear-gradient(
     135deg,
-    rgba(252, 249, 234, 0.96),
-    rgba(168, 187, 163, 0.2)
+    rgba(239, 232, 246, 0.96),
+    rgba(216, 202, 227, 0.78)
   ) !important;
 }
 
+.member-app :is([class^="from-pink-"], [class*=" from-pink-"]) {
+  background-image: linear-gradient(135deg, rgba(249, 232, 237, 0.96), rgba(239, 207, 217, 0.8)) !important;
+}
+
 .member-app :is(
-  [class~="bg-white"],
-  [class~="bg-white/70"],
-  [class~="bg-white/80"],
-  [class~="bg-white/90"]
-) {
-  background-color: rgba(252, 249, 234, 0.94) !important;
+  [class~="bg-white"], [class^="bg-white/"], [class*=" bg-white/"]
+):not(button):not(a) {
+  background-color: #fff !important;
 }
 
 .member-app :is(button, a):is([class^="bg-"], [class*=" bg-"]) {
@@ -1059,13 +1131,18 @@ button[class*="bg-brand-sage"]:hover {
 
 .member-app :is(button, a):is([class^="bg-blue-"], [class*=" bg-blue-"]),
 .member-app :is(button, a):is([class^="bg-indigo-"], [class*=" bg-indigo-"]),
+.member-app :is(button, a):is([class^="bg-cyan-"], [class*=" bg-cyan-"]) {
+  border-color: #50838a !important;
+  color: #fff !important;
+  background-color: #50838a !important;
+}
+
 .member-app :is(button, a):is([class^="bg-purple-"], [class*=" bg-purple-"]),
 .member-app :is(button, a):is([class^="bg-violet-"], [class*=" bg-violet-"]),
-.member-app :is(button, a):is([class^="bg-cyan-"], [class*=" bg-cyan-"]),
 .member-app :is(button, a):is([class^="bg-pink-"], [class*=" bg-pink-"]) {
-  border-color: #203b31 !important;
+  border-color: #796486 !important;
   color: #fff !important;
-  background-color: #203b31 !important;
+  background-color: #796486 !important;
 }
 
 .member-app :is(button, a):is([class^="from-orange-"], [class*=" from-orange-"]),
@@ -1085,12 +1162,18 @@ button[class*="bg-brand-sage"]:hover {
 
 .member-app :is(button, a):is([class^="from-blue-"], [class*=" from-blue-"]),
 .member-app :is(button, a):is([class^="from-indigo-"], [class*=" from-indigo-"]),
+.member-app :is(button, a):is([class^="from-cyan-"], [class*=" from-cyan-"]) {
+  border-color: #50838a !important;
+  color: #fff !important;
+  background-image: linear-gradient(120deg, #416f76, #6b9ba0) !important;
+}
+
 .member-app :is(button, a):is([class^="from-purple-"], [class*=" from-purple-"]),
 .member-app :is(button, a):is([class^="from-violet-"], [class*=" from-violet-"]),
 .member-app :is(button, a):is([class^="from-pink-"], [class*=" from-pink-"]) {
-  border-color: #203b31 !important;
+  border-color: #796486 !important;
   color: #fff !important;
-  background-image: linear-gradient(120deg, #203b31, #496652) !important;
+  background-image: linear-gradient(120deg, #665274, #887394) !important;
 }
 
 .member-app :is(button, a):is([class^="bg-"], [class*=" bg-"]):hover:not(:disabled) {
@@ -1609,10 +1692,10 @@ button[class*="bg-brand-sage"]:hover {
     transform: none;
     object-position: 62% center;
     -webkit-mask-image:
-      linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 18%, #000 94%, transparent 100%),
       linear-gradient(to bottom, transparent 0%, #000 8%, #000 90%, transparent 100%);
     mask-image:
-      linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 18%, #000 94%, transparent 100%),
       linear-gradient(to bottom, transparent 0%, #000 8%, #000 90%, transparent 100%);
   }
 

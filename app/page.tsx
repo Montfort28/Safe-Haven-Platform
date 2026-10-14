@@ -14,23 +14,23 @@ import BrandLogo from '@/components/BrandLogo';
 const tools = [
   {
     icon: Heart,
-    title: 'Understand your moods',
+    title: 'Check in with your mood',
     description:
-      'Notice patterns over time with a gentle mood check-in and thoughtful insights.',
+      'Record how you feel, add context like sleep or activities, and review mood patterns over time.',
     color: 'sage',
   },
   {
     icon: BookOpen,
-    title: 'Make space to reflect',
+    title: 'Reflect in your journal',
     description:
-      'Use guided journaling to untangle thoughts and capture the small things that matter.',
+      'Write about what is on your mind, respond to reflection prompts, and keep track of moments of gratitude.',
     color: 'orange',
   },
   {
     icon: Sprout,
-    title: 'Grow at your own pace',
+    title: 'Build gentle wellbeing habits',
     description:
-      'Build steady habits with calming exercises and a garden that grows with you.',
+      'Try breathing exercises, calming games, and Mind Garden activities in small steps that fit your day.',
     color: 'light',
   },
 ];
@@ -63,19 +63,19 @@ export default function HomePage() {
         <div className="home-hero-copy">
           <span className="home-eyebrow">
             <Leaf aria-hidden="true" size={15} />
-            Mental wellness, your way
+            Everyday wellbeing support
           </span>
           <h1 id="hero-title">
-            A stronger mind
+            A welcoming space
             <br />
-            starts with
+            to check in,
             <br />
-            <span>feeling good within.</span>
+            <span>reflect, and reset.</span>
           </h1>
           <p className="home-hero-description">
-            Find more calm in everyday life with private check-ins, thoughtful
-            reflection and gentle, science-informed tools for building habits
-            that feel right for you.
+            Safe Haven brings mood check-ins, journaling, breathing exercises,
+            wellbeing games, and a growing Mind Garden together in one place.
+            Explore at your own pace and choose what feels useful today.
           </p>
 
           <div className="home-hero-actions">
@@ -87,7 +87,7 @@ export default function HomePage() {
               <span className="home-play">
                 <Play aria-hidden="true" size={14} fill="currentColor" />
               </span>
-              Discover Safe Haven
+              What you can do here
             </a>
           </div>
 
@@ -98,7 +98,8 @@ export default function HomePage() {
             src="/images/Safe%20Haven_%20Feel%20Good%20Within%20(1).png"
             alt="A person taking a peaceful moment in a calm, plant-filled space"
             fill
-            priority
+            loading="eager"
+            fetchPriority="high"
             sizes="(max-width: 650px) 90vw, 48vw"
             className="home-manifest-image"
           />
@@ -106,11 +107,11 @@ export default function HomePage() {
             <span className="home-art-card-mark">
               <Sprout aria-hidden="true" size={19} />
             </span>
-            <span className="home-art-card-kicker">A gentle reminder</span>
-            <strong>You deserve to feel good from within.</strong>
+            <span className="home-art-card-kicker">Your wellbeing, your pace</span>
+            <strong>Small moments of care can start here.</strong>
             <span className="home-art-card-rule" />
             <span className="home-art-card-caption">
-              Small steps. Your pace. Your space.
+              Check in. Reflect. Take a next step.
             </span>
           </div>
         </div>
@@ -142,21 +143,24 @@ export default function HomePage() {
 
       <section id="about" className="home-section home-about">
         <div className="home-section-heading">
-          <span className="home-section-label">A place to begin</span>
+          <span className="home-section-label">About Safe Haven</span>
           <h2>
-            Care that meets you
+            Wellbeing support,
             <br />
-            <span>where you are.</span>
+            <span>all in one place.</span>
           </h2>
         </div>
         <div className="home-about-copy">
           <p>
-            Wellbeing isn’t one-size-fits-all. Safe Haven brings supportive
-            everyday tools together in one private space, helping you check in
-            with yourself and find what feels helpful.
+            Safe Haven is a digital wellbeing platform for everyday reflection
+            and self-care. It gives you a place to record how you feel, write
+            down your thoughts, try calming activities, and notice your own
+            progress over time. It is designed as a welcoming starting point
+            for wellbeing—not a diagnosis or a replacement for professional
+            mental health care.
           </p>
           <Link href="/register" className="home-text-link">
-            Find your starting point <ArrowRight aria-hidden="true" size={16} />
+            Create your account <ArrowRight aria-hidden="true" size={16} />
           </Link>
         </div>
       </section>
@@ -164,12 +168,13 @@ export default function HomePage() {
       <section id="services" className="home-section home-services">
         <div className="home-services-heading">
           <div>
-            <span className="home-section-label">Support for everyday life</span>
-            <h2>Tools for your wellbeing.</h2>
+            <span className="home-section-label">What you can expect</span>
+            <h2>Three ways to get started.</h2>
           </div>
           <p>
-            Thoughtful ways to reflect, reset and reconnect with what matters
-            to you.
+            Start with a mood check-in, make time to write, or try a calming
+            activity. You can use one tool at a time and return whenever it
+            suits you.
           </p>
         </div>
         <div className="home-tool-grid">
@@ -192,19 +197,19 @@ export default function HomePage() {
       <section id="contact" className="home-section home-closing">
         <div className="home-closing-mark">
           <LockKeyhole aria-hidden="true" size={19} />
-          A private space, just for you
+          A gentle place to begin
         </div>
         <h2>
-          Your next step can
+          Take a moment for
           <br />
-          <span>start right here.</span>
+          <span>your wellbeing.</span>
         </h2>
         <p>
-          Begin with one small check-in. There’s no perfect pace and no need to
-          have it all figured out.
+          Create an account to explore mood tracking, journaling, wellbeing
+          games, breathing activities, and your Mind Garden.
         </p>
         <Link href="/register" className="home-button home-button-primary">
-          Start with Safe Haven
+          Explore Safe Haven
           <ArrowRight aria-hidden="true" size={17} />
         </Link>
       </section>

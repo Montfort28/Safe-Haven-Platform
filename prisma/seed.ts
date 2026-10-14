@@ -1,4 +1,4 @@
-CMUimport { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { hashPassword } from '../lib/auth';
 
 const prisma = new PrismaClient();
@@ -10,6 +10,7 @@ async function main() {
     where: { email: 'test@example.com' },
     update: {},
     create: {
+      username: 'testuser',
       email: 'test@example.com',
       name: 'Test User',
       password: hashedPassword,
@@ -98,10 +99,11 @@ async function main() {
     update: {},
     create: {
       userId: user.id,
-      plants: 2,
-      flowers: 1,
-      health: 60,
-      lastCare: new Date(),
+      growthScore: 60,
+      streak: 2,
+      ambientMode: 'forest',
+      totalInteractions: 3,
+      lastActivity: new Date(),
     },
   });
 

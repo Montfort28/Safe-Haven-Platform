@@ -1,12 +1,20 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/components/AuthLayout';
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="auth-page min-h-screen" role="status">Loading sign in…</div>}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get('next');

@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyToken, getTokenFromRequest } from '@/lib/auth';
+import { getGrowthStats } from '@/lib/mindGardenStats';
 
 export async function POST(request: NextRequest) {
   const token = getTokenFromRequest(request);
@@ -72,9 +73,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Get updated stats
-    // Import getGrowthStats from stats route
-    const { getGrowthStats } = await import('../stats/route');
     const stats = await getGrowthStats(payload.userId);
 
     return NextResponse.json({
@@ -88,5 +86,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
-
-// getGrowthStats is imported from stats/route

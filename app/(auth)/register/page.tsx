@@ -1,12 +1,20 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/components/AuthLayout';
 
 export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="auth-page min-h-screen" role="status">Loading registration…</div>}>
+      <RegisterForm />
+    </Suspense>
+  );
+}
+
+function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get('next');
