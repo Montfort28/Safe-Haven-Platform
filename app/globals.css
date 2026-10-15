@@ -1282,18 +1282,21 @@ button[class*="bg-brand-sage"]:hover {
   bottom: 0;
   left: 0;
   height: 2px;
-  background: var(--brand-ink);
+  background: currentColor;
   content: "";
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 200ms ease;
 }
 
-.member-nav-link:hover,
-.member-nav-link:focus-visible,
 .member-nav-link.is-active,
 .member-nav-link[aria-current="page"] {
   color: var(--brand-ink);
+}
+
+.member-nav-link:hover,
+.member-nav-link:focus-visible {
+  color: var(--brand-primary);
 }
 
 .member-nav-link:hover::after,
@@ -1858,4 +1861,49 @@ button[class*="bg-brand-sage"]:hover {
     border-top: 1px solid rgba(168, 187, 163, 0.32);
     padding: 18px 0 0;
   }
+}
+
+.home-page :is(p, li, small, figcaption, blockquote):not(.home-platform-caption):not(.home-footer *) {
+  color: #000;
+}
+
+.home-page .home-nav a,
+.home-page .home-nav-cta,
+.home-page .home-story-link {
+  color: #000;
+}
+
+.home-page .home-nav a:hover,
+.home-page .home-nav a:focus-visible,
+.home-page .home-nav-cta:hover,
+.home-page .home-nav-cta:focus-visible,
+.home-page .home-story-link:hover,
+.home-page .home-story-link:focus-visible {
+  color: var(--brand-primary);
+}
+
+.auth-page :is(p, li, small, label, input, textarea) {
+  color: #000;
+}
+
+.member-app :is(p, li, small, label, dt, dd, time):not(.font-bold):not(.font-semibold):not(.font-extrabold):not(.font-black) {
+  color: #000 !important;
+}
+
+.member-app :is([class^="text-"], [class*=" text-"]):not([class*="text-white"]):not(.bg-clip-text):not(.font-bold):not(.font-semibold):not(.font-extrabold):not(.font-black) {
+  color: #000 !important;
+}
+
+.member-app .member-nav-link {
+  color: #000;
+}
+
+.member-app .member-nav-link:hover,
+.member-app .member-nav-link:focus-visible {
+  color: var(--brand-primary);
+}
+
+.member-app .member-nav-link.is-active,
+.member-app .member-nav-link[aria-current="page"] {
+  color: #000;
 }
