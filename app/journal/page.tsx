@@ -4,12 +4,40 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Home, BarChart3, Gamepad2, Library, BookOpen, User, Heart,
-  Plus, Clock, Flame, Lightbulb, Target, Smile, Frown, Meh,
-  Sun, Moon, Cloud, CloudRain, Zap, Mic, MicOff, Save,
-  Sparkles, TrendingUp, Calendar, Quote, Brain, Pause, Play,
-  Volume2, VolumeX, RefreshCw
-} from 'lucide-react';
+  FaHouse as Home,
+  FaChartColumn as BarChart3,
+  FaGamepad as Gamepad2,
+  FaBook as Library,
+  FaBookOpen as BookOpen,
+  FaUser as User,
+  FaHeart as Heart,
+  FaPlus as Plus,
+  FaClock as Clock,
+  FaFire as Flame,
+  FaLightbulb as Lightbulb,
+  FaBullseye as Target,
+  FaFaceSmile as Smile,
+  FaFaceFrown as Frown,
+  FaFaceMeh as Meh,
+  FaSun as Sun,
+  FaMoon as Moon,
+  FaCloud as Cloud,
+  FaCloudRain as CloudRain,
+  FaBolt as Zap,
+  FaMicrophone as Mic,
+  FaMicrophoneSlash as MicOff,
+  FaFloppyDisk as Save,
+  FaWandMagicSparkles as Sparkles,
+  FaArrowTrendUp as TrendingUp,
+  FaCalendarDays as Calendar,
+  FaQuoteLeft as Quote,
+  FaBrain as Brain,
+  FaPause as Pause,
+  FaPlay as Play,
+  FaVolumeHigh as Volume2,
+  FaVolumeXmark as VolumeX,
+  FaRotate as RefreshCw,
+} from 'react-icons/fa6';
 import { formatDate } from '@/lib/utils';
 import SoundPlayer from '@/components/SoundPlayer';
 import Navbar from '@/components/Navbar';

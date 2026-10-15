@@ -2,7 +2,27 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { PUZZLES, Puzzle } from '@/lib/puzzles';
-import { Heart, Star, Clock, Timer, Trophy, Sparkles, Zap, Target, Gamepad2, Home, BarChart3, Library, BookOpen, User, Play, Pause, RotateCcw, Check, X } from 'lucide-react';
+import {
+  FaHeart as Heart,
+  FaStar as Star,
+  FaClock as Clock,
+  FaHourglass as Timer,
+  FaTrophy as Trophy,
+  FaWandMagicSparkles as Sparkles,
+  FaBolt as Zap,
+  FaBullseye as Target,
+  FaGamepad as Gamepad2,
+  FaHouse as Home,
+  FaChartColumn as BarChart3,
+  FaBook as Library,
+  FaBookOpen as BookOpen,
+  FaUser as User,
+  FaPlay as Play,
+  FaPause as Pause,
+  FaRotate as RotateCcw,
+  FaCheck as Check,
+  FaXmark as X,
+} from 'react-icons/fa6';
 import Navbar from '@/components/Navbar';
 import EmergencySupport from '@/components/EmergencySupport';
 
@@ -842,7 +862,7 @@ const AchievementsModal = ({ achievements, onClose }: { achievements: string[]; 
   </div>
 );
 
-// Main Games Component
+// Main wellbeing activities component
 export default function GamesPage() {
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   // Persistent stats from backend
@@ -1003,10 +1023,10 @@ export default function GamesPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-blue-700 mb-4 drop-shadow-lg">
-            Therapeutic Games
+            Wellbeing Activities
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Engage in fun, therapeutic games designed to boost your mood, reduce anxiety, and build positive mental habits
+            Explore guided activities designed to support your mood, ease anxiety, and build positive mental habits.
           </p>
         </div>
 
@@ -1015,7 +1035,7 @@ export default function GamesPage() {
           <div className="bg-gradient-to-br from-blue-200 to-blue-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <Trophy className="h-10 w-10 text-yellow-500 mb-2" />
             <div className="text-3xl font-extrabold text-blue-900">{userStats.gamesPlayed}</div>
-            <div className="text-base text-blue-700 font-medium mt-1">Games Played</div>
+            <div className="text-base text-blue-700 font-medium mt-1">Activities Completed</div>
           </div>
           <div className="bg-gradient-to-br from-pink-200 to-pink-400 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
             <Star className="h-10 w-10 text-pink-500 mb-2" />
@@ -1079,7 +1099,7 @@ export default function GamesPage() {
                     onClick={() => setCurrentGame(null)}
                     className="bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors"
                   >
-                    ← Back to Games
+                    ← Back to Activities
                   </button>
                 </div>
               </div>

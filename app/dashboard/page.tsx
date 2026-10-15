@@ -3,7 +3,26 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Heart, BookOpen, User, Home, BarChart3, Gamepad2, Library, Plus, TrendingUp, Sun, Flame, Play, Brain, Pause, RotateCcw } from 'lucide-react';
+import {
+  FaHeart as Heart,
+  FaBookOpen as BookOpen,
+  FaUser as User,
+  FaHouse as Home,
+  FaChartColumn as BarChart3,
+  FaGamepad as Gamepad2,
+  FaBook as Library,
+  FaPlus as Plus,
+  FaArrowTrendUp as TrendingUp,
+  FaSun as Sun,
+  FaFire as Flame,
+  FaPlay as Play,
+  FaBrain as Brain,
+  FaPause as Pause,
+  FaRotate as RotateCcw,
+  FaChartColumn,
+  FaGamepad as ActivitiesIcon,
+  FaSeedling as GardenIcon,
+} from 'react-icons/fa6';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Area, AreaChart } from 'recharts';
 import { formatDate } from '@/lib/utils';
 import SoundPlayer from '@/components/SoundPlayer';
@@ -350,11 +369,11 @@ export default function DashboardPage() {
             <p className="text-slate-600 text-lg mb-4">
               This is your wellness page. Here you can see how you're feeling, write about your day, and take care of your mind.
             </p>
-            <div className="flex flex-wrap gap-2 text-sm text-slate-500">
-              <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">📊 View mood trends</span>
-              <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full">📝 Journal entries</span>
-              <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full">🎮 Wellness games</span>
-              <span className="bg-pink-100 text-pink-700 px-3 py-1 rounded-full">🌱 Mind garden</span>
+            <div className="dashboard-feature-tags">
+              <span className="dashboard-feature-badge dashboard-feature-mood"><FaChartColumn aria-hidden="true" />View mood trends</span>
+              <span className="dashboard-feature-badge dashboard-feature-journal"><BookOpen aria-hidden="true" />Journal entries</span>
+              <span className="dashboard-feature-badge dashboard-feature-games"><ActivitiesIcon aria-hidden="true" />Wellbeing activities</span>
+              <span className="dashboard-feature-badge dashboard-feature-garden"><GardenIcon aria-hidden="true" />Mind garden</span>
             </div>
             {/* Personalized Feedback & Motivation */}
             <div className="mt-6">
@@ -367,7 +386,7 @@ export default function DashboardPage() {
               {activityStats.totalMoodEntries > 0 && moodData.slice(-4).every(entry => entry.mood <= 4) && (
                 <div className="mb-3 p-4 bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-200 rounded-xl text-blue-700 font-semibold flex items-center gap-2 animate-fade-in">
                   <Heart className="w-5 h-5 text-blue-500 animate-pulse" />
-                  You marked feeling anxious 4 days in a row. Here's a <Link href="/games" className="underline text-blue-600">breathing game</Link> to help you relax.
+                  You marked feeling anxious 4 days in a row. Here's a <Link href="/games" className="underline text-blue-600">breathing activity</Link> to help you relax.
                 </div>
               )}
               {activityStats.streak >= 5 && (
@@ -468,7 +487,7 @@ export default function DashboardPage() {
               </Link>
               <Link href="/games" className="group w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white p-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-lg transform">
                 <Gamepad2 className="w-5 h-5 group-hover:animate-pulse" />
-                <span className="font-medium">Play a Game</span>
+                <span className="font-medium">Explore Activities</span>
               </Link>
             </div>
           </div>

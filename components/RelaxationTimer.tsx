@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Pause, Play } from 'lucide-react';
+import { FaPause as Pause, FaPlay as Play } from 'react-icons/fa6';
 
 export default function RelaxationTimer() {
   const [time, setTime] = useState(300); // 5 minutes in seconds

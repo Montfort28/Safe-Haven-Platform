@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, Gamepad2, Library, BookOpen, User, LogOut, Heart } from 'lucide-react';
+import { FaHouse as Home, FaGamepad as Gamepad2, FaBook as Library, FaBookOpen as BookOpen, FaUser as User, FaRightFromBracket as LogOut, FaHeart as Heart } from 'react-icons/fa6';
 import Link from 'next/link';
 import BrandLogo from '@/components/BrandLogo';
 
@@ -9,7 +9,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="min-h-screen bg-white">
             <nav className="glass-card mx-4 mt-4 px-6 py-4">
                 <div className="flex items-center justify-between">
-                    <BrandLogo className="h-[60px] w-[162px]" />
+                    <Link href="/dashboard" aria-label="Safe Haven dashboard" className="app-shell-brand">
+                        <BrandLogo className="h-[72px] w-[180px]" />
+                    </Link>
                     <div className="flex items-center gap-6">
                         <Link href="/dashboard" className="flex items-center gap-2 text-blue-600">
                             <Home className="w-5 h-5" />

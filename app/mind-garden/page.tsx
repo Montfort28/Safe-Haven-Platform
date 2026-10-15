@@ -5,11 +5,28 @@ import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Home, Heart, BookOpen, Gamepad2, Library, Trophy,
-  Target, Calendar, Flame, Droplets, Sun, Moon,
-  TrendingUp, Award, Star, Zap, Settings, LogOut,
-  Wind, CloudRain, Leaf
-} from 'lucide-react';
+  FaHouse as Home,
+  FaHeart as Heart,
+  FaBookOpen as BookOpen,
+  FaGamepad as Gamepad2,
+  FaBook as Library,
+  FaTrophy as Trophy,
+  FaBullseye as Target,
+  FaCalendarDays as Calendar,
+  FaFire as Flame,
+  FaDroplet as Droplets,
+  FaSun as Sun,
+  FaMoon as Moon,
+  FaArrowTrendUp as TrendingUp,
+  FaAward as Award,
+  FaStar as Star,
+  FaBolt as Zap,
+  FaGear as Settings,
+  FaRightFromBracket as LogOut,
+  FaWind as Wind,
+  FaCloudRain as CloudRain,
+  FaLeaf as Leaf,
+} from 'react-icons/fa6';
 import Navbar from '@/components/Navbar';
 import EmergencySupport from '@/components/EmergencySupport';
 

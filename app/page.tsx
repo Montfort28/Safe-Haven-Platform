@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  ArrowRight,
-  BookOpen,
-  Heart,
-  Leaf,
-  LockKeyhole,
-  Play,
-  Sprout,
-} from 'lucide-react';
+  FaArrowRight as ArrowRight,
+  FaBookOpen as BookOpen,
+  FaHeart as Heart,
+  FaLeaf as Leaf,
+  FaLock as LockKeyhole,
+  FaPlay as Play,
+  FaSeedling as Sprout,
+} from 'react-icons/fa6';
 import BrandLogo from '@/components/BrandLogo';
 
 const tools = [
@@ -41,7 +41,7 @@ export default function HomePage() {
       <header className="home-header">
         <div className="home-header-inner">
           <Link href="/" aria-label="Safe Haven home" className="home-brand">
-            <BrandLogo className="h-[68px] w-[180px]" />
+            <BrandLogo className="h-[84px] w-[210px]" />
           </Link>
 
           <nav aria-label="Main navigation" className="home-nav">
@@ -217,8 +217,8 @@ export default function HomePage() {
       <footer className="home-footer">
         <div className="home-footer-inner">
           <div className="home-footer-brand">
-            <Link href="/" aria-label="Safe Haven home">
-              <BrandLogo className="h-[60px] w-[162px]" />
+            <Link href="/" aria-label="Safe Haven home" className="footer-brand-link">
+              <BrandLogo className="h-[80px] w-[200px]" />
             </Link>
             <p>A quieter space to reconnect with yourself.</p>
           </div>

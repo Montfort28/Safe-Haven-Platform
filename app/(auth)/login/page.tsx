@@ -2,9 +2,19 @@
 
 import { FormEvent, Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { FaArrowRight as ArrowRight, FaEye as Eye, FaEyeSlash as EyeOff } from 'react-icons/fa6';
 import AuthLayout from '@/components/AuthLayout';
+
+const memberRoutes = new Set([
+  '/dashboard',
+  '/games',
+  '/journal',
+  '/mind-garden',
+  '/mood',
+  '/profile',
+  '/resources',
+]);
 
 export default function LoginPage() {
   return (
@@ -15,7 +25,6 @@ export default function LoginPage() {
 }
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get('next');
   const registerHref =
@@ -51,11 +60,15 @@ function LoginForm() {
       }
 
       document.cookie = `token=${data.token}; path=/; max-age=86400; samesite=lax`;
+      const requestedPath = nextPath?.split(/[?#]/, 1)[0];
       const safeNextPath =
-        nextPath?.startsWith('/') && !nextPath.startsWith('//')
+        nextPath?.startsWith('/') &&
+        !nextPath.startsWith('//') &&
+        requestedPath &&
+        memberRoutes.has(requestedPath)
           ? nextPath
           : '/dashboard';
-      router.replace(safeNextPath);
+      window.location.replace(safeNextPath);
     } catch {
       setError('We could not connect right now. Please try again.');
     } finally {

@@ -186,10 +186,37 @@ button[class*="bg-brand-sage"]:hover {
   display: inline-block;
   flex: none;
   max-width: 100%;
-  aspect-ratio: 8 / 3;
-  background-color: var(--brand-sage);
-  -webkit-mask: url("/images/Safe%20haven%20logo.png") center / contain no-repeat;
-  mask: url("/images/Safe%20haven%20logo.png") center / contain no-repeat;
+  aspect-ratio: 2 / 1;
+  color: var(--brand-ink);
+  background-color: var(--brand-ink);
+  -webkit-mask: url("/images/safe%20logo.png") center / contain no-repeat;
+  mask: url("/images/safe%20logo.png") center / contain no-repeat;
+  filter:
+    drop-shadow(0.35px 0 0 currentColor)
+    drop-shadow(-0.35px 0 0 currentColor)
+    drop-shadow(0 0.35px 0 currentColor)
+    drop-shadow(0 -0.35px 0 currentColor);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.home-brand:hover .brand-logo,
+.home-brand:focus-visible .brand-logo,
+.member-brand:hover .brand-logo,
+.member-brand:focus-visible .brand-logo,
+.auth-brand:hover .brand-logo,
+.auth-brand:focus-visible .brand-logo,
+.footer-brand-link:hover .brand-logo,
+.footer-brand-link:focus-visible .brand-logo,
+.app-shell-brand:hover .brand-logo,
+.app-shell-brand:focus-visible .brand-logo {
+  color: var(--brand-primary);
+  background-color: var(--brand-primary);
+}
+
+.member-brand {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
 }
 
 .home-page {
@@ -282,16 +309,24 @@ button[class*="bg-brand-sage"]:hover {
   border-radius: 12px;
   padding: 0 22px;
   color: #fff;
-  background: var(--brand-sage);
+  background: var(--brand-ink);
   font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
-  transition: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
-.home-button:hover {
-  background: var(--brand-sage);
+.home-button:hover,
+.home-button:focus-visible {
+  background: var(--brand-ink);
   color: #fff;
+  box-shadow: 0 6px 14px rgba(68, 81, 61, 0.2);
+  transform: translateY(-2px);
+}
+
+.home-button:active {
+  box-shadow: none;
+  transform: translateY(0);
 }
 
 .home-nav-cta {
@@ -433,7 +468,7 @@ button[class*="bg-brand-sage"]:hover {
   place-items: center;
   border-radius: 50%;
   color: var(--brand-cream);
-  background: var(--brand-sage);
+  background: var(--brand-ink);
 }
 
 .home-trust-note p {
@@ -461,11 +496,11 @@ button[class*="bg-brand-sage"]:hover {
   object-position: 62% center;
   transform: translateX(-112px);
   -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 24%, #000 94%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 10%, #000 94%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-image:
-    linear-gradient(to right, transparent 0%, #000 24%, #000 94%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 10%, #000 94%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
   mask-composite: intersect;
 }
@@ -533,14 +568,14 @@ button[class*="bg-brand-sage"]:hover {
 
 .home-platforms {
   min-height: 116px;
-  padding: 22px max(24px, calc((100% - 1210px) / 2));
+  padding: 20px max(24px, calc((100% - 1210px) / 2));
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   color: var(--brand-cream);
-  background: #203b31;
+  background: var(--brand-ink);
 }
 
 .home-platform-caption {
@@ -786,6 +821,7 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .home-footer .brand-logo {
+  color: var(--brand-cream);
   background-color: var(--brand-cream);
 }
 
@@ -902,6 +938,8 @@ button[class*="bg-brand-sage"]:hover {
 .member-app {
   min-height: 100vh;
   font-family: "Poppins", sans-serif !important;
+  font-size: 0.95rem;
+  line-height: 1.65;
   color: var(--brand-ink);
   background: var(--brand-cream);
 }
@@ -920,6 +958,8 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .member-app h1 {
+  font-size: clamp(1.85rem, 3vw, 2.35rem);
+  line-height: 1.2;
   font-weight: 700;
 }
 
@@ -927,6 +967,21 @@ button[class*="bg-brand-sage"]:hover {
 .member-app h3,
 .member-app h4 {
   font-weight: 600;
+}
+
+.member-app h2 {
+  font-size: 1.45rem;
+  line-height: 1.3;
+}
+
+.member-app h3 {
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+
+.member-app h4 {
+  font-size: 1rem;
+  line-height: 1.4;
 }
 
 .member-app button,
@@ -957,120 +1012,87 @@ button[class*="bg-brand-sage"]:hover {
   color: var(--brand-primary) !important;
 }
 
-.member-app .bg-clip-text.text-transparent {
-  color: transparent !important;
-  background-image: linear-gradient(100deg, var(--brand-primary), var(--brand-sage), var(--brand-ink)) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
+.member-app :is(
+  [class^="text-green-"], [class*=" text-green-"],
+  [class^="text-emerald-"], [class*=" text-emerald-"],
+  [class^="text-lime-"], [class*=" text-lime-"]
+) {
+  color: var(--brand-ink) !important;
 }
 
-.member-app :is(
+.member-app .bg-clip-text.text-transparent {
+  color: var(--brand-primary) !important;
+  background-image: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+.member-app :is([class^="text-white"], [class*=" text-white"]) {
+  color: var(--brand-ink) !important;
+}
+
+.member-app :is(div, section, article, aside):is(
+  [class*="bg-gradient-to-"],
+  [class^="bg-white/"], [class*=" bg-white/"],
+  [class~="bg-white"],
+  [class^="bg-gray-"], [class*=" bg-gray-"],
+  [class^="bg-slate-"], [class*=" bg-slate-"],
   [class^="bg-blue-"], [class*=" bg-blue-"],
   [class^="bg-indigo-"], [class*=" bg-indigo-"],
   [class^="bg-purple-"], [class*=" bg-purple-"],
   [class^="bg-violet-"], [class*=" bg-violet-"],
   [class^="bg-cyan-"], [class*=" bg-cyan-"],
-  [class^="bg-pink-"], [class*=" bg-pink-"]
-) {
-  background-color: rgba(168, 187, 163, 0.2) !important;
-}
-
-.member-app :is(
+  [class^="bg-pink-"], [class*=" bg-pink-"],
   [class^="bg-green-"], [class*=" bg-green-"],
   [class^="bg-emerald-"], [class*=" bg-emerald-"],
-  [class^="bg-lime-"], [class*=" bg-lime-"]
-) {
-  background-color: rgba(151, 168, 122, 0.22) !important;
-}
-
-.member-app :is(
+  [class^="bg-lime-"], [class*=" bg-lime-"],
   [class^="bg-orange-"], [class*=" bg-orange-"],
   [class^="bg-amber-"], [class*=" bg-amber-"],
   [class^="bg-yellow-"], [class*=" bg-yellow-"],
   [class^="bg-red-"], [class*=" bg-red-"]
+):is(
+  [class*="rounded-lg"], [class*="rounded-xl"],
+  [class*="rounded-2xl"], [class*="rounded-3xl"]
+) {
+  border-color: rgba(151, 168, 122, 0.26) !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: 0 8px 24px rgba(68, 81, 61, 0.07);
+}
+
+.member-app :is(div, section, article, aside):is(
+  [class^="bg-green-"], [class*=" bg-green-"],
+  [class^="bg-emerald-"], [class*=" bg-emerald-"],
+  [class^="bg-lime-"], [class*=" bg-lime-"],
+  [class^="from-green-"], [class*=" from-green-"],
+  [class^="from-emerald-"], [class*=" from-emerald-"]
+):is(
+  [class*="rounded-lg"], [class*="rounded-xl"],
+  [class*="rounded-2xl"], [class*="rounded-3xl"]
+) {
+  background-color: rgba(151, 168, 122, 0.2) !important;
+}
+
+.member-app :is(div, section, article, aside):is(
+  [class^="bg-orange-"], [class*=" bg-orange-"],
+  [class^="bg-amber-"], [class*=" bg-amber-"],
+  [class^="bg-yellow-"], [class*=" bg-yellow-"],
+  [class^="from-orange-"], [class*=" from-orange-"],
+  [class^="from-amber-"], [class*=" from-amber-"],
+  [class^="from-yellow-"], [class*=" from-yellow-"]
+):is(
+  [class*="rounded-lg"], [class*="rounded-xl"],
+  [class*="rounded-2xl"], [class*="rounded-3xl"]
 ) {
   background-color: rgba(219, 149, 88, 0.16) !important;
 }
 
-.member-app :is(
-  [class^="border-blue-"], [class*=" border-blue-"],
-  [class^="border-cyan-"], [class*=" border-cyan-"],
-  [class^="border-indigo-"], [class*=" border-indigo-"],
-  [class^="border-purple-"], [class*=" border-purple-"],
-  [class^="border-violet-"], [class*=" border-violet-"],
-  [class^="border-pink-"], [class*=" border-pink-"]
-) {
-  border-color: rgba(168, 187, 163, 0.55) !important;
-}
-
-.member-app :is(
-  [class^="border-green-"], [class*=" border-green-"],
-  [class^="border-emerald-"], [class*=" border-emerald-"],
-  [class^="border-lime-"]
-) {
-  border-color: rgba(151, 168, 122, 0.55) !important;
-}
-
-.member-app :is(
-  [class^="border-orange-"], [class*=" border-orange-"],
-  [class^="border-amber-"], [class*=" border-amber-"],
-  [class^="border-yellow-"], [class*=" border-yellow-"]
-) {
-  border-color: rgba(219, 149, 88, 0.5) !important;
-}
-
-.member-app :is(
-  [class^="from-blue-"], [class*=" from-blue-"],
-  [class^="from-cyan-"], [class*=" from-cyan-"]
-) {
-  background-image: linear-gradient(
-    135deg,
-    rgba(252, 249, 234, 0.92),
-    rgba(168, 187, 163, 0.22)
-  ) !important;
-}
-
-.member-app :is(
-  [class^="from-indigo-"], [class*=" from-indigo-"],
-  [class^="from-purple-"], [class*=" from-purple-"],
-  [class^="from-violet-"], [class*=" from-violet-"]
-) {
-  background-image: linear-gradient(
-    135deg,
-    rgba(252, 249, 234, 0.92),
-    rgba(168, 187, 163, 0.28)
-  ) !important;
-}
-
-.member-app :is(
-  [class^="from-green-"], [class*=" from-green-"],
-  [class^="from-emerald-"], [class*=" from-emerald-"]
-) {
-  background-image: linear-gradient(135deg, rgba(168, 187, 163, 0.38), rgba(151, 168, 122, 0.32)) !important;
-}
-
-.member-app :is(
-  [class^="from-orange-"], [class*=" from-orange-"],
-  [class^="from-amber-"], [class*=" from-amber-"],
-  [class^="from-yellow-"], [class*=" from-yellow-"],
-  [class^="from-pink-"], [class*=" from-pink-"]
-) {
-  background-image: linear-gradient(135deg, rgba(219, 149, 88, 0.2), rgba(168, 187, 163, 0.2)) !important;
-}
-
-.member-app :is(
-  [class~="bg-white"], [class^="bg-white/"], [class*=" bg-white/"],
-  [class~="bg-gray-50"], [class~="bg-gray-100"],
-  [class~="bg-slate-50"], [class~="bg-slate-100"]
-):not(button):not(a) {
-  background-color: #fff !important;
-}
-
 .member-app :is(button, a):is([class^="bg-"], [class*=" bg-"]) {
   border-radius: 12px;
-  background-color: var(--brand-sage);
-  color: #fff;
+  background-color: var(--brand-ink) !important;
+  background-image: none !important;
+  color: #fff !important;
   font-weight: 600;
+  font-family: "Poppins", sans-serif !important;
   transition:
     background-color 160ms ease,
     background-image 160ms ease,
@@ -1086,15 +1108,15 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .member-app .btn-primary {
-  border-color: var(--brand-sage) !important;
+  border-color: var(--brand-ink) !important;
   color: #fff !important;
-  background-color: var(--brand-sage) !important;
+  background-color: var(--brand-ink) !important;
 }
 
 .member-app .btn-secondary {
-  border-color: var(--brand-primary) !important;
+  border-color: var(--brand-ink) !important;
   color: #fff !important;
-  background-color: var(--brand-primary) !important;
+  background-color: var(--brand-ink) !important;
 }
 
 .member-app :is(button, a)[class~="bg-white"],
@@ -1103,7 +1125,7 @@ button[class*="bg-brand-sage"]:hover {
 .member-app :is(button, a):is([class^="bg-slate-"], [class*=" bg-slate-"]) {
   border-color: rgba(151, 168, 122, 0.48) !important;
   color: var(--brand-ink) !important;
-  background-color: var(--brand-cream) !important;
+  background-color: #fff !important;
 }
 
 .member-app :is(button, a):is([class^="bg-green-"], [class*=" bg-green-"]),
@@ -1128,9 +1150,9 @@ button[class*="bg-brand-sage"]:hover {
 .member-app :is(button, a):is([class^="bg-purple-"], [class*=" bg-purple-"]),
 .member-app :is(button, a):is([class^="bg-violet-"], [class*=" bg-violet-"]),
 .member-app :is(button, a):is([class^="bg-pink-"], [class*=" bg-pink-"]) {
-  border-color: var(--brand-sage-light) !important;
-  color: var(--brand-ink) !important;
-  background-color: var(--brand-sage-light) !important;
+  border-color: var(--brand-sage) !important;
+  color: #fff !important;
+  background-color: var(--brand-sage) !important;
 }
 
 .member-app :is(button, a):is([class^="from-orange-"], [class*=" from-orange-"]),
@@ -1138,14 +1160,16 @@ button[class*="bg-brand-sage"]:hover {
 .member-app :is(button, a):is([class^="from-yellow-"], [class*=" from-yellow-"]) {
   border-color: var(--brand-primary) !important;
   color: #fff !important;
-  background-image: linear-gradient(120deg, #c77c43, var(--brand-primary)) !important;
+  background-color: var(--brand-primary) !important;
+  background-image: none !important;
 }
 
 .member-app :is(button, a):is([class^="from-green-"], [class*=" from-green-"]),
 .member-app :is(button, a):is([class^="from-emerald-"], [class*=" from-emerald-"]) {
   border-color: var(--brand-sage) !important;
   color: #fff !important;
-  background-image: linear-gradient(120deg, #7f9166, var(--brand-sage)) !important;
+  background-color: var(--brand-sage) !important;
+  background-image: none !important;
 }
 
 .member-app :is(button, a):is([class^="from-blue-"], [class*=" from-blue-"]),
@@ -1154,9 +1178,22 @@ button[class*="bg-brand-sage"]:hover {
 .member-app :is(button, a):is([class^="from-purple-"], [class*=" from-purple-"]),
 .member-app :is(button, a):is([class^="from-violet-"], [class*=" from-violet-"]),
 .member-app :is(button, a):is([class^="from-pink-"], [class*=" from-pink-"]) {
-  border-color: var(--brand-sage-light) !important;
-  color: var(--brand-ink) !important;
-  background-image: linear-gradient(120deg, var(--brand-sage-light), var(--brand-sage)) !important;
+  border-color: var(--brand-sage) !important;
+  color: #fff !important;
+  background-color: var(--brand-sage) !important;
+  background-image: none !important;
+}
+
+.member-app :is(button, a):is([class^="bg-"], [class*=" bg-"]):not(
+  [class*="bg-white"],
+  [class*="bg-gray-"],
+  [class*="bg-slate-"],
+  [class*="bg-transparent"]
+) {
+  border-color: var(--brand-ink) !important;
+  color: #fff !important;
+  background-color: var(--brand-ink) !important;
+  background-image: none !important;
 }
 
 .member-app :is(button, a):is([class^="bg-"], [class*=" bg-"]):hover:not(:disabled) {
@@ -1169,12 +1206,45 @@ button[class*="bg-brand-sage"]:hover {
   color: #fff !important;
 }
 
-.member-app :is(button, a):is(
-  [class~="bg-white"],
-  [class^="bg-gray-"], [class*=" bg-gray-"],
-  [class^="bg-slate-"], [class*=" bg-slate-"]
-) :is([class^="text-white"], [class*=" text-white"]) {
-  color: var(--brand-ink) !important;
+.dashboard-feature-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dashboard-feature-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--brand-ink);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.dashboard-feature-badge svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.dashboard-feature-mood,
+.dashboard-feature-garden {
+  border-color: rgba(151, 168, 122, 0.35);
+  background: rgba(151, 168, 122, 0.18);
+}
+
+.dashboard-feature-journal {
+  border-color: rgba(219, 149, 88, 0.35);
+  background: rgba(219, 149, 88, 0.15);
+}
+
+.dashboard-feature-games {
+  border-color: rgba(168, 187, 163, 0.55);
+  background: rgba(168, 187, 163, 0.28);
 }
 
 .member-app input:focus,
@@ -1212,7 +1282,7 @@ button[class*="bg-brand-sage"]:hover {
   bottom: 0;
   left: 0;
   height: 2px;
-  background: var(--brand-sage);
+  background: var(--brand-ink);
   content: "";
   transform: scaleX(0);
   transform-origin: left;
@@ -1223,7 +1293,7 @@ button[class*="bg-brand-sage"]:hover {
 .member-nav-link:focus-visible,
 .member-nav-link.is-active,
 .member-nav-link[aria-current="page"] {
-  color: var(--brand-sage);
+  color: var(--brand-ink);
 }
 
 .member-nav-link:hover::after,
@@ -1234,7 +1304,7 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .member-navbar button:focus-visible {
-  outline: 2px solid var(--brand-sage);
+  outline: 2px solid var(--brand-ink);
   outline-offset: 3px;
   box-shadow: none;
 }
@@ -1373,7 +1443,7 @@ button[class*="bg-brand-sage"]:hover {
     border: 1px solid rgba(151, 168, 122, 0.3);
     border-radius: 24px;
     background: rgba(252, 249, 234, 0.94);
-    box-shadow: 0 20px 60px rgba(68, 81, 61, 0.1);
+    box-shadow: 0 8px 24px rgba(68, 81, 61, 0.12);
   }
 
   .auth-panel h2 {
@@ -1469,16 +1539,23 @@ button[class*="bg-brand-sage"]:hover {
     border: 0;
     border-radius: 999px;
     color: #fff;
-    background: var(--brand-sage);
+    background: var(--brand-ink);
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
-    transition: background 150ms ease, transform 150ms ease;
+    transition: background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
   }
 
   .auth-submit:hover:not(:disabled) {
-    background: var(--brand-sage);
+    background: var(--brand-ink);
     color: #fff;
+    box-shadow: 0 6px 14px rgba(68, 81, 61, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .auth-submit:active:not(:disabled) {
+    box-shadow: none;
+    transform: translateY(0);
   }
 
   .auth-submit:disabled {
@@ -1574,8 +1651,8 @@ button[class*="bg-brand-sage"]:hover {
     }
 
     .auth-header .brand-logo {
-      width: 156px;
-      height: 58px;
+      width: 184px;
+      height: 74px;
     }
 
     .auth-layout {
@@ -1607,8 +1684,8 @@ button[class*="bg-brand-sage"]:hover {
 
 @media (max-width: 650px) {
   .home-brand .brand-logo {
-    width: 172px;
-    height: 64px;
+    width: 190px;
+    height: 76px;
   }
 
   .home-header-inner > .home-nav-cta {
@@ -1675,17 +1752,16 @@ button[class*="bg-brand-sage"]:hover {
     transform: none;
     object-position: 62% center;
     -webkit-mask-image:
-      linear-gradient(to right, transparent 0%, #000 18%, #000 94%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 8%, #000 94%, transparent 100%),
       linear-gradient(to bottom, transparent 0%, #000 8%, #000 90%, transparent 100%);
     mask-image:
-      linear-gradient(to right, transparent 0%, #000 18%, #000 94%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 8%, #000 94%, transparent 100%),
       linear-gradient(to bottom, transparent 0%, #000 8%, #000 90%, transparent 100%);
   }
 
   .home-platforms {
-    padding: 25px 20px;
-    align-items: flex-start;
-    flex-direction: column;
+    padding: 20px;
+    align-items: center;
     gap: 20px;
   }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { AlertCircle, Phone, X } from 'lucide-react';
+import { FaCircleExclamation as AlertCircle, FaPhone as Phone, FaXmark as X } from 'react-icons/fa6';
 
 const RWANDA_HELPLINES = [
   { 

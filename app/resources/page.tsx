@@ -3,7 +3,21 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Home, BarChart3, Gamepad2, Library, BookOpen, Video, Phone, User, LogOut, ExternalLink, Heart, Smile, Frown } from 'lucide-react';
+import {
+  FaHouse as Home,
+  FaChartColumn as BarChart3,
+  FaGamepad as Gamepad2,
+  FaBook as Library,
+  FaBookOpen as BookOpen,
+  FaVideo as Video,
+  FaPhone as Phone,
+  FaUser as User,
+  FaRightFromBracket as LogOut,
+  FaArrowUpRightFromSquare as ExternalLink,
+  FaHeart as Heart,
+  FaFaceSmile as Smile,
+  FaFaceFrown as Frown,
+} from 'react-icons/fa6';
 import AppShell from '../AppShell';
 import stories from './stories';
 import Navbar from '@/components/Navbar';

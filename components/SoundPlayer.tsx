@@ -1,6 +1,6 @@
 'use client';
 
-import { Volume2, VolumeX } from 'lucide-react';
+import { FaVolumeHigh as Volume2, FaVolumeXmark as VolumeX } from 'react-icons/fa6';
 import React from 'react';
 
 interface SoundPlayerProps {

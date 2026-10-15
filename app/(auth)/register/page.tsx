@@ -3,7 +3,7 @@
 import { FormEvent, Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { FaArrowRight as ArrowRight, FaEye as Eye, FaEyeSlash as EyeOff } from 'react-icons/fa6';
 import AuthLayout from '@/components/AuthLayout';
 
 export default function RegisterPage() {
@@ -82,9 +82,9 @@ function RegisterForm() {
   return (
     <AuthLayout
       title="Make room for wellbeing"
-      description="Create your private Safe Haven account and take the first small step at a pace that feels right for you."
+      description="Create a Safe Haven account to check in with your mood, write in your journal, and explore calming activities. Take things one step at a time."
       panelTitle="Create your account"
-      panelDescription="Your personal space for reflection and growth."
+      panelDescription="Build a personal space for reflection, gentle routines, and noticing your progress over time."
       footer={
         <>
           Already have an account? <Link href={loginHref}>Sign in</Link>

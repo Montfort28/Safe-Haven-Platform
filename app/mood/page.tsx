@@ -1,7 +1,29 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Home, BarChart3, Gamepad2, Library, BookOpen, User, Heart, TrendingUp, TrendingDown, Minus, Calendar, Clock, Zap, Moon, Sun, Activity, Target, ChevronUp, ChevronDown, Brain, Shield } from 'lucide-react';
+import {
+  FaHouse as Home,
+  FaChartColumn as BarChart3,
+  FaGamepad as Gamepad2,
+  FaBook as Library,
+  FaBookOpen as BookOpen,
+  FaUser as User,
+  FaHeart as Heart,
+  FaArrowTrendUp as TrendingUp,
+  FaArrowTrendDown as TrendingDown,
+  FaMinus as Minus,
+  FaCalendarDays as Calendar,
+  FaClock as Clock,
+  FaBolt as Zap,
+  FaMoon as Moon,
+  FaSun as Sun,
+  FaHeartPulse as Activity,
+  FaBullseye as Target,
+  FaChevronUp as ChevronUp,
+  FaChevronDown as ChevronDown,
+  FaBrain as Brain,
+  FaShieldHalved as Shield,
+} from 'react-icons/fa6';
 import Navbar from '@/components/Navbar';
 import EmergencySupport from '@/components/EmergencySupport';
 
