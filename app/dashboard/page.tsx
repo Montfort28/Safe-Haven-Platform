@@ -341,7 +341,10 @@ export default function DashboardPage() {
         <header className="dashboard-welcome">
           <div>
             <span className="dashboard-eyebrow">Your wellbeing space</span>
-            <h1>Welcome back{user?.name || user?.username ? `, ${user.name || user.username}` : ''}.</h1>
+            <h1>
+              Welcome <span className="member-heading-accent">back</span>
+              {user?.name || user?.username ? `, ${user.name || user.username}` : '.'}
+            </h1>
             <p>A calm place to check in, reflect, and choose what feels helpful today.</p>
           </div>
           <Link href="/mood" className="dashboard-primary-action">
@@ -407,7 +410,7 @@ export default function DashboardPage() {
                     <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#44513D', fontSize: 12 }} />
                     <YAxis domain={[1, 10]} axisLine={false} tickLine={false} tick={{ fill: '#44513D', fontSize: 12 }} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Area type="monotone" dataKey="mood" stroke="#44513D" strokeWidth={2.5} fill="url(#dashboardMoodFill)" dot={{ fill: '#44513D', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, fill: '#DB9558' }} connectNulls />
+                    <Area type="natural" dataKey="mood" stroke="#44513D" strokeWidth={2.5} fill="url(#dashboardMoodFill)" dot={{ fill: '#44513D', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, fill: '#DB9558' }} connectNulls strokeLinecap="round" strokeLinejoin="round" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>

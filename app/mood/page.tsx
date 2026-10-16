@@ -430,18 +430,19 @@ const MoodPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
       <EmergencySupport />
       <Navbar />
-      <div className="max-w-7xl mx-auto p-6">
+      <main className="member-page-content">
         {/* Header Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-blue-700 mb-4 drop-shadow-lg">Mood Tracker</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <header className="member-page-header">
+          <span className="member-page-eyebrow">Check in with yourself</span>
+          <h1>Mood <span className="member-heading-accent">Tracker</span></h1>
+          <p>
             Track your emotional wellbeing with detailed insights and personalized recommendations
           </p>
-          <div className="mt-4 flex items-center justify-center gap-2">
+          <div className="member-page-private-note">
             <span className="text-green-600 font-semibold text-lg">🔐</span>
             <span className="text-green-700 text-base font-medium">Your entries are private and encrypted</span>
           </div>
-        </div>
+        </header>
 
         {/* Quick Stats */}
         {analytics && (
@@ -805,7 +806,7 @@ const MoodPage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

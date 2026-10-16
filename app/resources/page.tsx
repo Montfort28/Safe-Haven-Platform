@@ -153,10 +153,40 @@ export default function ResourcesPage() {
   const [openStory, setOpenStory] = useState<Story | null>(null);
   const [openCopingModal, setOpenCopingModal] = useState<'anxiety' | 'depression' | null>(null);
   const [showHelplineModal, setShowHelplineModal] = useState(false);
+  const [gardenNotice, setGardenNotice] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'audio' | 'video' | 'articles' | 'coping' | 'stories' | 'hotlines'>('all');
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement | null>(null);
   const audioRefs = useRef<Array<HTMLAudioElement | null>>([]);
+
+  const trackResourceVisit = async () => {
+    const token = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('token='))
+      ?.split('=')[1];
+
+    try {
+      const response = await fetch('/api/mind-garden/activity', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ activityType: 'resource' }),
+      });
+
+      if (!response.ok) {
+        setGardenNotice('Your resource opened, but its garden growth could not be recorded.');
+        return;
+      }
+
+      const result = await response.json();
+      setGardenNotice(result.message || 'Your garden grew from exploring a resource.');
+    } catch (error) {
+      console.error('Could not record resource visit for Mind Garden:', error);
+      setGardenNotice('Your resource opened, but its garden growth could not be recorded.');
+    }
+  };
 
   // Improved search: filter and sort by match relevance (type, then title/desc)
   const term = searchTerm.toLowerCase();
@@ -282,18 +312,20 @@ export default function ResourcesPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
       <EmergencySupport />
       <Navbar />
-      <div className="max-w-7xl mx-auto p-6">
+      <main className="member-page-content">
         {/* Hero Section */}
-        <section className="rounded-3xl bg-gradient-to-r from-blue-200 to-blue-200 shadow-xl p-8 mb-8 flex flex-col md:flex-row items-center gap-8">
+        <section className="member-page-header member-page-hero">
           <div className="flex-1">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-blue-900 mb-4 drop-shadow-lg">You Are Not Alone</h1>
-            <p className="text-lg md:text-xl text-slate-700 mb-4 max-w-xl">Explore trusted resources, real stories, and practical tools for managing anxiety and depression. Safe Haven is your supportive space for mental wellness.</p>
+            <span className="member-page-eyebrow">Support and guidance</span>
+            <h1>You are <span className="member-heading-accent">not alone</span></h1>
+            <p>Explore trusted resources, real stories, and practical tools for managing anxiety and depression. Safe Haven is your supportive space for mental wellness.</p>
             <div className="flex flex-row gap-4 mt-6">
               <a href="#coping" className="btn-primary">Coping Mechanisms</a>
               <a href="#stories" className="btn-secondary">Real Stories</a>
             </div>
           </div>
         </section>
+        {gardenNotice && <p className="member-page-private-note" role="status">{gardenNotice}</p>}
 
         {/* Search Bar & Emotion Filter */}
         <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-center w-full">
@@ -453,6 +485,7 @@ export default function ResourcesPage() {
                     href={article.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => void trackResourceVisit()}
                     className="btn-primary flex items-center w-fit"
                   >
                     <ExternalLink className="w-4 h-4 mr-2" />
@@ -498,6 +531,7 @@ export default function ResourcesPage() {
                     href={video.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => void trackResourceVisit()}
                     className="btn-primary flex items-center w-fit"
                   >
                     <ExternalLink className="w-4 h-4 mr-2" />
@@ -667,7 +701,7 @@ export default function ResourcesPage() {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

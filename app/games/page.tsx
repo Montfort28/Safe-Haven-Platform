@@ -910,7 +910,7 @@ export default function GamesPage() {
       name: 'Puzzle Game',
       description: 'Solve awesome puzzles with increasing difficulty and unlock achievements!',
       icon: Trophy,
-      color: 'from-pink-400 to-purple-400',
+      color: '#DB9558',
       component: PuzzleGame
     },
     {
@@ -918,7 +918,7 @@ export default function GamesPage() {
       name: 'Anxiety Breather',
       description: 'Practice breathing exercises to calm anxiety and reduce stress',
       icon: Sparkles,
-      color: 'from-blue-400 to-cyan-400',
+      color: '#97A87A',
       component: AnxietyBreather
     },
     {
@@ -926,7 +926,7 @@ export default function GamesPage() {
       name: 'Positivity Puzzle',
       description: 'Complete positive affirmations to rewire your thinking patterns',
       icon: Zap,
-      color: 'from-yellow-400 to-orange-400',
+      color: '#DB9558',
       component: PositivityPuzzle
     },
     {
@@ -934,7 +934,7 @@ export default function GamesPage() {
       name: 'Mindful Memory',
       description: 'Train your focus and mindfulness through memory challenges',
       icon: Target,
-      color: 'from-indigo-400 to-purple-400',
+      color: '#A8BBA3',
       component: MindfulMemory
     },
     {
@@ -942,7 +942,7 @@ export default function GamesPage() {
       name: 'Gratitude Builder',
       description: 'Build a daily gratitude practice to improve your overall wellbeing',
       icon: Star,
-      color: 'from-green-400 to-emerald-400',
+      color: '#97A87A',
       component: GratitudeBuilder
     }
   ];
@@ -1019,16 +1019,17 @@ export default function GamesPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
       <EmergencySupport />
       <Navbar />
-      <div className="w-full px-2 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-6 mx-auto">
+      <main className="member-page-content">
         {/* Header */}
-        <div className="text-center mb-12">
+        <header className="member-page-header">
+          <span className="member-page-eyebrow">Explore at your pace</span>
           <h1 className="text-4xl font-bold text-blue-700 mb-4 drop-shadow-lg">
-            Wellbeing Activities
+            Wellbeing <span className="member-heading-accent">Activities</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p>
             Explore guided activities designed to support your mood, ease anxiety, and build positive mental habits.
           </p>
-        </div>
+        </header>
 
         {/* Enhanced Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
@@ -1072,7 +1073,7 @@ export default function GamesPage() {
                   className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
                   onClick={() => setCurrentGame(game.id)}
                 >
-                  <div className={`h-32 bg-gradient-to-br ${game.color} flex items-center justify-center`}>
+                  <div className="h-32 flex items-center justify-center" style={{ backgroundColor: game.color }}>
                     <IconComponent className="h-16 w-16 text-white" />
                   </div>
                   <div className="p-6">
@@ -1122,7 +1123,7 @@ export default function GamesPage() {
             </p>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

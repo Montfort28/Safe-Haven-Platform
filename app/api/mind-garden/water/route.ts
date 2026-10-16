@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyToken, getTokenFromRequest } from '@/lib/auth';
 import { getGrowthStats } from '@/lib/mindGardenStats';
+import { recordGardenGrowth } from '@/lib/mindGarden';
 
 export async function POST(request: NextRequest) {
   const token = getTokenFromRequest(request);
@@ -62,23 +63,14 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Update garden (remove artificial cap, allow unlimited growth)
-    const newGrowthScore = garden.growthScore + 5;
-    const updatedGarden = await prisma.mindGarden.update({
-      where: { userId: payload.userId },
-      data: {
-        growthScore: newGrowthScore,
-        totalInteractions: garden.totalInteractions + 1,
-        lastActivity: new Date(),
-      },
-    });
+    const updatedGarden = await recordGardenGrowth(payload.userId, 5);
 
     const stats = await getGrowthStats(payload.userId);
 
     return NextResponse.json({
       success: true,
       data: { garden: updatedGarden, stats },
-      message: 'Tree watered successfully! +5 health points'
+      message: 'Tree watered successfully! +5 growth points'
     });
 
   } catch (error) {

@@ -473,13 +473,18 @@ export default function ProfilePage() {
       <Navbar />
 
       {/* Animated background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      <div className="member-page-decoration fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-200 to-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
         <div className="absolute top-40 right-10 w-72 h-72 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
         <div className="absolute bottom-20 left-20 w-72 h-72 bg-gradient-to-r from-pink-200 to-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="relative z-10 w-full px-2 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-6 mx-auto">
+      <main className="member-page-content relative z-10">
+        <header className="member-page-header">
+          <span className="member-page-eyebrow">Your personal space</span>
+          <h1>Your <span className="member-heading-accent">profile</span></h1>
+          <p>Review your progress and the details of your wellbeing journey.</p>
+        </header>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Sidebar - Now on the Left */}
           <div className="lg:col-span-1 space-y-6">
@@ -503,7 +508,7 @@ export default function ProfilePage() {
                   </div>
                   {/* Removed image upload and remove buttons, only avatar icon remains */}
                 </div>
-                <h1 className="text-2xl font-bold text-gray-800 mb-2">{user?.name}</h1>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">{user?.name}</h2>
                 <p className="text-blue-600 mb-4">{user?.email}</p>
                 <div className="text-sm text-gray-500">
                   Member since {user ? new Date(user.createdAt).toLocaleDateString() : ''}
@@ -891,7 +896,7 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Loading Overlay */}
       {isLoading && (

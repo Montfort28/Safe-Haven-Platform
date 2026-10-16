@@ -215,6 +215,7 @@ export default function HomePage() {
       </section>
 
       <footer className="home-footer">
+        <div className="home-footer-wordmark" aria-label="Safe Haven">Safe Haven</div>
         <div className="home-footer-inner">
           <div className="home-footer-brand">
             <Link href="/" aria-label="Safe Haven home" className="footer-brand-link">

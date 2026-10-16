@@ -806,12 +806,31 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .home-footer {
+  position: relative;
+  overflow: hidden;
   padding: 0 max(24px, calc((100% - 1210px) / 2));
   color: var(--brand-cream);
   background: var(--brand-ink);
 }
 
+.home-footer-wordmark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(255, 255, 255, 0.1);
+  font-size: clamp(2.5rem, 11vw, 8.5rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
 .home-footer-inner {
+  position: relative;
+  z-index: 1;
   min-height: 205px;
   padding: 42px 0;
   display: grid;
@@ -955,6 +974,10 @@ button[class*="bg-brand-sage"]:hover {
 .member-app h4 {
   color: var(--brand-ink);
   letter-spacing: -0.025em;
+}
+
+.member-app h1 .member-heading-accent {
+  color: var(--brand-primary) !important;
 }
 
 .member-app h1 {
@@ -1895,17 +1918,17 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .member-app .member-nav-link {
-  color: #000;
+  color: #000 !important;
 }
 
 .member-app .member-nav-link:hover,
 .member-app .member-nav-link:focus-visible {
-  color: var(--brand-primary);
+  color: var(--brand-primary) !important;
 }
 
 .member-app .member-nav-link.is-active,
 .member-app .member-nav-link[aria-current="page"] {
-  color: #000;
+  color: #000 !important;
 }
 
 .dashboard-page {
@@ -2540,5 +2563,344 @@ button[class*="bg-brand-sage"]:hover {
     width: 130px;
     height: 130px;
     align-self: center;
+  }
+}
+
+.member-page-content {
+  width: min(100% - 48px, 1210px);
+  margin: 0 auto;
+  padding: 42px 0 64px;
+  color: #000;
+}
+
+.member-page-header {
+  margin: 0 0 30px;
+}
+
+.member-page-header h1 {
+  margin: 0;
+  color: var(--brand-ink);
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1.15;
+}
+
+.member-page-header p {
+  max-width: 760px;
+  margin: 12px 0 0;
+  color: #000;
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+
+.member-page-eyebrow {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--brand-ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.member-page-private-note {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #000;
+  font-size: 0.82rem;
+}
+
+.member-page-private-note > span:first-child {
+  font-size: 0.95rem;
+}
+
+.member-page-hero {
+  margin-bottom: 28px;
+  border: 1px solid rgba(68, 81, 61, 0.12);
+  border-radius: 20px;
+  padding: clamp(22px, 4vw, 36px);
+  background: rgba(168, 187, 163, 0.2);
+  box-shadow: 0 8px 24px rgba(68, 81, 61, 0.06);
+}
+
+.member-page-hero h1 {
+  color: var(--brand-ink);
+}
+
+.member-page-decoration {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .member-page-content {
+    width: min(100% - 32px, 1210px);
+    padding: 30px 0 48px;
+  }
+
+  .member-page-header {
+    margin-bottom: 24px;
+  }
+
+  .member-page-header h1 {
+    font-size: clamp(1.85rem, 9vw, 2.4rem);
+  }
+
+  .member-page-header p {
+    font-size: 0.9rem;
+  }
+}
+
+.garden-experience-card {
+  overflow: hidden;
+  border: 1px solid rgba(68, 81, 61, 0.14);
+  border-radius: 24px;
+  padding: clamp(18px, 3vw, 32px);
+  background: #fff;
+  box-shadow: 0 14px 36px rgba(68, 81, 61, 0.08);
+}
+
+.garden-experience-heading {
+  margin: 0 auto 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.garden-experience-heading h1 {
+  margin: 0;
+  color: var(--brand-ink);
+  font-size: clamp(1.8rem, 3.4vw, 2.55rem);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1.15;
+}
+
+.garden-experience-heading p {
+  max-width: 720px;
+  margin: 9px 0 0;
+  color: #000;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  text-transform: capitalize;
+}
+
+.garden-experience-heading p + p {
+  max-width: 680px;
+  color: #343a31;
+  text-transform: none;
+}
+
+.garden-vitality-badge {
+  min-width: 124px;
+  min-height: 46px;
+  margin-top: 10px;
+  border: 1px solid rgba(68, 81, 61, 0.18);
+  border-radius: 999px;
+  padding: 0 14px;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--brand-ink);
+  background: rgba(168, 187, 163, 0.2);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.garden-vitality-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+.garden-vitality-badge.is-thirsty {
+  border-color: rgba(169, 95, 56, 0.35);
+  color: #75462f;
+  background: rgba(209, 154, 77, 0.18);
+}
+
+.garden-scene-shell {
+  overflow: hidden;
+  border: 1px solid rgba(68, 81, 61, 0.15);
+  border-radius: 20px;
+  background: #d9e5d0;
+}
+
+.garden-scene {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.garden-scene-badge {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #fff !important;
+  background: rgba(35, 45, 36, 0.58) !important;
+  box-shadow: 0 4px 14px rgba(20, 30, 20, 0.18);
+}
+
+.garden-tree-svg {
+  width: clamp(310px, 39vw, 470px);
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 8px 10px rgba(37, 40, 29, 0.2));
+  transform-origin: 50% 86%;
+  animation: garden-tree-sway 5.5s ease-in-out infinite;
+}
+
+.garden-stat-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.garden-stat-card {
+  min-height: 132px;
+  border: 1px solid rgba(68, 81, 61, 0.12);
+  border-radius: 16px;
+  padding: 16px;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  background: #fff !important;
+  box-shadow: 0 5px 16px rgba(68, 81, 61, 0.06);
+}
+
+.garden-stat-icon {
+  width: 21px;
+  height: 21px;
+}
+
+.garden-stat-value {
+  color: var(--brand-ink);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.25;
+}
+
+.garden-stat-label {
+  color: #000 !important;
+  font-size: 0.76rem;
+  font-weight: 500;
+}
+
+.garden-care-row {
+  margin-top: 18px;
+  border: 1px solid rgba(68, 81, 61, 0.12);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: rgba(168, 187, 163, 0.17);
+}
+
+.garden-care-row p,
+.garden-feedback {
+  margin: 0;
+  color: #000;
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.garden-water-button {
+  min-height: 46px;
+  border: 1px solid var(--brand-ink);
+  border-radius: 12px;
+  padding: 0 18px;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #fff !important;
+  background: var(--brand-ink) !important;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.garden-water-button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.garden-water-button:hover:not(:disabled),
+.garden-water-button:focus-visible {
+  background: #354331 !important;
+  box-shadow: 0 7px 18px rgba(68, 81, 61, 0.18);
+  transform: translateY(-2px);
+}
+
+.garden-water-button:disabled {
+  cursor: progress;
+  opacity: 0.72;
+}
+
+.garden-button-spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.42);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: garden-spin 700ms linear infinite;
+}
+
+.garden-feedback {
+  margin-top: 13px;
+  color: var(--brand-ink);
+  font-weight: 500;
+}
+
+@keyframes garden-tree-sway {
+  0%, 100% { transform: rotate(-0.45deg); }
+  50% { transform: rotate(0.45deg); }
+}
+
+@keyframes garden-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 760px) {
+  .garden-experience-heading {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .garden-vitality-badge {
+    margin-top: 0;
+  }
+
+  .garden-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .garden-care-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .garden-water-button {
+    width: 100%;
+  }
+
+  .garden-tree-svg {
+    width: min(370px, 78vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-tree-svg,
+  .garden-button-spinner {
+    animation: none;
   }
 }

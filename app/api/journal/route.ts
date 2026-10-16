@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { recordGardenGrowth } from '@/lib/mindGarden';
 import { verifyToken } from '@/lib/auth';
 import { z } from 'zod';
 
@@ -103,17 +104,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Update Mind Garden growthScore
-    const garden = await prisma.mindGarden.findUnique({ where: { userId: decoded.userId } });
-    if (garden) {
-      await prisma.mindGarden.update({
-        where: { userId: decoded.userId },
-        data: {
-          growthScore: Math.min(100, garden.growthScore + 10),
-          totalInteractions: garden.totalInteractions + 1,
-          lastActivity: new Date(),
-        },
-      });
-    }
+    await recordGardenGrowth(decoded.userId, 10);
 
     return NextResponse.json({ success: true, data: entry });
   } catch (error) {

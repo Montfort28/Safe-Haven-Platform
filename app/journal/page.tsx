@@ -432,17 +432,18 @@ export default function JournalPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
       <EmergencySupport />
       <Navbar />
-      <div className="max-w-7xl mx-auto p-6 flex-grow">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-blue-700 mb-4 drop-shadow-lg">Mindful Journal</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+      <main className="member-page-content">
+        <header className="member-page-header">
+          <span className="member-page-eyebrow">Your reflections</span>
+          <h1>Mindful <span className="member-heading-accent">Journal</span></h1>
+          <p>
             A safe space to express your thoughts, track your emotions, and reflect on your journey of growth.
           </p>
-          <div className="mt-4 flex items-center justify-center gap-2">
+          <div className="member-page-private-note">
             <span className="text-green-600 font-semibold text-lg">🔐</span>
             <span className="text-green-700 text-base font-medium">Your entries are private and encrypted</span>
           </div>
-        </div>
+        </header>
 
         {/* Wellness Toolbar */}
         <div className="flex flex-wrap gap-4 justify-center mb-8">
@@ -865,7 +866,7 @@ export default function JournalPage() {
             </div>
           </div>
         )}
-      </div>
+      </main>
 
       {soundEnabled && <SoundPlayer src="/sounds/paper-rustle.mp3" loop={true} />}
     </div>

@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyToken, getTokenFromRequest } from '@/lib/auth';
 import { getGrowthStats } from '@/lib/mindGardenStats';
+import { getGardenSoilMoisture, getGardenVitality } from '@/lib/mindGardenVitals';
 
 export async function GET(request: NextRequest) {
   const token = getTokenFromRequest(request);
@@ -52,13 +53,11 @@ export async function GET(request: NextRequest) {
       take: 10
     });
 
-    // Calculate tree properties - let growth score grow unlimited
+    // Growth stage is permanent; vitality and soil moisture respond to time since care.
     const growthScore = garden.growthScore;
-    // Health is percent progress toward 10,000 points (Legendary Tree)
-    const treeHealth = Math.min(100, Math.floor((growthScore / 10000) * 100));
+    const treeHealth = getGardenVitality(garden.lastActivity);
     const treeStage = getTreeStage(growthScore); // Use new stage system
-    const soilQuality = Math.min(100, garden.totalInteractions * 2);
-    const sunlightHours = Math.min(24, garden.streak * 2);
+    const soilQuality = getGardenSoilMoisture(garden.lastActivity);
 
     // Get weekly growth data
     const weeklyGrowth = await getWeeklyGrowthData(payload.userId);
@@ -90,9 +89,8 @@ export async function GET(request: NextRequest) {
       treeStage,  // for stage (seed, sprout, etc.)
       streak: garden.streak,
       totalPoints: growthScore, // show real points from DB
-      lastWatered: garden.lastActivity.toISOString(),
+      lastNurturedAt: garden.lastActivity.toISOString(),
       soilQuality,
-      sunlightHours,
       achievements: formatAchievements(milestoneAchievements),
       weeklyGrowth,
       activities // show all recent activities with type and points
