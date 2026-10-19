@@ -244,7 +244,7 @@ export default function DashboardPage() {
 
   const fetchNewAffirmation = async () => {
     try {
-      const response = await fetch('/api/affirmation/random');
+      const response = await fetch('/api/affirmation/daily');
       if (response.ok) {
         const affirmationData = await response.json();
         setAffirmation(affirmationData.data.content);

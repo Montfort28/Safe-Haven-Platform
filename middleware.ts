@@ -11,6 +11,16 @@ const protectedRoutes = [
 ];
 
 export function middleware(request: NextRequest) {
+  const isAdminPage =
+    request.nextUrl.pathname.startsWith('/admin') &&
+    request.nextUrl.pathname !== '/admin/login';
+  if (isAdminPage) {
+    if (!request.cookies.get('safehaven_admin')?.value) {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+    return NextResponse.next();
+  }
+
   const token = request.cookies.get('token')?.value;
   const isProtectedRoute = protectedRoutes.some(
     route =>
@@ -37,5 +47,6 @@ export const config = {
     '/profile/:path*',
     '/mood/:path*',
     '/mind-garden/:path*',
+    '/admin/:path*',
   ],
 };

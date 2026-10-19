@@ -18,7 +18,15 @@ export function generateToken(userId: string): string {
 
 export function verifyToken(token: string): { userId: string } | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as { userId: string };
+    const payload = jwt.verify(token, JWT_SECRET);
+    if (
+      typeof payload === 'string' ||
+      typeof payload.userId !== 'string' ||
+      payload.role === 'admin'
+    ) {
+      return null;
+    }
+    return { userId: payload.userId };
   } catch {
     return null;
   }
