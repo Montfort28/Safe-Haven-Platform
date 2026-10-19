@@ -42,6 +42,7 @@ import { formatDate } from '@/lib/utils';
 import SoundPlayer from '@/components/SoundPlayer';
 import Navbar from '@/components/Navbar';
 import EmergencySupport from '@/components/EmergencySupport';
+import MoodEmoji from '@/components/MoodEmoji';
 
 // Fallback getCurrentTime function if not defined in utils
 const getCurrentTime = (timeZone: string = 'UTC'): string => {
@@ -78,18 +79,7 @@ const JOURNAL_PROMPTS: JournalPrompt[] = [
   { id: '8', text: 'How did I show kindness today?', category: 'reflection' },
 ];
 
-const MOOD_ICONS = {
-  1: { icon: '😢', color: 'text-red-500', bg: 'bg-red-100' },
-  2: { icon: '😟', color: 'text-red-400', bg: 'bg-red-100' },
-  3: { icon: '😕', color: 'text-orange-500', bg: 'bg-orange-100' },
-  4: { icon: '😐', color: 'text-orange-400', bg: 'bg-orange-100' },
-  5: { icon: '😊', color: 'text-yellow-500', bg: 'bg-yellow-100' },
-  6: { icon: '😊', color: 'text-yellow-400', bg: 'bg-yellow-100' },
-  7: { icon: '😄', color: 'text-green-500', bg: 'bg-green-100' },
-  8: { icon: '😁', color: 'text-green-400', bg: 'bg-green-100' },
-  9: { icon: '🤩', color: 'text-blue-500', bg: 'bg-blue-100' },
-  10: { icon: '😍', color: 'text-purple-500', bg: 'bg-purple-100' },
-};
+const MOOD_LEVELS = Array.from({ length: 10 }, (_, index) => index + 1);
 
 const EMOTIONS = [
   'Happy', 'Sad', 'Anxious', 'Excited', 'Calm', 'Frustrated', 'Grateful',
@@ -535,15 +525,17 @@ export default function JournalPage() {
                     How are you feeling? (1-10)
                   </label>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {Object.entries(MOOD_ICONS).map(([value, { icon, color, bg }]) => (
+                    {MOOD_LEVELS.map(value => (
                       <button
                         key={value}
                         type="button"
-                        onClick={() => setMood(Number(value))}
-                        className={`p-3 rounded-lg transition-all ${mood === Number(value) ? 'bg-blue-200 ring-2 ring-offset-2 ring-blue-500' : 'bg-blue-50 hover:bg-blue-100'
+                        onClick={() => setMood(value)}
+                        aria-label={`Set mood to ${value} out of 10`}
+                        aria-pressed={mood === value}
+                        className={`p-3 rounded-lg transition-all ${mood === value ? 'bg-blue-200 ring-2 ring-offset-2 ring-blue-500' : 'bg-blue-50 hover:bg-blue-100'
                           }`}
                       >
-                        <span className="text-2xl">{icon}</span>
+                        <MoodEmoji mood={value} size={28} />
                         <div className="text-xs font-medium mt-1">{value}</div>
                       </button>
                     ))}
@@ -767,7 +759,7 @@ export default function JournalPage() {
                     <h3 className="font-medium text-black line-clamp-1 group-hover:text-purple-600 transition-colors text-lg">{entry.title}</h3>
                     {entry.mood && (
                       <span className="text-lg">
-                        {MOOD_ICONS[entry.mood as keyof typeof MOOD_ICONS]?.icon}
+                        <MoodEmoji mood={entry.mood} size={23} />
                       </span>
                     )}
                   </div>

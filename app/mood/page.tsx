@@ -26,6 +26,7 @@ import {
 } from 'react-icons/fa6';
 import Navbar from '@/components/Navbar';
 import EmergencySupport from '@/components/EmergencySupport';
+import MoodEmoji, { getMoodEmoji } from '@/components/MoodEmoji';
 
 interface MoodEntry {
   id: string;
@@ -144,16 +145,16 @@ const MoodPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const moodEmojis = [
-    { value: 1, emoji: '😭', label: 'Terrible', color: '#DB9558', className: '' },
-    { value: 2, emoji: '😢', label: 'Very Sad', color: '#DB9558', className: '' },
-    { value: 3, emoji: '😔', label: 'Sad', color: '#A8BBA3', className: '' },
-    { value: 4, emoji: '😕', label: 'Down', color: '#97A87A', className: '' },
-    { value: 5, emoji: '😐', label: 'Neutral', color: '#A8BBA3', className: '' },
-    { value: 6, emoji: '🙂', label: 'Okay', color: '#97A87A', className: '' },
-    { value: 7, emoji: '😊', label: 'Good', color: '#97A87A', className: '' },
-    { value: 8, emoji: '😄', label: 'Great', color: '#97A87A', className: '' },
-    { value: 9, emoji: '😃', label: 'Amazing', color: '#97A87A', className: '' },
-    { value: 10, emoji: '🤩', label: 'Incredible', color: '#97A87A', className: '' },
+    { value: 1, label: 'Terrible', color: '#DB9558', className: '' },
+    { value: 2, label: 'Very Sad', color: '#DB9558', className: '' },
+    { value: 3, label: 'Sad', color: '#A8BBA3', className: '' },
+    { value: 4, label: 'Down', color: '#97A87A', className: '' },
+    { value: 5, label: 'Neutral', color: '#A8BBA3', className: '' },
+    { value: 6, label: 'Okay', color: '#97A87A', className: '' },
+    { value: 7, label: 'Good', color: '#97A87A', className: '' },
+    { value: 8, label: 'Great', color: '#97A87A', className: '' },
+    { value: 9, label: 'Amazing', color: '#97A87A', className: '' },
+    { value: 10, label: 'Incredible', color: '#97A87A', className: '' },
   ];
 
   const commonTriggers = [
@@ -337,11 +338,10 @@ const MoodPage = () => {
       ctx.beginPath();
       ctx.arc(x, y, 6, 0, 2 * Math.PI);
       ctx.fill();
-      // Add mood emoji (no animation)
-      const emoji = moodEmojis.find(e => e.value === Math.round(point.mood))?.emoji || '😐';
-      ctx.font = '16px "Poppins", sans-serif';
+      ctx.font = '16px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(emoji, x, y - 15);
+      ctx.fillText(getMoodEmoji(point.mood), x, y - 15);
+      // Add mood emoji (no animation)
     });
   };
 
@@ -531,7 +531,7 @@ const MoodPage = () => {
                         backgroundColor: mood === emoji.value ? `${emoji.color}20` : 'transparent'
                       }}
                     >
-                      <div className="text-3xl mb-2">{emoji.emoji}</div>
+                      <div className="mb-2 flex justify-center"><MoodEmoji mood={emoji.value} size={34} /></div>
                       <div className="text-xs text-gray-600">{emoji.label}</div>
                     </button>
                   ))}
@@ -539,7 +539,7 @@ const MoodPage = () => {
                 {currentMoodData && (
                   <div className="mt-4 p-4 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
                     <div className="flex items-center gap-3">
-                      <div className="text-2xl">{currentMoodData.emoji}</div>
+                      <MoodEmoji mood={currentMoodData.value} size={28} />
                       <div>
                         <p className="font-medium text-gray-900">You're feeling {currentMoodData.label}</p>
                         <p className="text-sm text-gray-600">On a scale of 1-10: {mood}</p>
@@ -781,7 +781,7 @@ const MoodPage = () => {
                   const entryMood = moodEmojis.find(e => e.value === Math.round(entry.mood));
                   return (
                     <div key={entry.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                      <div className="text-xl">{entryMood?.emoji || '😐'}</div>
+                      <MoodEmoji mood={entryMood?.value ?? 5} size={24} />
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
                           <span className="font-medium text-gray-900">{entryMood?.label || 'Neutral'}</span>
