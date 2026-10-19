@@ -3,7 +3,7 @@ node_modules/
 .next/
 .env
 .env*.local
-.ADMIN_README.md
+
 
 # Ignore logs and build artifacts
 *.log
@@ -11,3 +11,4 @@ node_modules/
 dist/
 out/
 coverage/
+ADMIN_README.md
