@@ -1292,11 +1292,19 @@ button[class*="bg-brand-sage"]:hover {
   min-height: 42px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: var(--brand-ink);
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0;
   text-decoration: none;
   transition: color 160ms ease;
+}
+
+.member-nav-link svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
 }
 
 .member-nav-link::after {
