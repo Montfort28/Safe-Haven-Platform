@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { recordGardenGrowth } from '@/lib/mindGarden';
+import { recordGardenActivity } from '@/lib/mindGarden';
 import { verifyToken } from '@/lib/auth';
 import { z } from 'zod';
 
@@ -94,17 +94,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Add journal activity to Mind Garden
-    await prisma.activityLog.create({
-      data: {
-        userId: decoded.userId,
-        activityType: 'journal_written',
-        points: 10,
-      }
-    });
-
-    // Update Mind Garden growthScore
-    await recordGardenGrowth(decoded.userId, 10);
+    await recordGardenActivity(decoded.userId, 'journal_written');
 
     return NextResponse.json({ success: true, data: entry });
   } catch (error) {

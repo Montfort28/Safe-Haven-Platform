@@ -706,7 +706,7 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
     recordGameStart('gratitude-builder');
   };
 
-  const addGratitude = async () => {
+  const addGratitude = () => {
     const wordCount = currentInput.trim().split(/\s+/).length;
     setError('');
     let errorMsg = '';
@@ -731,12 +731,6 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
     setGratitudeItems([...gratitudeItems, currentInput.trim()]);
     setScore(score + 15 * level);
     setCurrentInput('');
-    try {
-      const { logMindGardenActivity } = await import('@/lib/utils');
-      await logMindGardenActivity('journal', 15 * level);
-    } catch (err) {
-      console.error('Failed to log gratitude activity:', err);
-    }
     if (gratitudeItems.length + 1 >= levelSettings[level].count) {
       onGameComplete('gratitude-builder', 5, startTime !== null ? Math.floor((Date.now() - startTime) / 1000) : 0);
       setCongratsLevel(level);

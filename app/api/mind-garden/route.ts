@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyToken, getTokenFromRequest } from '@/lib/auth';
-import { getGardenSoilMoisture, getGardenVitality } from '@/lib/mindGardenVitals';
+import { getGardenCondition, getGardenGrowthProgress } from '@/lib/mindGardenGrowth';
 
 export async function GET(request: NextRequest) {
   const token = getTokenFromRequest(request);
@@ -48,9 +48,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate tree properties
     const growthScore = garden.growthScore; // Use full value for stage
-    const treeHealth = getGardenVitality(garden.lastActivity);
-    const treeStage = getTreeStage(growthScore); // Stage uses full growthScore
-    const soilQuality = getGardenSoilMoisture(garden.lastActivity);
+    const growth = getGardenGrowthProgress(growthScore);
 
     // Get weekly growth data
     const weeklyGrowth = await getWeeklyGrowthData(payload.userId);
@@ -64,12 +62,10 @@ export async function GET(request: NextRequest) {
 
     const formattedGarden = {
       id: garden.id,
-      treeHealth, // for health bar (0-100)
-      treeStage,  // for stage (seed, sprout, etc.)
-      streak: garden.streak,
+      treeStage: growth.stage.id,
+      condition: getGardenCondition(garden.lastActivity),
       totalPoints: growthScore, // show real points
       lastNurturedAt: garden.lastActivity.toISOString(),
-      soilQuality,
       achievements: formatAchievements(gameProgress?.achievements || []),
       weeklyGrowth,
       activities // show all recent activities with type and points
@@ -80,14 +76,6 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching Mind Garden:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
-}
-
-function getTreeStage(growthScore: number): string {
-  if (growthScore < 10) return 'seed';
-  if (growthScore < 30) return 'sprout';
-  if (growthScore < 60) return 'sapling';
-  if (growthScore < 90) return 'tree';
-  return 'ancient';
 }
 
 function formatAchievements(achievementCodes: string[]) {

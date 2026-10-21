@@ -1,7 +1,7 @@
 // app/api/mood/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { recordGardenGrowth } from '@/lib/mindGarden';
+import { recordGardenActivity } from '@/lib/mindGarden';
 import { verifyToken, getTokenFromRequest } from '@/lib/auth';
 import { z } from 'zod';
 
@@ -119,17 +119,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Add mood activity to Mind Garden
-    await prisma.activityLog.create({
-      data: {
-        userId: payload.userId,
-        activityType: 'mood_logged',
-        points: 5,
-      }
-    });
-
-    // Update Mind Garden growthScore
-    await recordGardenGrowth(payload.userId, 5);
+    await recordGardenActivity(payload.userId, 'mood_logged');
 
     return NextResponse.json({ success: true, data: moodEntry });
   } catch (error) {
