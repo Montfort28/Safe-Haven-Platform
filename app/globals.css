@@ -369,6 +369,7 @@ button[class*="bg-brand-sage"]:hover {
   position: relative;
   z-index: 1;
   padding: 24px 0;
+  transform: translateY(-28px);
 }
 
 .home-eyebrow,
@@ -482,26 +483,24 @@ button[class*="bg-brand-sage"]:hover {
 .home-hero-art {
   position: relative;
   min-width: 0;
-  min-height: 520px;
+  min-height: 590px;
+  margin-top: 42px;
   overflow: visible;
-  background: radial-gradient(
-    ellipse at 62% 48%,
-    rgba(168, 187, 163, 0.18),
-    transparent 70%
-  );
+  background: radial-gradient(ellipse at 58% 48%, rgba(168, 187, 163, 0.24), transparent 73%);
 }
 
 .home-manifest-image {
   object-fit: cover;
-  object-position: 62% center;
-  transform: translateX(-112px);
+  object-position: center 45%;
+  transform: scale(1.08);
+  transform-origin: center;
   -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 10%, #000 94%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    linear-gradient(to right, transparent 0%, #000 9%, #000 78%, rgba(0, 0, 0, 0.72) 88%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 5%, #000 88%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-image:
-    linear-gradient(to right, transparent 0%, #000 10%, #000 94%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    linear-gradient(to right, transparent 0%, #000 9%, #000 78%, rgba(0, 0, 0, 0.72) 88%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 5%, #000 88%, transparent 100%);
   mask-composite: intersect;
 }
 
@@ -937,7 +936,8 @@ button[class*="bg-brand-sage"]:hover {
   }
 
   .home-hero-art {
-    min-height: 500px;
+    min-height: 520px;
+    margin-top: 24px;
   }
 
   .home-about {
@@ -1746,6 +1746,7 @@ button[class*="bg-brand-sage"]:hover {
 
   .home-hero-copy {
     padding: 0;
+    transform: none;
   }
 
   .home-hero h1 {
@@ -1778,19 +1779,22 @@ button[class*="bg-brand-sage"]:hover {
   }
 
   .home-hero-art {
-    min-height: 430px;
+    min-height: min(590px, 132vw);
+    margin-top: 8px;
     width: 100%;
   }
 
   .home-manifest-image {
-    transform: none;
-    object-position: 62% center;
+    transform: scale(1.06);
+    transform-origin: center;
+    object-fit: cover;
+    object-position: center 45%;
     -webkit-mask-image:
-      linear-gradient(to right, transparent 0%, #000 8%, #000 94%, transparent 100%),
-      linear-gradient(to bottom, transparent 0%, #000 8%, #000 90%, transparent 100%);
+      linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 4%, #000 90%, transparent 100%);
     mask-image:
-      linear-gradient(to right, transparent 0%, #000 8%, #000 94%, transparent 100%),
-      linear-gradient(to bottom, transparent 0%, #000 8%, #000 90%, transparent 100%);
+      linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 4%, #000 90%, transparent 100%);
   }
 
   .home-platforms {
