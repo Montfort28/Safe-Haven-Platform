@@ -492,15 +492,18 @@ button[class*="bg-brand-sage"]:hover {
 .home-manifest-image {
   object-fit: cover;
   object-position: center 45%;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
   transform: scale(1.08);
   transform-origin: center;
   -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 9%, #000 78%, rgba(0, 0, 0, 0.72) 88%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 5%, #000 88%, transparent 100%);
+    linear-gradient(to right, transparent 0%, #000 22%, #000 52%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-image:
-    linear-gradient(to right, transparent 0%, #000 9%, #000 78%, rgba(0, 0, 0, 0.72) 88%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 5%, #000 88%, transparent 100%);
+    linear-gradient(to right, transparent 0%, #000 22%, #000 52%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
   mask-composite: intersect;
 }
 
@@ -1790,11 +1793,11 @@ button[class*="bg-brand-sage"]:hover {
     object-fit: cover;
     object-position: center 45%;
     -webkit-mask-image:
-      linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%),
-      linear-gradient(to bottom, transparent 0%, #000 4%, #000 90%, transparent 100%);
+      linear-gradient(to right, transparent 0%, #000 18%, #000 58%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
     mask-image:
-      linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%),
-      linear-gradient(to bottom, transparent 0%, #000 4%, #000 90%, transparent 100%);
+      linear-gradient(to right, transparent 0%, #000 18%, #000 58%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
   }
 
   .home-platforms {
