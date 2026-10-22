@@ -10,6 +10,7 @@
   --brand-sage: #97A87A;
   --brand-sage-light: #A8BBA3;
   --brand-ink: #44513D;
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='.55'/%3E%3C/svg%3E");
   --background: 48 75% 95%;
   --foreground: 92 17% 28%;
   --primary: 28 64.5% 60.2%;
@@ -145,19 +146,76 @@ select {
 
 .min-h-screen {
   background-color: var(--brand-primary) !important;
-  background-image: linear-gradient(
-    135deg,
-    var(--brand-primary) 0%,
-    var(--brand-sage-light) 52%,
-    var(--brand-sage) 100%
-  ) !important;
+  background-image:
+    var(--paper-grain),
+    linear-gradient(
+      135deg,
+      var(--brand-primary) 0%,
+      var(--brand-sage-light) 52%,
+      var(--brand-sage) 100%
+    ) !important;
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
 }
 
 .auth-page.min-h-screen {
   background-color: var(--brand-cream) !important;
   background-image:
+    var(--paper-grain),
     radial-gradient(ellipse at 9% 88%, rgba(219, 149, 88, 0.24), transparent 34%),
     radial-gradient(ellipse at 88% 10%, rgba(151, 168, 122, 0.24), transparent 34%) !important;
+  background-size: 180px 180px, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat;
+}
+
+.home-header,
+.auth-header,
+.home-platforms,
+.home-services,
+.home-footer,
+.home-art-card,
+.home-tool-card,
+.auth-panel,
+.glass-card,
+.admin-section,
+.admin-metric,
+.admin-login-card,
+.member-app :is(div, section, article, aside):is(
+  [class*="card"],
+  [class*="shadow-lg"],
+  [class*="shadow-xl"]
+) {
+  position: relative;
+  isolation: isolate;
+}
+
+.home-header::after,
+.auth-header::after,
+.home-platforms::after,
+.home-services::after,
+.home-footer::after,
+.home-art-card::after,
+.home-tool-card::after,
+.auth-panel::after,
+.glass-card::after,
+.admin-section::after,
+.admin-metric::after,
+.admin-login-card::after,
+.member-app :is(div, section, article, aside):is(
+  [class*="card"],
+  [class*="shadow-lg"],
+  [class*="shadow-xl"]
+)::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--paper-grain);
+  background-size: 180px 180px;
+  mix-blend-mode: soft-light;
+  opacity: 0.7;
+  pointer-events: none;
+  content: "";
 }
 
 .btn-primary,
@@ -223,14 +281,20 @@ button[class*="bg-brand-sage"]:hover {
   min-height: 100vh;
   overflow-x: clip;
   color: var(--brand-ink);
-  background: var(--brand-cream);
+  background-color: var(--brand-cream);
+  background-image: var(--paper-grain), linear-gradient(var(--brand-cream), var(--brand-cream));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
 }
 
 .home-header {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(252, 249, 234, 0.94);
+  background-color: rgba(252, 249, 234, 0.94);
+  background-image: var(--paper-grain), linear-gradient(rgba(252, 249, 234, 0.94), rgba(252, 249, 234, 0.94));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
   border-bottom: 1px solid rgba(151, 168, 122, 0.2);
   backdrop-filter: blur(14px);
 }
@@ -489,6 +553,18 @@ button[class*="bg-brand-sage"]:hover {
   background: radial-gradient(ellipse at 58% 48%, rgba(168, 187, 163, 0.24), transparent 73%);
 }
 
+.home-hero-art::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background: var(--paper-grain);
+  background-size: 180px 180px;
+  mix-blend-mode: soft-light;
+  opacity: 0.42;
+  content: "";
+}
+
 .home-manifest-image {
   object-fit: cover;
   object-position: center 45%;
@@ -577,7 +653,10 @@ button[class*="bg-brand-sage"]:hover {
   flex-direction: column;
   gap: 20px;
   color: var(--brand-cream);
-  background: var(--brand-ink);
+  background-color: var(--brand-ink);
+  background-image: var(--paper-grain), linear-gradient(var(--brand-ink), var(--brand-ink));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
 }
 
 .home-platform-caption {
@@ -693,7 +772,10 @@ button[class*="bg-brand-sage"]:hover {
 .home-services {
   width: 100%;
   padding: 88px max(24px, calc((100% - 1120px) / 2)) 100px;
-  background: rgba(168, 187, 163, 0.2);
+  background-color: rgba(168, 187, 163, 0.2);
+  background-image: var(--paper-grain), linear-gradient(rgba(168, 187, 163, 0.2), rgba(168, 187, 163, 0.2));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
 }
 
 .home-services-heading {
@@ -812,7 +894,10 @@ button[class*="bg-brand-sage"]:hover {
   overflow: hidden;
   padding: 0 max(24px, calc((100% - 1210px) / 2));
   color: var(--brand-cream);
-  background: var(--brand-ink);
+  background-color: var(--brand-ink);
+  background-image: var(--paper-grain), linear-gradient(var(--brand-ink), var(--brand-ink));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
 }
 
 .home-footer-wordmark {
@@ -963,12 +1048,18 @@ button[class*="bg-brand-sage"]:hover {
   font-size: 0.95rem;
   line-height: 1.65;
   color: var(--brand-ink);
-  background: var(--brand-cream);
+  background-color: var(--brand-cream);
+  background-image: var(--paper-grain), linear-gradient(var(--brand-cream), var(--brand-cream));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
 }
 
 .member-app .min-h-screen {
   color: var(--brand-ink);
-  background: var(--brand-cream) !important;
+  background-color: var(--brand-cream) !important;
+  background-image: var(--paper-grain), linear-gradient(var(--brand-cream), var(--brand-cream)) !important;
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
 }
 
 .member-app h1,
@@ -1282,7 +1373,10 @@ button[class*="bg-brand-sage"]:hover {
 
 .member-navbar {
   border-color: rgba(151, 168, 122, 0.24);
-  background: rgba(252, 249, 234, 0.96);
+  background-color: rgba(252, 249, 234, 0.96);
+  background-image: var(--paper-grain), linear-gradient(rgba(252, 249, 234, 0.96), rgba(252, 249, 234, 0.96));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
   box-shadow: 0 8px 24px rgba(68, 81, 61, 0.08);
 }
 
@@ -2772,7 +2866,10 @@ button[class*="bg-brand-sage"]:hover {
   min-height: 100vh;
   padding: clamp(24px, 5vw, 64px);
   color: var(--brand-ink);
-  background: var(--brand-cream);
+  background-color: var(--brand-cream);
+  background-image: var(--paper-grain), linear-gradient(var(--brand-cream), var(--brand-cream));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
 }
 
 .admin-shell {
