@@ -95,11 +95,12 @@ export default function HomePage() {
 
         <div className="home-hero-art" aria-label="A calm space for your wellbeing">
           <Image
-            src="/images/Paper frame.jpg"
+            src="/images/download (6).png"
             alt="A person taking a peaceful moment in a calm, plant-filled space"
             fill
             loading="eager"
             fetchPriority="high"
+            quality={100}
             sizes="(max-width: 650px) 90vw, (max-width: 1200px) 48vw, 600px"
             className="home-manifest-image"
           />

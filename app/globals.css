@@ -141,18 +141,23 @@ select {
 }
 
 .fade-page-transition {
+  min-height: 100vh;
   animation: fadein 0.16s ease-out;
+  background-color: var(--brand-cream);
+  background-image:
+    var(--paper-grain),
+    linear-gradient(var(--brand-cream), var(--brand-cream));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
 }
 
 .min-h-screen {
-  background-color: var(--brand-primary) !important;
+  background-color: var(--brand-cream) !important;
   background-image:
     var(--paper-grain),
     linear-gradient(
-      135deg,
-      var(--brand-primary) 0%,
-      var(--brand-sage-light) 52%,
-      var(--brand-sage) 100%
+      var(--brand-cream) 0%,
+      var(--brand-cream) 100%
     ) !important;
   background-size: 180px 180px, auto;
   background-repeat: repeat, no-repeat;
@@ -547,10 +552,26 @@ button[class*="bg-brand-sage"]:hover {
 .home-hero-art {
   position: relative;
   min-width: 0;
-  min-height: 590px;
-  margin-top: 42px;
+  min-height: min(520px, 68vh);
+  margin-top: 30px;
   overflow: visible;
   background: radial-gradient(ellipse at 58% 48%, rgba(168, 187, 163, 0.24), transparent 73%);
+}
+
+.home-manifest-image {
+  object-fit: contain;
+  object-position: center;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 22%, #000 52%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 22%, #000 52%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
+  mask-composite: intersect;
 }
 
 .home-hero-art::after {
@@ -561,26 +582,8 @@ button[class*="bg-brand-sage"]:hover {
   background: var(--paper-grain);
   background-size: 180px 180px;
   mix-blend-mode: soft-light;
-  opacity: 0.42;
+  opacity: 0.32;
   content: "";
-}
-
-.home-manifest-image {
-  object-fit: cover;
-  object-position: center 45%;
-  border: 0;
-  outline: 0;
-  box-shadow: none;
-  transform: scale(1.08);
-  transform-origin: center;
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 22%, #000 52%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to right, transparent 0%, #000 22%, #000 52%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
-  mask-composite: intersect;
 }
 
 .home-art-card {
@@ -1024,8 +1027,8 @@ button[class*="bg-brand-sage"]:hover {
   }
 
   .home-hero-art {
-    min-height: 520px;
-    margin-top: 24px;
+    min-height: min(480px, 68vh);
+    margin-top: 20px;
   }
 
   .home-about {
@@ -1380,6 +1383,11 @@ button[class*="bg-brand-sage"]:hover {
   box-shadow: 0 8px 24px rgba(68, 81, 61, 0.08);
 }
 
+.dashboard-page .member-navbar {
+  top: 0;
+  margin-top: 0;
+}
+
 .member-nav-links {
   gap: clamp(12px, 1.8vw, 24px);
 }
@@ -1474,6 +1482,8 @@ button[class*="bg-brand-sage"]:hover {
 
   .auth-header {
     min-height: 82px;
+    width: min(100%, 1120px);
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1491,27 +1501,9 @@ button[class*="bg-brand-sage"]:hover {
     transition: color 160ms ease;
   }
 
-  .auth-back-link::after {
-    position: absolute;
-    right: 0;
-    bottom: -6px;
-    left: 0;
-    height: 2px;
-    background: currentColor;
-    content: "";
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 200ms ease;
-  }
-
   .auth-back-link:hover,
   .auth-back-link:focus-visible {
     color: var(--brand-primary);
-  }
-
-  .auth-back-link:hover::after,
-  .auth-back-link:focus-visible::after {
-    transform: scaleX(1);
   }
 
   .auth-back-icon {
@@ -1876,16 +1868,14 @@ button[class*="bg-brand-sage"]:hover {
   }
 
   .home-hero-art {
-    min-height: min(590px, 132vw);
+    min-height: min(460px, 110vw, 68vh);
     margin-top: 8px;
     width: 100%;
   }
 
   .home-manifest-image {
-    transform: scale(1.06);
-    transform-origin: center;
-    object-fit: cover;
-    object-position: center 45%;
+    object-fit: contain;
+    object-position: center;
     -webkit-mask-image:
       linear-gradient(to right, transparent 0%, #000 18%, #000 58%, transparent 100%),
       linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
@@ -2043,7 +2033,10 @@ button[class*="bg-brand-sage"]:hover {
 .dashboard-page {
   min-height: 100vh;
   color: #000;
-  background: var(--brand-cream);
+  background-color: var(--brand-cream);
+  background-image: var(--paper-grain), linear-gradient(var(--brand-cream), var(--brand-cream));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
 }
 
 .dashboard-content {
