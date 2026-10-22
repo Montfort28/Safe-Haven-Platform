@@ -283,11 +283,22 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .home-page {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   overflow-x: clip;
   color: var(--brand-ink);
   background-color: var(--brand-cream);
   background-image: var(--paper-grain), linear-gradient(var(--brand-cream), var(--brand-cream));
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
+}
+
+html:has(.home-page),
+body:has(.home-page),
+body:has(.home-page) .fade-page-transition {
+  background-color: var(--brand-ink);
+  background-image: var(--paper-grain), linear-gradient(var(--brand-ink), var(--brand-ink));
   background-size: 180px 180px, auto;
   background-repeat: repeat, no-repeat;
 }
@@ -305,7 +316,7 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .home-header-inner {
-  width: min(100% - 48px, 1210px);
+  width: min(100% - 64px, 1320px);
   min-height: 82px;
   margin: 0 auto;
   display: flex;
@@ -325,15 +336,19 @@ button[class*="bg-brand-sage"]:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(16px, 2.8vw, 38px);
+  gap: clamp(20px, 3vw, 44px);
 }
 
 .home-nav a,
 .home-footer a {
   color: var(--brand-ink);
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-decoration: none;
   transition: color 160ms ease;
+}
+
+.home-nav a {
+  font-weight: 400;
 }
 
 .home-nav a,
@@ -402,15 +417,36 @@ button[class*="bg-brand-sage"]:hover {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: var(--brand-ink);
-  font-size: 1rem;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 18px;
+  background: var(--brand-ink);
+  font: inherit;
+  color: var(--brand-cream);
+  font-size: 0.98rem;
   font-weight: 600;
   text-decoration: none;
-  transition: color 160ms ease;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
 }
 
-.home-nav-cta:hover {
-  color: var(--brand-primary);
+.home-nav-button {
+  color: var(--brand-cream);
+}
+
+.home-nav-button:hover,
+.home-nav-button:focus-visible {
+  color: var(--brand-cream);
+  background: var(--brand-primary);
+  transform: translateY(-1px);
+}
+
+.home-nav-button .signin-icon {
+  background-color: currentColor;
+}
+
+.home-nav-cta::after {
+  display: none;
 }
 
 .signin-icon {
@@ -470,7 +506,7 @@ button[class*="bg-brand-sage"]:hover {
 .home-section h2 {
   margin: 25px 0 16px;
   color: var(--brand-ink);
-  font-size: clamp(3rem, 4.5vw, 4.3rem);
+  font-size: clamp(2.5rem, 4vw, 3.8rem);
   font-weight: 700;
   letter-spacing: -0.065em;
   line-height: 1.04;
@@ -552,7 +588,7 @@ button[class*="bg-brand-sage"]:hover {
 .home-hero-art {
   position: relative;
   min-width: 0;
-  min-height: min(520px, 68vh);
+  min-height: min(560px, 72vh);
   margin-top: 30px;
   overflow: visible;
   background: radial-gradient(ellipse at 58% 48%, rgba(168, 187, 163, 0.24), transparent 73%);
@@ -564,6 +600,8 @@ button[class*="bg-brand-sage"]:hover {
   border: 0;
   outline: 0;
   box-shadow: none;
+  transform: scale(1.2);
+  transform-origin: center;
   -webkit-mask-image:
     linear-gradient(to right, transparent 0%, #000 22%, #000 52%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
@@ -589,11 +627,11 @@ button[class*="bg-brand-sage"]:hover {
 .home-art-card {
   position: absolute;
   z-index: 2;
-  right: clamp(18px, 7%, 58px);
-  bottom: 4px;
-  width: min(250px, 60%);
-  min-height: 182px;
-  padding: 30px 25px 22px;
+  right: clamp(18px, 5%, 44px);
+  bottom: 10px;
+  width: min(220px, 52%);
+  min-height: 142px;
+  padding: 24px 18px 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -606,9 +644,9 @@ button[class*="bg-brand-sage"]:hover {
 
 .home-art-card-mark {
   position: absolute;
-  top: -23px;
-  width: 48px;
-  height: 48px;
+  top: -19px;
+  width: 42px;
+  height: 42px;
   display: grid;
   place-items: center;
   border: 4px solid var(--brand-cream);
@@ -626,10 +664,10 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .home-art-card strong {
-  max-width: 190px;
-  margin: 9px auto;
+  max-width: 180px;
+  margin: 8px auto 0;
   color: var(--brand-ink);
-  font-size: 1.15rem;
+  font-size: 1rem;
   line-height: 1.3;
 }
 
@@ -893,6 +931,8 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .home-footer {
+  width: 100%;
+  margin-top: auto;
   position: relative;
   overflow: hidden;
   padding: 0 max(24px, calc((100% - 1210px) / 2));
@@ -1010,11 +1050,12 @@ button[class*="bg-brand-sage"]:hover {
   }
 
   .home-nav {
-    gap: 15px;
+    gap: 16px;
   }
 
   .home-nav a {
-    font-size: 0.82rem;
+    font-size: 0.9rem;
+    font-weight: 400;
   }
 
   .home-nav-cta {
@@ -1023,12 +1064,12 @@ button[class*="bg-brand-sage"]:hover {
 
   .home-hero {
     min-height: 555px;
-    gap: 30px;
+    gap: 0;
   }
 
   .home-hero-art {
-    min-height: min(480px, 68vh);
-    margin-top: 20px;
+    min-height: min(500px, 68vh);
+    margin-top: 14px;
   }
 
   .home-about {
@@ -1823,7 +1864,8 @@ button[class*="bg-brand-sage"]:hover {
   }
 
   .home-nav a {
-    font-size: 0.75rem;
+    font-size: 0.86rem;
+    font-weight: 400;
   }
 
   .home-hero {
@@ -1876,6 +1918,7 @@ button[class*="bg-brand-sage"]:hover {
   .home-manifest-image {
     object-fit: contain;
     object-position: center;
+    transform: scale(1.12);
     -webkit-mask-image:
       linear-gradient(to right, transparent 0%, #000 18%, #000 58%, transparent 100%),
       linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
@@ -1914,13 +1957,23 @@ button[class*="bg-brand-sage"]:hover {
   .home-art-card {
     right: 18px;
     bottom: 0;
-    width: 190px;
-    min-height: 145px;
-    padding: 23px 17px 15px;
+    width: min(180px, 52%);
+    min-height: 120px;
+    padding: 20px 14px 14px;
+  }
+
+  .home-art-card-mark {
+    top: -17px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .home-art-card-kicker {
+    font-size: 0.62rem;
   }
 
   .home-art-card strong {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .home-section {
@@ -1990,18 +2043,28 @@ button[class*="bg-brand-sage"]:hover {
 }
 
 .home-page .home-nav a,
-.home-page .home-nav-cta,
 .home-page .home-story-link {
   color: #000;
 }
 
+.home-page .home-nav a {
+  font-weight: 400;
+}
+
+.home-page .home-nav-cta {
+  color: var(--brand-cream);
+}
+
 .home-page .home-nav a:hover,
 .home-page .home-nav a:focus-visible,
-.home-page .home-nav-cta:hover,
-.home-page .home-nav-cta:focus-visible,
 .home-page .home-story-link:hover,
 .home-page .home-story-link:focus-visible {
   color: var(--brand-primary);
+}
+
+.home-page .home-nav-cta:hover,
+.home-page .home-nav-cta:focus-visible {
+  color: var(--brand-cream);
 }
 
 .auth-page :is(p, li, small, label, input, textarea) {

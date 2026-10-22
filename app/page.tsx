@@ -10,6 +10,7 @@ import {
   FaSeedling as Sprout,
 } from 'react-icons/fa6';
 import BrandLogo from '@/components/BrandLogo';
+import HomeSignInButton from '@/components/HomeSignInButton';
 
 const tools = [
   {
@@ -41,7 +42,7 @@ export default function HomePage() {
       <header className="home-header">
         <div className="home-header-inner">
           <Link href="/" aria-label="Safe Haven home" className="home-brand">
-            <BrandLogo className="h-[84px] w-[210px]" />
+            <BrandLogo className="h-[96px] w-[240px]" />
           </Link>
 
           <nav aria-label="Main navigation" className="home-nav">
@@ -52,10 +53,7 @@ export default function HomePage() {
             <a href="#contact">Contact</a>
           </nav>
 
-          <Link href="/login" className="home-nav-cta">
-            Sign in
-            <span className="signin-icon" aria-hidden="true" />
-          </Link>
+          <HomeSignInButton />
         </div>
       </header>
 
@@ -95,7 +93,7 @@ export default function HomePage() {
 
         <div className="home-hero-art" aria-label="A calm space for your wellbeing">
           <Image
-            src="/images/download (6).png"
+            src="/images/new 1.png"
             alt="A person taking a peaceful moment in a calm, plant-filled space"
             fill
             loading="eager"
@@ -110,10 +108,6 @@ export default function HomePage() {
             </span>
             <span className="home-art-card-kicker">Your wellbeing, your pace</span>
             <strong>Small moments of care can start here.</strong>
-            <span className="home-art-card-rule" />
-            <span className="home-art-card-caption">
-              Check in. Reflect. Take a next step.
-            </span>
           </div>
         </div>
       </section>
