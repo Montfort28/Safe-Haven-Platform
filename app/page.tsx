@@ -93,7 +93,7 @@ export default function HomePage() {
 
         <div className="home-hero-art" aria-label="A calm space for your wellbeing">
           <Image
-            src="/images/new 1.png"
+            src="/images/upscaler.png"
             alt="A person taking a peaceful moment in a calm, plant-filled space"
             fill
             loading="eager"
