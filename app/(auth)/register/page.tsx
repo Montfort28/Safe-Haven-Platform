@@ -86,6 +86,7 @@ function RegisterForm() {
       panelTitle="Create your account"
       panelDescription="Build a personal space for reflection, gentle routines, and noticing your progress over time."
       helpingHandImage="/images/helping%20hand.png"
+      helpingHandPlacement="register"
       footer={
         <>
           Already have an account? <Link href={loginHref}>Sign in</Link>

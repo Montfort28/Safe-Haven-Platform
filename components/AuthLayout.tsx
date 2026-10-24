@@ -10,6 +10,7 @@ type AuthLayoutProps = {
   footer: React.ReactNode;
   children: React.ReactNode;
   helpingHandImage?: string;
+  helpingHandPlacement?: 'login' | 'register';
 };
 
 export default function AuthLayout({
@@ -20,6 +21,7 @@ export default function AuthLayout({
   footer,
   children,
   helpingHandImage,
+  helpingHandPlacement,
 }: AuthLayoutProps) {
   return (
     <main className="auth-page min-h-screen">
@@ -35,14 +37,16 @@ export default function AuthLayout({
 
       <div className="auth-layout">
         {helpingHandImage && (
-          <Image
-            src={helpingHandImage}
-            alt=""
-            aria-hidden="true"
-            width={548}
-            height={455}
-            className="auth-helping-hand"
-          />
+          <>
+            <Image
+              src={helpingHandImage}
+              alt=""
+              aria-hidden="true"
+              width={548}
+              height={455}
+              className={`auth-helping-hand auth-helping-hand-${helpingHandPlacement ?? 'login'}`}
+            />
+          </>
         )}
         <section className="auth-intro">
           <div className="auth-intro-copy">
