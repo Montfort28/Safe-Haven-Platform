@@ -327,6 +327,8 @@ body:has(.auth-page) {
 }
 
 .home-header-inner > .home-nav-cta {
+  grid-column: 3;
+  grid-row: 1;
   justify-self: end;
 }
 
@@ -337,11 +339,23 @@ body:has(.auth-page) {
   flex: none;
 }
 
+.home-brand {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+}
+
 .home-nav {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: clamp(20px, 3vw, 44px);
+}
+
+.home-nav {
+  grid-column: 2;
+  grid-row: 1;
+  gap: clamp(16px, 2vw, 30px);
 }
 
 .home-nav a,
@@ -1130,6 +1144,7 @@ body:has(.auth-page) {
 @media (max-width: 850px) {
   .home-header-inner {
     min-height: 72px;
+    width: min(100% - 40px, 1320px);
     display: flex;
     justify-content: space-between;
     gap: 18px;
@@ -1147,6 +1162,18 @@ body:has(.auth-page) {
 
   .home-nav-cta {
     font-size: 0.9rem;
+  }
+
+  .home-brand .brand-logo {
+    width: 190px;
+    height: 76px;
+  }
+
+  .auth-brand .brand-logo,
+  .footer-brand-link .brand-logo,
+  .app-shell-brand .brand-logo {
+    width: 190px;
+    height: 76px;
   }
 
   .home-crack-two {
@@ -1661,17 +1688,16 @@ body:has(.auth-page) {
 
   .auth-intro {
     position: relative;
-    z-index: 1;
+    z-index: auto;
     min-height: 540px;
     display: flex;
     align-items: center;
     justify-content: center;
-    isolation: isolate;
   }
 
   .auth-intro-copy {
     position: relative;
-    z-index: 1;
+    z-index: 3;
     width: 100%;
     max-width: 510px;
   }
@@ -1712,12 +1738,14 @@ body:has(.auth-page) {
 
   .auth-helping-hand {
     position: absolute;
-    z-index: 2;
-    top: 42%;
-    left: calc(50% - 16px);
-    width: clamp(180px, 25vw, 290px);
+    z-index: 1;
+    top: 46%;
+    left: 50.5%;
+    width: clamp(300px, 26vw, 360px);
     height: auto;
-    opacity: 0.56;
+    opacity: 0.78;
+    mix-blend-mode: multiply;
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
     pointer-events: none;
     transform: translate(-50%, -50%);
   }
@@ -1930,11 +1958,6 @@ body:has(.auth-page) {
       min-height: 70px;
     }
 
-    .auth-header .brand-logo {
-      width: 184px;
-      height: 74px;
-    }
-
     .auth-layout {
       padding-top: 0;
     }
@@ -1963,13 +1986,16 @@ body:has(.auth-page) {
   }
 
 @media (max-width: 650px) {
+  .home-header-inner {
+    width: min(100% - 32px, 1210px);
+    flex-wrap: wrap;
+    padding: 12px 0 15px;
+    row-gap: 12px;
+  }
+
   .home-brand .brand-logo {
     width: 190px;
     height: 76px;
-  }
-
-  .home-header-inner > .home-nav-cta {
-    font-size: 0.76rem;
   }
 
   .home-nav {

@@ -237,7 +237,7 @@ export default function HomePage() {
         <div className="home-footer-inner">
           <div className="home-footer-brand">
             <Link href="/" aria-label="Safe Haven home" className="footer-brand-link">
-              <BrandLogo className="h-[80px] w-[200px]" />
+              <BrandLogo className="h-[96px] w-[240px]" />
             </Link>
             <p>A quieter space to reconnect with yourself.</p>
           </div>

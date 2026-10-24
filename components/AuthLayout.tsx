@@ -9,7 +9,7 @@ type AuthLayoutProps = {
   panelDescription: string;
   footer: React.ReactNode;
   children: React.ReactNode;
-  showHelpingHand?: boolean;
+  helpingHandImage?: string;
 };
 
 export default function AuthLayout({
@@ -19,13 +19,13 @@ export default function AuthLayout({
   panelDescription,
   footer,
   children,
-  showHelpingHand = false,
+  helpingHandImage,
 }: AuthLayoutProps) {
   return (
     <main className="auth-page min-h-screen">
       <header className="auth-header">
         <Link href="/" aria-label="Safe Haven home" className="auth-brand">
-          <BrandLogo className="h-[84px] w-[210px]" />
+          <BrandLogo className="h-[96px] w-[240px]" />
         </Link>
         <Link href="/" className="auth-back-link">
           <span className="signin-icon auth-back-icon" aria-hidden="true" />
@@ -34,9 +34,9 @@ export default function AuthLayout({
       </header>
 
       <div className="auth-layout">
-        {showHelpingHand && (
+        {helpingHandImage && (
           <Image
-            src="/images/helping%20hand.png"
+            src={helpingHandImage}
             alt=""
             aria-hidden="true"
             width={548}

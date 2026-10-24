@@ -85,6 +85,7 @@ function RegisterForm() {
       description="Create a Safe Haven account to check in with your mood, write in your journal, and explore calming activities. Take things one step at a time."
       panelTitle="Create your account"
       panelDescription="Build a personal space for reflection, gentle routines, and noticing your progress over time."
+      helpingHandImage="/images/helping%20hand.png"
       footer={
         <>
           Already have an account? <Link href={loginHref}>Sign in</Link>

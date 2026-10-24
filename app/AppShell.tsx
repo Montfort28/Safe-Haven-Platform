@@ -10,7 +10,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <nav className="glass-card mx-4 mt-4 px-6 py-4">
                 <div className="flex items-center justify-between">
                     <Link href="/dashboard" aria-label="Safe Haven dashboard" className="app-shell-brand">
-                        <BrandLogo className="h-[72px] w-[180px]" />
+                        <BrandLogo className="h-[96px] w-[240px]" />
                     </Link>
                     <div className="flex items-center gap-6">
                         <Link href="/dashboard" className="flex items-center gap-2 text-blue-600">
