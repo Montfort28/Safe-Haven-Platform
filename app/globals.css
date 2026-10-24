@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Poppins:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -172,7 +172,6 @@ select {
 .home-platforms,
 .home-services,
 .home-footer,
-.home-art-card,
 .home-tool-card,
 .auth-panel,
 .glass-card,
@@ -192,7 +191,6 @@ select {
 .home-platforms::after,
 .home-services::after,
 .home-footer::after,
-.home-art-card::after,
 .home-tool-card::after,
 .auth-panel::after,
 .glass-card::after,
@@ -484,6 +482,36 @@ body:has(.auth-page) {
   transform: translateY(-28px);
 }
 
+.home-hero-cracks {
+  position: absolute;
+  z-index: -1;
+  inset: -22px -10px;
+  pointer-events: none;
+}
+
+.home-crack {
+  position: absolute;
+  height: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  opacity: 0.58;
+}
+
+.home-crack-one {
+  top: -5px;
+  left: 55%;
+  width: clamp(140px, 13vw, 190px);
+  transform: rotate(9deg);
+}
+
+.home-crack-two {
+  top: 52%;
+  right: 3%;
+  width: clamp(145px, 13vw, 195px);
+  opacity: 0.7;
+  transform: rotate(-13deg);
+}
+
 .home-eyebrow,
 .home-section-label,
 .home-closing-mark {
@@ -522,6 +550,14 @@ body:has(.auth-page) {
 .home-hero h1 span,
 .home-section h2 span {
   color: var(--brand-primary);
+}
+
+.home-hero h1 span {
+  font-family: "DM Serif Display", Georgia, serif !important;
+  font-size: 0.96em;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.035em;
 }
 
 .home-hero-description {
@@ -602,6 +638,7 @@ body:has(.auth-page) {
 }
 
 .home-manifest-image {
+  z-index: 2;
   object-fit: contain;
   object-position: center;
   border: 0;
@@ -621,7 +658,7 @@ body:has(.auth-page) {
 
 .home-hero-art::after {
   position: absolute;
-  z-index: 1;
+  z-index: 3;
   inset: 0;
   pointer-events: none;
   background: var(--paper-grain);
@@ -633,24 +670,39 @@ body:has(.auth-page) {
 
 .home-art-card {
   position: absolute;
-  z-index: 2;
-  right: clamp(18px, 5%, 44px);
+  z-index: auto;
+  isolation: auto;
+  right: clamp(0px, 2%, 12px);
   bottom: 10px;
-  width: min(220px, 52%);
+  width: min(220px, 48%);
   min-height: 142px;
-  padding: 24px 18px 18px;
+  padding: 24px 10px 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
   text-align: center;
+}
+
+.home-art-card::before {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: 20px;
   background: var(--brand-cream);
   box-shadow: 0 18px 42px rgba(68, 81, 61, 0.13);
+  content: "";
+}
+
+.home-art-card > span,
+.home-art-card > strong {
+  position: relative;
+  z-index: 4;
 }
 
 .home-art-card-mark {
   position: absolute;
+  z-index: 4;
   top: -19px;
   width: 42px;
   height: 42px;
@@ -663,14 +715,19 @@ body:has(.auth-page) {
 }
 
 .home-art-card-kicker {
+  position: relative;
+  z-index: 4;
   color: var(--brand-sage);
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .home-art-card strong {
+  position: relative;
+  z-index: 4;
   max-width: 180px;
   margin: 8px auto 0;
   color: var(--brand-ink);
@@ -693,6 +750,8 @@ body:has(.auth-page) {
 }
 
 .home-platforms {
+  position: relative;
+  z-index: 3;
   min-height: 116px;
   padding: 20px max(24px, calc((100% - 1210px) / 2));
   display: flex;
@@ -944,11 +1003,23 @@ body:has(.auth-page) {
   width: 100%;
   margin-top: auto;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   padding: 0 max(24px, calc((100% - 1210px) / 2));
   color: var(--brand-cream);
   background-color: var(--brand-ink);
   background-image: linear-gradient(var(--brand-ink), var(--brand-ink));
+}
+
+.home-footer-sitters {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: clamp(90px, 11vw, 170px);
+  width: clamp(340px, 31vw, 440px);
+  height: auto;
+  filter: drop-shadow(0 5px 5px rgba(20, 30, 20, 0.16));
+  transform: translateY(-82%);
+  pointer-events: none;
 }
 
 .home-footer::after {
@@ -1076,6 +1147,15 @@ body:has(.auth-page) {
 
   .home-nav-cta {
     font-size: 0.9rem;
+  }
+
+  .home-crack-two {
+    right: 0;
+  }
+
+  .home-footer-sitters {
+    left: clamp(60px, 12vw, 120px);
+    width: 300px;
   }
 
   .home-hero {
@@ -1568,6 +1648,7 @@ body:has(.auth-page) {
   }
 
   .auth-layout {
+    position: relative;
     width: min(100%, 1120px);
     min-height: calc(100vh - 82px);
     margin: 0 auto;
@@ -1580,6 +1661,7 @@ body:has(.auth-page) {
 
   .auth-intro {
     position: relative;
+    z-index: 1;
     min-height: 540px;
     display: flex;
     align-items: center;
@@ -1618,12 +1700,26 @@ body:has(.auth-page) {
   }
 
   .auth-panel {
+    position: relative;
+    z-index: 3;
     width: 100%;
     padding: clamp(26px, 4vw, 42px);
     border: 1px solid rgba(151, 168, 122, 0.3);
     border-radius: 24px;
-    background: rgba(252, 249, 234, 0.94);
+    background: var(--brand-cream);
     box-shadow: 0 8px 24px rgba(68, 81, 61, 0.12);
+  }
+
+  .auth-helping-hand {
+    position: absolute;
+    z-index: 2;
+    top: 42%;
+    left: calc(50% - 16px);
+    width: clamp(180px, 25vw, 290px);
+    height: auto;
+    opacity: 0.56;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
   }
 
   .auth-panel h2 {
@@ -1792,6 +1888,10 @@ body:has(.auth-page) {
   }
 
   @media (max-width: 760px) {
+    .auth-helping-hand {
+      display: none;
+    }
+
     .auth-layout {
       min-height: auto;
       grid-template-columns: 1fr;
@@ -1896,6 +1996,18 @@ body:has(.auth-page) {
     transform: none;
   }
 
+  .home-crack-one {
+    left: 58%;
+    width: 140px;
+  }
+
+  .home-crack-two {
+    top: 48%;
+    top: 58%;
+    right: 0;
+    width: 135px;
+  }
+
   .home-hero h1 {
     margin-top: 22px;
     font-size: clamp(2.25rem, 10vw, 3.2rem);
@@ -1985,7 +2097,8 @@ body:has(.auth-page) {
   }
 
   .home-art-card-kicker {
-    font-size: 0.62rem;
+    font-size: 0.52rem;
+    letter-spacing: 0.025em;
   }
 
   .home-art-card strong {
@@ -2037,6 +2150,12 @@ body:has(.auth-page) {
 
   .home-footer {
     padding: 0 20px;
+  }
+
+  .home-footer-sitters {
+    right: 16px;
+    left: auto;
+    width: 210px;
   }
 
   .home-footer-inner {

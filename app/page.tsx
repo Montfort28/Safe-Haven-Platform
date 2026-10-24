@@ -59,6 +59,22 @@ export default function HomePage() {
 
       <section className="home-hero" aria-labelledby="hero-title">
         <div className="home-hero-copy">
+          <div className="home-hero-cracks" aria-hidden="true">
+            <Image
+              src="/images/crack%201.png"
+              alt=""
+              width={423}
+              height={590}
+              className="home-crack home-crack-one"
+            />
+            <Image
+              src="/images/crack%202.png"
+              alt=""
+              width={374}
+              height={666}
+              className="home-crack home-crack-two"
+            />
+          </div>
           <span className="home-eyebrow">
             <Leaf aria-hidden="true" size={15} />
             Everyday wellbeing support
@@ -88,13 +104,12 @@ export default function HomePage() {
               What you can do here
             </a>
           </div>
-
         </div>
 
         <div className="home-hero-art" aria-label="A calm space for your wellbeing">
           <Image
             src="/images/upscaler.png"
-            alt="A person taking a peaceful moment in a calm, plant-filled space"
+            alt="Black-and-white portrait artwork with fine cracks across the face"
             fill
             loading="eager"
             fetchPriority="high"
@@ -210,6 +225,14 @@ export default function HomePage() {
       </section>
 
       <footer className="home-footer">
+        <Image
+          src="/images/cool.png"
+          alt=""
+          aria-hidden="true"
+          width={447}
+          height={559}
+          className="home-footer-sitters"
+        />
         <div className="home-footer-wordmark" aria-label="Safe Haven">Safe Haven</div>
         <div className="home-footer-inner">
           <div className="home-footer-brand">
