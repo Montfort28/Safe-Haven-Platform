@@ -225,14 +225,6 @@ export default function HomePage() {
       </section>
 
       <footer className="home-footer">
-        <Image
-          src="/images/cool.png"
-          alt=""
-          aria-hidden="true"
-          width={447}
-          height={559}
-          className="home-footer-sitters"
-        />
         <div className="home-footer-wordmark" aria-label="Safe Haven">Safe Haven</div>
         <div className="home-footer-inner">
           <div className="home-footer-brand">

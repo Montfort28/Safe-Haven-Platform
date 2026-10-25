@@ -1024,18 +1024,6 @@ body:has(.auth-page) {
   background-image: linear-gradient(var(--brand-ink), var(--brand-ink));
 }
 
-.home-footer-sitters {
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: clamp(90px, 11vw, 170px);
-  width: clamp(340px, 31vw, 440px);
-  height: auto;
-  filter: drop-shadow(0 5px 5px rgba(20, 30, 20, 0.16));
-  transform: translateY(-82%);
-  pointer-events: none;
-}
-
 .home-footer::after {
   background-size: 100px 100px;
   opacity: 0.35;
@@ -1178,11 +1166,6 @@ body:has(.auth-page) {
 
   .home-crack-two {
     right: 0;
-  }
-
-  .home-footer-sitters {
-    left: clamp(60px, 12vw, 120px);
-    width: 300px;
   }
 
   .home-hero {
@@ -2193,12 +2176,6 @@ body:has(.auth-page) {
 
   .home-footer {
     padding: 0 20px;
-  }
-
-  .home-footer-sitters {
-    right: 16px;
-    left: auto;
-    width: 210px;
   }
 
   .home-footer-inner {
