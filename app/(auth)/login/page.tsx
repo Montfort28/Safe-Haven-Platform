@@ -82,8 +82,6 @@ function LoginForm() {
       description="Sign in to your private space for reflection, small steps and steady support."
       panelTitle="Welcome back"
       panelDescription="Continue your wellbeing journey."
-      helpingHandImage="/images/hand%20to%20hand.png"
-      helpingHandPlacement="login"
       footer={
         <>
           New to Safe Haven? <Link href={registerHref}>Create an account</Link>
