@@ -59,22 +59,6 @@ export default function HomePage() {
 
       <section className="home-hero" aria-labelledby="hero-title">
         <div className="home-hero-copy">
-          <div className="home-hero-cracks" aria-hidden="true">
-            <Image
-              src="/images/crack%201.png"
-              alt=""
-              width={423}
-              height={590}
-              className="home-crack home-crack-one"
-            />
-            <Image
-              src="/images/crack%202.png"
-              alt=""
-              width={374}
-              height={666}
-              className="home-crack home-crack-two"
-            />
-          </div>
           <span className="home-eyebrow">
             <Leaf aria-hidden="true" size={15} />
             Everyday wellbeing support
