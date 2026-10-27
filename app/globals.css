@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Poppins:wght@400;500;600;700;800&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=pally@400,500,600,700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -496,6 +497,11 @@ body:has(.auth-page) {
   transform: translateY(-28px);
 }
 
+.home-hero,
+.home-hero * {
+  font-family: "Pally", sans-serif !important;
+}
+
 .home-eyebrow,
 .home-section-label,
 .home-closing-mark {
@@ -537,7 +543,6 @@ body:has(.auth-page) {
 }
 
 .home-hero h1 span {
-  font-family: "DM Serif Display", Georgia, serif !important;
   font-size: 0.96em;
   font-style: italic;
   font-weight: 400;
@@ -628,7 +633,7 @@ body:has(.auth-page) {
   border: 0;
   outline: 0;
   box-shadow: none;
-  transform: scale(1.34);
+  transform: scale(1.12);
   transform-origin: center;
 }
 
@@ -1972,7 +1977,7 @@ body:has(.auth-page) {
   .home-manifest-image {
     object-fit: contain;
     object-position: center;
-    transform: scale(1.23);
+    transform: scale(1.05);
   }
 
   .home-platforms {
