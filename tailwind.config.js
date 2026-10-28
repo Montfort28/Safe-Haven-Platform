@@ -96,7 +96,9 @@ module.exports = {
         foreground: "hsl(var(--foreground))",
       },
       fontFamily: {
-        sans: ['"Solitus Sans Serif"', 'Solitus', 'Arial', 'sans-serif'],
+        sans: ['"Manrope"', 'sans-serif'],
+        serif: ['"Manrope"', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
