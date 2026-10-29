@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fa6';
 import BrandLogo from '@/components/BrandLogo';
 import HomeSignInButton from '@/components/HomeSignInButton';
+import HomeMobileNav from '@/components/HomeMobileNav';
 import HomeFaq from '@/components/HomeFaq';
 import HomeWave from '@/components/HomeWave';
 
@@ -67,6 +68,8 @@ export default function HomePage() {
             </a>
             <HomeSignInButton />
           </div>
+
+          <HomeMobileNav />
         </div>
       </header>
 
