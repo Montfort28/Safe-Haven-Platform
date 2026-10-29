@@ -12,6 +12,7 @@ import {
 import BrandLogo from '@/components/BrandLogo';
 import HomeSignInButton from '@/components/HomeSignInButton';
 import HomeFaq from '@/components/HomeFaq';
+import HomeWave from '@/components/HomeWave';
 
 const tools = [
   {
@@ -36,28 +37,6 @@ const tools = [
     color: 'light',
   },
 ];
-
-function HomeWave({
-  className,
-  fill,
-  path,
-}: {
-  className: string;
-  fill: string;
-  path: string;
-}) {
-  return (
-    <svg
-      className={`home-wave ${className}`}
-      viewBox="0 0 1200 100"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path d={path} fill={fill} />
-    </svg>
-  );
-}
 
 export default function HomePage() {
   return (
@@ -137,9 +116,9 @@ export default function HomePage() {
 
       <section className="home-platforms" aria-label="Mental health platforms">
         <HomeWave
-          className="home-wave-top home-wave-platforms-top"
-          fill="var(--brand-cream)"
-          path="M0 0H1200V48C1060 38 930 38 780 49C600 63 430 63 260 49C150 39 70 39 0 48Z"
+          className="home-wave-platforms-top"
+          color="var(--brand-ink)"
+          tone="ink"
         />
         <p className="home-platform-caption">
           You can also explore these other mental health platforms.
@@ -162,14 +141,13 @@ export default function HomePage() {
             <span>7 Cups</span>
           </span>
         </div>
-        <HomeWave
-          className="home-wave-bottom home-wave-platforms-bottom"
-          fill="var(--brand-cream)"
-          path="M0 48C70 39 150 39 260 49C430 63 600 63 780 49C930 38 1060 38 1200 48V100H0Z"
-        />
       </section>
 
       <section id="about" className="home-section home-about">
+        <HomeWave
+          className="home-wave-about-top"
+          color="#f3eedc"
+        />
         <div className="home-section-heading">
           <span className="home-section-label">About Safe Haven</span>
           <h2>
@@ -195,9 +173,8 @@ export default function HomePage() {
 
       <section id="services" className="home-section home-services">
         <HomeWave
-          className="home-wave-top home-wave-services-top"
-          fill="var(--brand-cream)"
-          path="M0 0H1200V49C1060 39 930 39 780 50C600 64 430 64 260 50C150 40 70 40 0 49Z"
+          className="home-wave-services-top"
+          color="#e5eddc"
         />
         <div className="home-services-heading">
           <div>
@@ -225,16 +202,15 @@ export default function HomePage() {
             </article>
           ))}
         </div>
-        <HomeWave
-          className="home-wave-bottom home-wave-services-bottom"
-          fill="#F5F6F0"
-          path="M0 49C70 40 150 40 260 50C430 64 600 64 780 50C930 39 1060 39 1200 49V100H0Z"
-        />
       </section>
 
       <HomeFaq />
 
       <section id="contact" className="home-section home-closing">
+        <HomeWave
+          className="home-wave-closing-top"
+          color="#f3e8d6"
+        />
         <div className="home-closing-mark">
           <LockKeyhole aria-hidden="true" size={19} />
           A gentle place to begin
@@ -255,11 +231,6 @@ export default function HomePage() {
       </section>
 
       <footer className="home-footer">
-        <HomeWave
-          className="home-wave-top home-wave-footer-top"
-          fill="var(--brand-cream)"
-          path="M0 0H1200V49C1060 39 930 39 780 50C600 64 430 64 260 50C150 40 70 40 0 49Z"
-        />
         <div className="home-footer-wordmark" aria-label="Safe Haven">Safe Haven</div>
         <div className="home-footer-inner">
           <div className="home-footer-brand">

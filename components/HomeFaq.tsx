@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import HomeWave from '@/components/HomeWave';
 
 const faqs = [
   {
@@ -116,6 +117,10 @@ export default function HomeFaq() {
 
   return (
     <section id="faq" className="home-faq" aria-labelledby="home-faq-title">
+      <HomeWave
+        className="home-wave-faq-top"
+        color="#d9e7e1"
+      />
       <div className="home-faq-layout">
         <div className="home-faq-intro">
           <span className="home-section-label">A little more clarity</span>
@@ -166,18 +171,6 @@ export default function HomeFaq() {
           })}
         </div>
       </div>
-      <svg
-        className="home-wave home-wave-bottom home-wave-faq-bottom"
-        viewBox="0 0 1200 100"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path
-          d="M0 29C180 18 335 21 510 34C710 49 865 47 1030 31C1090 25 1150 24 1200 30V100H0Z"
-          fill="var(--brand-cream)"
-        />
-      </svg>
     </section>
   );
 }
