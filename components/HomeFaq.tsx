@@ -119,7 +119,7 @@ export default function HomeFaq() {
     <section id="faq" className="home-faq" aria-labelledby="home-faq-title">
       <HomeWave
         className="home-wave-faq-top"
-        color="#d9e7e1"
+        color="#f0e7d8"
       />
       <div className="home-faq-layout">
         <div className="home-faq-intro">

@@ -4,7 +4,7 @@ import {
   FaArrowRight as ArrowRight,
   FaBookOpen as BookOpen,
   FaHeart as Heart,
-  FaLeaf as Leaf,
+  FaInstagram as Instagram,
   FaLock as LockKeyhole,
   FaPlay as Play,
   FaSeedling as Sprout,
@@ -52,20 +52,26 @@ export default function HomePage() {
             <a href="#about">About</a>
             <a href="#services">Services</a>
             <a href="#faq">FAQs</a>
-            <Link href="/resources">Resources</Link>
             <a href="#contact">Contact</a>
           </nav>
 
-          <HomeSignInButton />
+          <div className="home-header-actions">
+            <a
+              className="home-instagram-link"
+              href="https://www.instagram.com/safehaven.circle/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Follow Safe Haven on Instagram"
+            >
+              <Instagram aria-hidden="true" size={19} />
+            </a>
+            <HomeSignInButton />
+          </div>
         </div>
       </header>
 
       <section className="home-hero" aria-labelledby="hero-title">
         <div className="home-hero-copy">
-          <span className="home-eyebrow">
-            <Leaf aria-hidden="true" size={15} />
-            Everyday wellbeing support
-          </span>
           <h1 id="hero-title">
             A welcoming space
             <br />
@@ -115,11 +121,6 @@ export default function HomePage() {
       </section>
 
       <section className="home-platforms" aria-label="Mental health platforms">
-        <HomeWave
-          className="home-wave-platforms-top"
-          color="var(--brand-ink)"
-          tone="ink"
-        />
         <p className="home-platform-caption">
           You can also explore these other mental health platforms.
         </p>
@@ -174,7 +175,7 @@ export default function HomePage() {
       <section id="services" className="home-section home-services">
         <HomeWave
           className="home-wave-services-top"
-          color="#e5eddc"
+          color="#dce8d2"
         />
         <div className="home-services-heading">
           <div>
@@ -209,7 +210,7 @@ export default function HomePage() {
       <section id="contact" className="home-section home-closing">
         <HomeWave
           className="home-wave-closing-top"
-          color="#f3e8d6"
+          color="#f1dfcf"
         />
         <div className="home-closing-mark">
           <LockKeyhole aria-hidden="true" size={19} />
@@ -237,23 +238,35 @@ export default function HomePage() {
             <Link href="/" aria-label="Safe Haven home" className="footer-brand-link">
               <BrandLogo className="h-[96px] w-[240px]" />
             </Link>
-            <p>A quieter space to reconnect with yourself.</p>
+            <p>
+              A welcoming space for mood check-ins, journaling, breathing
+              activities, and small steps toward everyday wellbeing.
+            </p>
           </div>
           <div className="home-footer-links">
             <span>Explore</span>
+            <a href="#about">About Safe Haven</a>
+            <a href="#services">Wellbeing tools</a>
+            <a href="#faq">Frequently asked questions</a>
+          </div>
+          <div className="home-footer-links">
+            <span>Get started</span>
             <Link href="/register">Create an account</Link>
             <Link href="/login">Sign in</Link>
-            <Link href="/login?next=%2Fresources">Wellbeing resources</Link>
+            <Link href="/resources">Wellbeing resources</Link>
           </div>
-          <div className="home-footer-note">
-            <span className="home-footer-note-mark">
-              <LockKeyhole aria-hidden="true" size={17} />
-            </span>
-            <p>
-              Your journey is personal.
-              <br />
-              Take it one step at a time.
-            </p>
+          <div className="home-footer-connect">
+            <span>Stay connected</span>
+            <p>Follow along for gentle reminders and updates from Safe Haven.</p>
+            <a
+              className="home-footer-instagram"
+              href="https://www.instagram.com/safehaven.circle/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Instagram aria-hidden="true" size={18} />
+              Follow us on Instagram
+            </a>
           </div>
         </div>
         <div className="home-footer-bottom">
