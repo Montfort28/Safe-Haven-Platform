@@ -119,7 +119,7 @@ export default function HomeFaq() {
     <section id="faq" className="home-faq" aria-labelledby="home-faq-title">
       <HomeWave
         className="home-wave-faq-top"
-        color="#f0e7d8"
+        color="#f3eedc"
       />
       <div className="home-faq-layout">
         <div className="home-faq-intro">
@@ -130,8 +130,10 @@ export default function HomeFaq() {
             answered.
           </h2>
           <p>
-            Explore how Safe Haven works, what it can offer, and where to turn
-            when you need more support.
+            Get to know the tools, privacy considerations, and limits of Safe
+            Haven before you begin. These answers explain how the platform can
+            support everyday reflection, when professional care may be a better
+            fit, and where to find urgent help if you need it.
           </p>
         </div>
         <div className="home-faq-list">
