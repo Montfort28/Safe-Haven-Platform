@@ -22,7 +22,7 @@ export default function AuthLayout({
     <main className="auth-page min-h-screen">
       <header className="auth-header">
         <Link href="/" aria-label="Safe Haven home" className="auth-brand">
-          <BrandLogo className="h-[96px] w-[240px]" />
+          <BrandLogo className="h-[86px] w-[216px]" />
         </Link>
         <Link href="/" className="auth-back-link">
           <span className="signin-icon auth-back-icon" aria-hidden="true" />

@@ -53,7 +53,7 @@ export default function Navbar() {
             <div className="member-navbar-inner max-w-7xl mx-auto px-4 sm:px-6 py-4">
                 <div className="flex items-center justify-between">
                     <Link href="/dashboard" aria-label="Safe Haven dashboard" className="member-brand">
-                        <BrandLogo className="h-[60px] w-[150px] sm:h-[72px] sm:w-[180px]" />
+                        <BrandLogo className="h-[55px] w-[138px] sm:h-[66px] sm:w-[165px]" />
                     </Link>
                     <button
                         ref={menuToggleRef}
