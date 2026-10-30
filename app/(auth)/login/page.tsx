@@ -79,7 +79,7 @@ function LoginForm() {
   return (
     <AuthLayout
       title="A calmer way forward"
-      description="Sign in to your private space for reflection, small steps and steady support."
+      description="Sign in to return to your personal wellbeing space. Pick up with mood check-ins, journaling, breathing exercises, and calming activities, and keep building gentle routines at a pace that feels right for you."
       panelTitle="Welcome back"
       panelDescription="Continue your wellbeing journey."
       footer={

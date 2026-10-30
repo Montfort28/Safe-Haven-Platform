@@ -23,6 +23,10 @@ import stories from './stories';
 import Navbar from '@/components/Navbar';
 import EmergencySupport from '@/components/EmergencySupport';
 import { anxietyDetails, depressionDetails } from './copingDetails';
+import {
+  INTERNATIONAL_HELPLINE_DIRECTORY,
+  RWANDA_HELPLINES,
+} from '@/components/emergencyHelplines';
 
 interface Resource {
   id: string;
@@ -114,10 +118,10 @@ const resources: Resource[] = [
   },
   {
     id: '4',
-    title: 'National Suicide Prevention Lifeline',
-    description: '24/7 crisis support for those in distress.',
+    title: 'International crisis helpline directory',
+    description: 'Find crisis support and helplines by country.',
     type: 'helpline',
-    url: 'tel:988',
+    url: INTERNATIONAL_HELPLINE_DIRECTORY,
   },
   // Add audio therapy audios to resources
   ...audioTherapy,
@@ -640,50 +644,35 @@ export default function ResourcesPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-blue-200/60 backdrop-blur-sm">
             <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative animate-fadeIn overflow-y-auto max-h-[90vh] border border-blue-200">
               <button className="absolute top-4 right-4 text-gray-400 hover:text-blue-600 text-xl" onClick={() => setShowHelplineModal(false)}>&times;</button>
-              <h3 className="text-2xl font-bold text-blue-800 mb-4">Rwanda Crisis Hotlines & Mental Health Support</h3>
+              <h3 className="text-2xl font-bold text-blue-800 mb-4">Rwanda Emergency & Mental Health Support</h3>
               <div className="mb-6">
                 <div className="space-y-3">
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-800 mb-1">Mental Health Helpline - RBC</div>
-                      <a href="tel:116" className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">116</a>
-                      <div className="text-sm text-gray-600">24/7 free & confidential support for emotional distress</div>
+                  {RWANDA_HELPLINES.map((line) => (
+                    <div key={line.number} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-gray-800 mb-1">{line.name}</div>
+                        <a href={`tel:${line.number.replace(/[^\d+]/g, '')}`} className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">{line.number}</a>
+                        <div className="text-sm text-gray-600">{line.description}</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-800 mb-1">Caritas Rwanda Crisis Support</div>
-                      <a href="tel:3525" className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">3525</a>
-                      <div className="text-sm text-gray-600">Psychological support & crisis intervention (8AM-10PM daily)</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-800 mb-1">Solid Minds Counseling Clinic</div>
-                      <a href="tel:+250788503528" className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">+250 788 503 528</a>
-                      <div className="text-sm text-gray-600">Licensed outpatient therapy for depression, anxiety & trauma</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-800 mb-1">MindSky Rwanda Youth Helpline</div>
-                      <a href="tel:+250788304782" className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">+250 788 304 782</a>
-                      <div className="text-sm text-gray-600">Youth mental health & suicide prevention (9AM-6PM Mon-Sat)</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-800 mb-1">Emergency Services</div>
-                      <a href="tel:112" className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1">112</a>
-                      <div className="text-sm text-gray-600">National emergency line for police, fire & medical services</div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
+              </div>
+              <div className="mb-6 rounded-xl border border-blue-100 bg-blue-50 p-4">
+                <h4 className="font-semibold text-gray-800">Outside Rwanda?</h4>
+                <p className="mt-1 text-sm text-gray-600">
+                  Find a verified crisis helpline in your country. For immediate danger, call
+                  your local emergency services.
+                </p>
+                <a
+                  href={INTERNATIONAL_HELPLINE_DIRECTORY}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-flex font-semibold text-blue-700 underline hover:text-blue-800"
+                >
+                  Find support by country
+                </a>
               </div>
               <div className="mb-6 p-4 bg-gradient-to-r from-purple-100 to-blue-100 rounded-xl">
                 <p className="italic text-purple-700 font-semibold text-center leading-relaxed">
@@ -692,10 +681,10 @@ export default function ResourcesPage() {
               </div>
               <div className="text-center">
                 <p className="text-base text-gray-700 font-medium mb-2">
-                  Crisis support is available 24/7. You don't have to face this alone.
+                  You don't have to face this alone. Reach out to someone who can help.
                 </p>
                 <p className="text-sm text-gray-600">
-                  Free, confidential help for mental health crises, emotional distress, and suicide prevention.
+                  Helpline availability and services vary by location.
                 </p>
               </div>
             </div>

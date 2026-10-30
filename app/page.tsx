@@ -226,47 +226,69 @@ export default function HomePage() {
           className="home-wave-closing-top"
           color="#dce8d2"
         />
-        <div className="home-closing-mark">
-          <LockKeyhole aria-hidden="true" size={19} />
-          A gentle place to begin
+        <div className="home-closing-art" aria-hidden="true">
+          {[
+            'CTA 1.png',
+            'CTA 2.png',
+            'CTA 3.png',
+            'CTA 4.png',
+            'CTA 5.png',
+            'CTA 6.png',
+          ].map((image, index) => (
+            <span className={`home-closing-artwork home-closing-artwork-${index + 1}`} key={image}>
+              <Image
+                src={`/images/${image}`}
+                alt=""
+                fill
+                loading="eager"
+                sizes="(max-width: 600px) 56px, 100px"
+              />
+            </span>
+          ))}
         </div>
-        <h2>
-          Take a moment for
-          <br />
-          <span>your wellbeing.</span>
-        </h2>
-        <p>
-          Create an account to explore mood tracking, journaling, wellbeing
-          games, breathing activities, and your Mind Garden.
-        </p>
-        <Link href="/register" className="home-button home-button-primary">
-          Explore Safe Haven
-          <ArrowRight aria-hidden="true" size={17} />
-        </Link>
+        <div className="home-closing-content">
+          <div className="home-closing-mark">
+            <LockKeyhole aria-hidden="true" size={19} />
+            A gentle place to begin
+          </div>
+          <h2>
+            Take a moment for
+            <br />
+            <span>your wellbeing.</span>
+          </h2>
+          <p>
+            Create an account to explore mood tracking, journaling, wellbeing
+            games, breathing activities, and your Mind Garden.
+          </p>
+          <Link href="/register" className="home-button home-button-primary">
+            Explore Safe Haven
+            <ArrowRight aria-hidden="true" size={17} />
+          </Link>
+        </div>
       </section>
 
       <footer className="home-footer">
-        <div className="home-footer-wordmark" aria-label="Safe Haven">Safe Haven</div>
+        <div className="home-footer-wordmark" aria-hidden="true">Safe Haven</div>
         <div className="home-footer-inner">
-          <div className="home-footer-brand">
-            <Link href="/" aria-label="Safe Haven home" className="footer-brand-link">
-              <BrandLogo className="h-[86px] w-[216px]" />
-            </Link>
+          <div className="home-footer-links">
+            <span>Safe Haven</span>
+            <Link href="/">Home</Link>
+            <a href="#about">About Safe Haven</a>
+            <a href="#contact">Contact</a>
           </div>
           <div className="home-footer-links">
             <span>Explore</span>
-            <a href="#about">About Safe Haven</a>
             <a href="#services">Wellbeing tools</a>
             <a href="#faq">Frequently asked questions</a>
+            <Link href="/resources">Wellbeing resources</Link>
           </div>
           <div className="home-footer-links">
             <span>Get started</span>
             <Link href="/register">Create an account</Link>
             <Link href="/login">Sign in</Link>
-            <Link href="/resources">Wellbeing resources</Link>
           </div>
           <div className="home-footer-connect">
-            <span>Stay connected</span>
+            <span>Contact</span>
             <p>Follow along for gentle reminders and updates from Safe Haven.</p>
             <a
               className="home-footer-instagram"
@@ -280,7 +302,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="home-footer-bottom">
-          <span>Safe Haven</span>
+          <span>© {new Date().getFullYear()} Safe Haven. All rights reserved.</span>
           <span>Find your peace, at your pace.</span>
         </div>
       </footer>

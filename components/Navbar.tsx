@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -10,6 +12,7 @@ import {
     FaGaugeHigh as DashboardIcon,
 } from 'react-icons/fa6';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import BrandLogo from '@/components/BrandLogo';
 
 const navItems = [
@@ -27,6 +30,7 @@ export default function Navbar() {
     const router = useRouter();
     const [menuOpen, setMenuOpen] = useState(false);
     const menuToggleRef = useRef<HTMLButtonElement>(null);
+    const menuPanelRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setMenuOpen(false);
@@ -34,6 +38,10 @@ export default function Navbar() {
 
     useEffect(() => {
         if (!menuOpen) return;
+
+        menuPanelRef.current?.querySelector<HTMLElement>('a[href]')?.focus();
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
 
         const closeOnEscape = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
@@ -43,7 +51,10 @@ export default function Navbar() {
         };
 
         document.addEventListener('keydown', closeOnEscape);
-        return () => document.removeEventListener('keydown', closeOnEscape);
+        return () => {
+            document.removeEventListener('keydown', closeOnEscape);
+            document.body.style.overflow = previousOverflow;
+        };
     }, [menuOpen]);
 
     const prefetchRoute = (href: string) => router.prefetch(href);
@@ -87,32 +98,70 @@ export default function Navbar() {
                         ))}
                     </div>
                 </div>
-                <div
-                    id="member-mobile-menu"
-                    className={`member-mobile-nav xl:hidden${menuOpen ? ' is-open' : ''}`}
-                    aria-hidden={!menuOpen}
-                    inert={!menuOpen}
-                >
-                    <p className="member-mobile-nav-heading">Find your space</p>
-                    <div className="member-mobile-nav-links">
-                        {navItems.map(({ href, label, Icon }) => (
-                            <Link
-                                key={href}
-                                href={href}
-                                aria-current={pathname === href ? 'page' : undefined}
-                                className={`member-nav-link ${pathname === href ? 'is-active' : ''}`}
-                                onMouseEnter={() => prefetchRoute(href)}
-                                onFocus={() => prefetchRoute(href)}
-                                onTouchStart={() => prefetchRoute(href)}
-                                onClick={() => setMenuOpen(false)}
-                            >
-                                <Icon className="w-5 h-5" />
-                                <span>{label}</span>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
             </div>
+            {menuOpen &&
+                createPortal(
+                    <div
+                        ref={menuPanelRef}
+                        id="member-mobile-menu"
+                        className="home-mobile-panel member-mobile-panel is-open"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Member navigation"
+                        onKeyDown={event => {
+                            if (event.key !== 'Tab' || !menuPanelRef.current) return;
+
+                            const focusable = menuPanelRef.current.querySelectorAll<HTMLElement>(
+                                'a[href], button:not([disabled])',
+                            );
+                            const first = focusable[0];
+                            const last = focusable[focusable.length - 1];
+
+                            if (event.shiftKey && document.activeElement === first) {
+                                event.preventDefault();
+                                last?.focus();
+                            } else if (!event.shiftKey && document.activeElement === last) {
+                                event.preventDefault();
+                                first?.focus();
+                            }
+                        }}
+                    >
+                        <div className="home-mobile-panel-header">
+                            <BrandLogo className="home-mobile-panel-logo h-[56px] w-[140px]" />
+                            <button
+                                className="home-mobile-close"
+                                type="button"
+                                aria-label="Close navigation menu"
+                                onClick={() => {
+                                    setMenuOpen(false);
+                                    menuToggleRef.current?.focus();
+                                }}
+                            >
+                                <span />
+                                <span />
+                            </button>
+                        </div>
+                        <nav aria-label="Member mobile navigation" className="home-mobile-links member-mobile-links">
+                            {navItems.map(({ href, label }, index) => (
+                                <Link
+                                    key={href}
+                                    href={href}
+                                    aria-current={pathname === href ? 'page' : undefined}
+                                    onMouseEnter={() => prefetchRoute(href)}
+                                    onFocus={() => prefetchRoute(href)}
+                                    onTouchStart={() => prefetchRoute(href)}
+                                    onClick={() => setMenuOpen(false)}
+                                >
+                                    <span>{label}</span>
+                                    <span className="home-mobile-link-number" aria-hidden="true">
+                                        {String(index + 1).padStart(2, '0')}
+                                    </span>
+                                </Link>
+                            ))}
+                        </nav>
+                    </div>,
+                    document.body,
+                )}
         </nav>
     );
 }

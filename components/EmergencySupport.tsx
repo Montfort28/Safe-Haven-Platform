@@ -2,34 +2,10 @@
 
 import { useState } from 'react';
 import { FaCircleExclamation as AlertCircle, FaPhone as Phone, FaXmark as X } from 'react-icons/fa6';
-
-const RWANDA_HELPLINES = [
-  { 
-    name: 'Mental Health Helpline - RBC', 
-    number: '116',
-    description: '24/7 free & confidential support for emotional distress'
-  },
-  { 
-    name: 'Caritas Rwanda Crisis Support', 
-    number: '3525',
-    description: 'Psychological support & crisis intervention (8AM-10PM daily)'
-  },
-  { 
-    name: 'Solid Minds Counseling Clinic', 
-    number: '+250 788 503 528',
-    description: 'Licensed outpatient therapy for depression, anxiety & trauma'
-  },
-  { 
-    name: 'MindSky Rwanda Youth Helpline', 
-    number: '+250 788 304 782',
-    description: 'Youth mental health & suicide prevention (9AM-6PM Mon-Sat)'
-  },
-  { 
-    name: 'Emergency Services', 
-    number: '112',
-    description: 'National emergency line for police, fire & medical services'
-  },
-];
+import {
+  INTERNATIONAL_HELPLINE_DIRECTORY,
+  RWANDA_HELPLINES,
+} from '@/components/emergencyHelplines';
 
 const ENCOURAGING_QUOTES = [
   'Your mental health matters. Professional help is available.',
@@ -42,12 +18,6 @@ const ENCOURAGING_QUOTES = [
 export default function EmergencySupport() {
   const [open, setOpen] = useState(false);
   const quote = ENCOURAGING_QUOTES[Math.floor(Math.random() * ENCOURAGING_QUOTES.length)];
-
-interface Helpline {
-    name: string;
-    number: string;
-    description: string;
-}
 
 interface MouseEventWithTarget extends React.MouseEvent<HTMLDivElement> {}
 
@@ -90,7 +60,7 @@ const handleBackdropClick = (e: MouseEventWithTarget) => {
             </div>
 
             <div className="mb-6">
-              <p className="text-lg font-semibold text-gray-700 mb-4">Rwanda Crisis Hotlines & Mental Health Support:</p>
+              <p className="text-lg font-semibold text-gray-700 mb-4">Rwanda Emergency & Mental Health Support</p>
               <div className="space-y-3">
                 {RWANDA_HELPLINES.map((line) => (
                   <div key={line.number} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
@@ -98,7 +68,7 @@ const handleBackdropClick = (e: MouseEventWithTarget) => {
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-gray-800 mb-1">{line.name}</div>
                       <a 
-                        href={`tel:${line.number}`} 
+                        href={`tel:${line.number.replace(/[^\d+]/g, '')}`}
                         className="text-blue-600 hover:text-blue-700 hover:underline font-bold text-lg break-all block mb-1"
                       >
                         {line.number}
@@ -110,6 +80,22 @@ const handleBackdropClick = (e: MouseEventWithTarget) => {
               </div>
             </div>
 
+            <div className="mb-6 rounded-xl border border-green-100 bg-green-50 p-4">
+              <h3 className="font-semibold text-gray-800">Outside Rwanda?</h3>
+              <p className="mt-1 text-sm text-gray-600">
+                Find a verified crisis helpline in your country. If you or someone else is in
+                immediate danger, contact your local emergency services.
+              </p>
+              <a
+                className="mt-3 inline-flex font-semibold text-blue-700 underline hover:text-blue-800"
+                href={INTERNATIONAL_HELPLINE_DIRECTORY}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Find support by country
+              </a>
+            </div>
+
             <div className="mb-6 p-4 bg-gradient-to-r from-purple-100 to-blue-100 rounded-xl">
               <p className="italic text-purple-700 font-semibold text-center leading-relaxed">
                 "{quote}"
@@ -118,10 +104,10 @@ const handleBackdropClick = (e: MouseEventWithTarget) => {
 
             <div className="text-center">
               <p className="text-base text-gray-700 font-medium mb-2">
-                Crisis support is available 24/7. You don't have to face this alone.
+                You don't have to face this alone. Reach out to someone who can help.
               </p>
               <p className="text-sm text-gray-600">
-                Free, confidential help for mental health crises, emotional distress, and suicide prevention.
+                Helpline availability and services vary by location.
               </p>
             </div>
           </div>
