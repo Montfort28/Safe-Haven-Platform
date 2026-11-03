@@ -37,7 +37,7 @@ html,
 body {
   min-height: 100%;
   font-family: "Manrope", sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 400;
   letter-spacing: 0.01em;
   background-color: var(--brand-cream);
@@ -177,7 +177,6 @@ select {
 .home-services,
 .home-faq,
 .home-footer,
-.home-tool-card,
 .auth-panel,
 .glass-card:not(.fixed),
 .admin-section,
@@ -197,7 +196,6 @@ select {
 .home-services::after,
 .home-faq::after,
 .home-footer::after,
-.home-tool-card::after,
 .auth-panel::after,
 .glass-card::after,
 .admin-section::after,
@@ -376,8 +374,8 @@ body:has(.auth-page) {
 }
 
 .member-navbar-inner .member-brand .brand-logo {
-  width: 155px;
-  height: 62px;
+  width: 140px;
+  height: 56px;
 }
 
 .home-brand {
@@ -387,8 +385,8 @@ body:has(.auth-page) {
 }
 
 .home-header-inner > .home-brand .brand-logo {
-  width: 200px;
-  height: 80px;
+  width: 180px;
+  height: 72px;
 }
 
 .home-nav {
@@ -929,6 +927,10 @@ body:has(.auth-page) {
   line-height: 1.08;
 }
 
+.home-services h2 span {
+  color: var(--brand-primary);
+}
+
 .home-about-copy p,
 .home-services-heading > p,
 .home-closing-content > p {
@@ -999,22 +1001,13 @@ body:has(.auth-page) {
   position: relative;
   min-height: 260px;
   padding: 28px;
-  border: 1px solid rgba(252, 249, 234, 0.2);
+  border: 0;
   border-radius: 18px;
-  background: linear-gradient(145deg, #58694d 0%, #45523e 55%, #394435 100%);
+  background-color: #918B67;
+  background-image: var(--paper-grain), linear-gradient(#918B67, #918B67);
+  background-size: 180px 180px, auto;
+  background-repeat: repeat, no-repeat;
   transition: transform 180ms ease, box-shadow 180ms ease;
-}
-
-.home-tool-sage {
-  background: linear-gradient(145deg, #627557 0%, #45523e 56%, #394435 100%);
-}
-
-.home-tool-orange {
-  background: linear-gradient(145deg, #665e45 0%, #45523e 56%, #394435 100%);
-}
-
-.home-tool-light {
-  background: linear-gradient(145deg, #5b6b56 0%, #45523e 56%, #394435 100%);
 }
 
 .home-tool-card:hover {
@@ -1038,18 +1031,8 @@ body:has(.auth-page) {
   display: grid;
   place-items: center;
   border-radius: 16px;
-  color: #45523e;
-  background: #a8bba3;
-}
-
-.home-tool-orange .home-tool-icon {
-  color: var(--brand-cream);
-  background: #db9558;
-}
-
-.home-tool-light .home-tool-icon {
-  color: #45523e;
-  background: #fcf9ea;
+  color: var(--brand-ink);
+  background: var(--brand-cream);
 }
 
 .home-tool-card h3 {
@@ -1063,7 +1046,7 @@ body:has(.auth-page) {
   max-width: 310px;
   margin: 0;
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 1rem;
   line-height: 1.7;
   opacity: 0.9;
 }
@@ -1072,7 +1055,7 @@ body:has(.auth-page) {
   position: absolute;
   right: 25px;
   bottom: 24px;
-  color: var(--brand-primary);
+  color: var(--brand-cream);
 }
 
 .home-tool-card > a:hover,
@@ -1534,8 +1517,8 @@ body:has(.auth-page) {
   }
 
   .home-brand .brand-logo {
-    width: 190px;
-    height: 76px;
+    width: 170px;
+    height: 68px;
   }
 
   .auth-brand .brand-logo,
@@ -1573,7 +1556,7 @@ body:has(.auth-page) {
 .member-app {
   min-height: 100vh;
   font-family: "Manrope", sans-serif !important;
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.65;
   color: var(--brand-ink);
   background-color: var(--brand-cream);
@@ -4925,12 +4908,12 @@ body:has(.auth-page) {
   }
 
   .home-header-inner .home-brand .brand-logo {
-    width: clamp(122px, 25vw, 160px);
+    width: clamp(112px, 23vw, 146px);
     height: auto;
   }
 
   .member-navbar-inner .member-brand .brand-logo {
-    width: clamp(128px, 18vw, 150px);
+    width: clamp(116px, 17vw, 138px);
     height: auto;
   }
 }
@@ -4949,8 +4932,8 @@ body:has(.auth-page) {
   }
 
   .member-navbar-inner .member-brand .brand-logo {
-    width: 126px;
-    height: 50px;
+    width: 116px;
+    height: 46px;
   }
 
   .home-page > * {

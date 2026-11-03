@@ -45,7 +45,7 @@ export default function HomePage() {
       <header className="home-header">
         <div className="home-header-inner">
           <Link href="/" aria-label="Safe Haven home" className="home-brand">
-            <BrandLogo className="h-[86px] w-[216px]" />
+            <BrandLogo className="h-[76px] w-[190px]" />
           </Link>
 
           <nav aria-label="Main navigation" className="home-nav">
@@ -179,7 +179,9 @@ export default function HomePage() {
         <div className="home-services-heading">
           <div>
             <span className="home-section-label">What you can expect</span>
-            <h2>Three ways to get started.</h2>
+            <h2>
+              Three ways to <span>get started.</span>
+            </h2>
           </div>
           <p>
             Start with a mood check-in, make time to write, or try a calming
