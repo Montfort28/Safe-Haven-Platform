@@ -39,19 +39,6 @@ const tools = [
   },
 ];
 
-function PlatformEdge({ className }: { className: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 1200 16"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path d="M0 8C145 6 245 12 390 9C535 6 625 3 770 8C920 13 1050 5 1200 9V16H0Z" />
-    </svg>
-  );
-}
-
 export default function HomePage() {
   return (
     <main className="home-page">
@@ -137,7 +124,6 @@ export default function HomePage() {
       </section>
 
       <section className="home-platforms" aria-label="Mental health platforms">
-        <PlatformEdge className="home-platform-edge home-platform-edge-top" />
         <p className="home-platform-caption">
           You can also explore these other mental health platforms.
         </p>
@@ -159,7 +145,6 @@ export default function HomePage() {
             <span>7 Cups</span>
           </span>
         </div>
-        <PlatformEdge className="home-platform-edge home-platform-edge-bottom" />
       </section>
 
       <section id="about" className="home-section home-about">

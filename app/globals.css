@@ -761,26 +761,6 @@ body:has(.auth-page) {
   background-image: linear-gradient(var(--brand-ink), var(--brand-ink));
 }
 
-.home-platform-edge {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  width: 100%;
-  height: 16px;
-  display: block;
-  fill: var(--brand-ink);
-  pointer-events: none;
-}
-
-.home-platform-edge-top {
-  top: -15px;
-}
-
-.home-platform-edge-bottom {
-  bottom: -15px;
-  transform: rotate(180deg);
-}
-
 .home-wave {
   position: absolute;
   z-index: 1;
@@ -826,14 +806,9 @@ body:has(.auth-page) {
   background-image: linear-gradient(var(--wave-color), var(--wave-color));
 }
 
-.home-platforms > :not(.home-wave):not(.home-platform-edge) {
+.home-platforms > :not(.home-wave) {
   position: relative;
   z-index: 2;
-}
-
-.home-platforms > .home-platform-edge {
-  position: absolute;
-  z-index: 1;
 }
 
 .home-platforms > .home-platform-caption,
@@ -1026,8 +1001,20 @@ body:has(.auth-page) {
   padding: 28px;
   border: 1px solid rgba(252, 249, 234, 0.2);
   border-radius: 18px;
-  background: #45523e;
+  background: linear-gradient(145deg, #58694d 0%, #45523e 55%, #394435 100%);
   transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.home-tool-sage {
+  background: linear-gradient(145deg, #627557 0%, #45523e 56%, #394435 100%);
+}
+
+.home-tool-orange {
+  background: linear-gradient(145deg, #665e45 0%, #45523e 56%, #394435 100%);
+}
+
+.home-tool-light {
+  background: linear-gradient(145deg, #5b6b56 0%, #45523e 56%, #394435 100%);
 }
 
 .home-tool-card:hover {
@@ -1381,16 +1368,12 @@ body:has(.auth-page) {
   padding: 48px max(24px, calc((100% - 1210px) / 2)) 0;
   color: var(--brand-cream);
   background-color: #46533f;
-  background-image:
-    var(--paper-grain),
-    linear-gradient(#46533f, #46533f);
-  background-size: 180px 180px, auto;
-  background-repeat: repeat, no-repeat;
+  background-image: linear-gradient(#46533f, #46533f);
 }
 
 .home-footer::after {
-  background-size: 180px 180px;
-  opacity: 0.18;
+  background-size: 240px 240px;
+  opacity: 0.06;
 }
 
 .home-footer-wordmark {
@@ -1398,13 +1381,15 @@ body:has(.auth-page) {
   z-index: 0;
   right: 0;
   bottom: -0.14em;
-  left: -0.025em;
+  left: 0;
   overflow: hidden;
+  width: 100%;
   color: rgba(252, 249, 234, 0.15);
   font-size: clamp(8rem, 27vw, 22rem);
   font-weight: 800;
   letter-spacing: -0.095em;
   line-height: 0.8;
+  text-align: center;
   white-space: nowrap;
   pointer-events: none;
 }
