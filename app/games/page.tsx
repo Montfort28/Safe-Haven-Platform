@@ -904,7 +904,7 @@ export default function GamesPage() {
       name: 'Puzzle Game',
       description: 'Solve awesome puzzles with increasing difficulty and unlock achievements!',
       icon: Trophy,
-      color: '#FE7A25',
+      color: '#D95F12',
       component: PuzzleGame
     },
     {
@@ -920,7 +920,7 @@ export default function GamesPage() {
       name: 'Positivity Puzzle',
       description: 'Complete positive affirmations to rewire your thinking patterns',
       icon: Zap,
-      color: '#FE7A25',
+      color: '#D95F12',
       component: PositivityPuzzle
     },
     {
