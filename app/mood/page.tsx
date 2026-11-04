@@ -145,16 +145,16 @@ const MoodPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const moodEmojis = [
-    { value: 1, label: 'Terrible', color: '#DB9558', className: '' },
-    { value: 2, label: 'Very Sad', color: '#DB9558', className: '' },
-    { value: 3, label: 'Sad', color: '#A8BBA3', className: '' },
-    { value: 4, label: 'Down', color: '#97A87A', className: '' },
-    { value: 5, label: 'Neutral', color: '#A8BBA3', className: '' },
-    { value: 6, label: 'Okay', color: '#97A87A', className: '' },
-    { value: 7, label: 'Good', color: '#97A87A', className: '' },
-    { value: 8, label: 'Great', color: '#97A87A', className: '' },
-    { value: 9, label: 'Amazing', color: '#97A87A', className: '' },
-    { value: 10, label: 'Incredible', color: '#97A87A', className: '' },
+    { value: 1, label: 'Terrible', color: '#FE7A25', className: '' },
+    { value: 2, label: 'Very Sad', color: '#FE7A25', className: '' },
+    { value: 3, label: 'Sad', color: '#006732', className: '' },
+    { value: 4, label: 'Down', color: '#006732', className: '' },
+    { value: 5, label: 'Neutral', color: '#006732', className: '' },
+    { value: 6, label: 'Okay', color: '#006732', className: '' },
+    { value: 7, label: 'Good', color: '#006732', className: '' },
+    { value: 8, label: 'Great', color: '#006732', className: '' },
+    { value: 9, label: 'Amazing', color: '#006732', className: '' },
+    { value: 10, label: 'Incredible', color: '#006732', className: '' },
   ];
 
   const commonTriggers = [
@@ -286,8 +286,8 @@ const MoodPage = () => {
 
     // Draw background gradient
     const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0, 'rgba(219, 149, 88, 0.1)');
-    gradient.addColorStop(1, 'rgba(168, 187, 163, 0.1)');
+    gradient.addColorStop(0, 'rgba(254, 122, 37, 0.1)');
+    gradient.addColorStop(1, 'rgba(0, 103, 50, 0.1)');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
 
@@ -298,7 +298,7 @@ const MoodPage = () => {
     const yScale = (height - 2 * padding) / 9;
 
     // Draw grid lines
-    ctx.strokeStyle = 'rgba(151, 168, 122, 0.3)';
+    ctx.strokeStyle = 'rgba(0, 103, 50, 0.3)';
     ctx.lineWidth = 1;
     for (let i = 1; i <= 9; i++) {
       const y = height - padding - (i * yScale);
@@ -309,7 +309,7 @@ const MoodPage = () => {
     }
 
     // Draw smooth mood curve (Bezier)
-    ctx.strokeStyle = '#DB9558';
+    ctx.strokeStyle = '#FE7A25';
     ctx.lineWidth = 3;
     ctx.beginPath();
     for (let i = 0; i < data.length; i++) {
@@ -334,7 +334,7 @@ const MoodPage = () => {
     data.forEach((point, index) => {
       const x = padding + (index * xStep);
       const y = height - padding - ((point.mood - 1) * yScale);
-      ctx.fillStyle = moodEmojis.find(e => e.value === Math.round(point.mood))?.color || '#DB9558';
+      ctx.fillStyle = moodEmojis.find(e => e.value === Math.round(point.mood))?.color || '#FE7A25';
       ctx.beginPath();
       ctx.arc(x, y, 6, 0, 2 * Math.PI);
       ctx.fill();

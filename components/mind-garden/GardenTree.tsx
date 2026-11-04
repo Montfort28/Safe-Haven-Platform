@@ -8,7 +8,7 @@ interface GardenTreeProps {
   condition: GardenCondition;
 }
 
-const foliage = ['#496b43', '#5d7c4d', '#718d59', '#849765'];
+const foliage = ['#064734', '#006732', '#006732', '#006732'];
 
 function FoliageCluster({
   cx,
@@ -27,7 +27,7 @@ function FoliageCluster({
 
   return (
     <g>
-      <ellipse cx={cx} cy={cy + 3} rx={rx} ry={ry} fill="#35553a" opacity="0.14" />
+      <ellipse cx={cx} cy={cy + 3} rx={rx} ry={ry} fill="#064734" opacity="0.14" />
       <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={color} />
       <ellipse
         cx={cx - rx * 0.16}
@@ -39,7 +39,7 @@ function FoliageCluster({
       <path
         d={`M${cx - rx * 0.58} ${cy + ry * 0.26} Q${cx} ${cy + ry * 0.58} ${cx + rx * 0.58} ${cy + ry * 0.22}`}
         fill="none"
-        stroke="#36553b"
+        stroke="#064734"
         strokeOpacity=".28"
         strokeWidth="2"
         strokeLinecap="round"

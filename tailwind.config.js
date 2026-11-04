@@ -4,33 +4,59 @@ const primaryScale = {
   100: '#FCF9EA',
   200: '#A8BBA3',
   300: '#A8BBA3',
-  400: '#DB9558',
-  500: '#DB9558',
-  600: '#97A87A',
-  700: '#44513D',
-  800: '#44513D',
-  900: '#44513D',
-  950: '#44513D',
+  400: '#FE7A25',
+  500: '#FE7A25',
+  600: '#006732',
+  700: '#064734',
+  800: '#064734',
+  900: '#064734',
+  950: '#064734',
+};
+
+const orangeScale = {
+  50: '#FFF1E7',
+  100: '#FFE2CC',
+  200: '#FFC399',
+  300: '#FFA366',
+  400: '#FE7A25',
+  500: '#FE7A25',
+  600: '#FE7A25',
+  700: '#FE7A25',
+  800: '#FE7A25',
+  900: '#FE7A25',
+  950: '#FE7A25',
 };
 
 const sageScale = {
   ...primaryScale,
-  400: '#97A87A',
-  500: '#97A87A',
-  600: '#97A87A',
+  400: '#006732',
+  500: '#006732',
+  600: '#006732',
+  700: '#064734',
+  800: '#064734',
+  900: '#064734',
+  950: '#064734',
 };
 
 const neutralScale = {
   ...primaryScale,
-  400: '#A8BBA3',
-  500: '#97A87A',
-  600: '#97A87A',
+  400: '#202B27',
+  500: '#202B27',
+  600: '#202B27',
+  700: '#202B27',
+  800: '#202B27',
+  900: '#202B27',
+  950: '#202B27',
 };
 
 const themeColors = {
   ...Object.fromEntries(
-    ['amber', 'blue', 'indigo', 'orange', 'pink', 'purple', 'red', 'rose', 'violet', 'yellow']
+    ['blue', 'indigo', 'pink', 'purple', 'red', 'rose', 'violet', 'yellow']
       .map((name) => [name, primaryScale])
+  ),
+  ...Object.fromEntries(
+    ['amber', 'orange']
+      .map((name) => [name, orangeScale])
   ),
   ...Object.fromEntries(
     ['cyan', 'emerald', 'green', 'sky', 'teal']
@@ -52,14 +78,15 @@ module.exports = {
     extend: {
       colors: {
         ...themeColors,
-        black: '#44513D',
+        black: '#202B27',
         white: '#FCF9EA',
         brand: {
-          primary: '#DB9558',
+          primary: '#064734',
+          orange: '#FE7A25',
           cream: '#FCF9EA',
-          sage: '#97A87A',
+          sage: '#006732',
           'sage-light': '#A8BBA3',
-          ink: '#44513D',
+          ink: '#202B27',
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",

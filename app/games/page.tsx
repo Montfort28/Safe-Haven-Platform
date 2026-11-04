@@ -904,7 +904,7 @@ export default function GamesPage() {
       name: 'Puzzle Game',
       description: 'Solve awesome puzzles with increasing difficulty and unlock achievements!',
       icon: Trophy,
-      color: '#DB9558',
+      color: '#FE7A25',
       component: PuzzleGame
     },
     {
@@ -912,7 +912,7 @@ export default function GamesPage() {
       name: 'Anxiety Breather',
       description: 'Practice breathing exercises to calm anxiety and reduce stress',
       icon: Sparkles,
-      color: '#97A87A',
+      color: '#006732',
       component: AnxietyBreather
     },
     {
@@ -920,7 +920,7 @@ export default function GamesPage() {
       name: 'Positivity Puzzle',
       description: 'Complete positive affirmations to rewire your thinking patterns',
       icon: Zap,
-      color: '#DB9558',
+      color: '#FE7A25',
       component: PositivityPuzzle
     },
     {
@@ -928,7 +928,7 @@ export default function GamesPage() {
       name: 'Mindful Memory',
       description: 'Train your focus and mindfulness through memory challenges',
       icon: Target,
-      color: '#A8BBA3',
+      color: '#006732',
       component: MindfulMemory
     },
     {
@@ -936,7 +936,7 @@ export default function GamesPage() {
       name: 'Gratitude Builder',
       description: 'Build a daily gratitude practice to improve your overall wellbeing',
       icon: Star,
-      color: '#97A87A',
+      color: '#006732',
       component: GratitudeBuilder
     }
   ];

@@ -222,8 +222,8 @@ export default function MindGardenExperience() {
                     <stop offset="1" stopColor="#c8d2b0" />
                   </linearGradient>
                   <linearGradient id="garden-meadow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stopColor="#879b6c" />
-                    <stop offset="1" stopColor="#687b56" />
+                    <stop offset="0" stopColor="#006732" />
+                    <stop offset="1" stopColor="#064734" />
                   </linearGradient>
                   <linearGradient id="garden-soil" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0" stopColor="#8a7255" />
@@ -232,12 +232,12 @@ export default function MindGardenExperience() {
                 </defs>
                 <rect width="1200" height="600" fill="url(#garden-sky)" />
                 <circle cx="935" cy="137" r="78" fill="#f0d99f" opacity=".48" />
-                <path d="M0 388C146 323 277 350 402 397c131 49 257 20 373-33 139-63 279-54 425 13v130H0Z" fill="#aebc91" opacity=".72" />
-                <path d="M0 429c148-47 250-14 383 26 144 43 282 25 415-13 145-41 275-34 402 8v108H0Z" fill="#879b70" />
+                <path d="M0 388C146 323 277 350 402 397c131 49 257 20 373-33 139-63 279-54 425 13v130H0Z" fill="#006732" opacity=".72" />
+                <path d="M0 429c148-47 250-14 383 26 144 43 282 25 415-13 145-41 275-34 402 8v108H0Z" fill="#064734" />
                 <path d="M0 514c183-24 309-7 455 12 176 23 335 17 489-2 105-13 183-17 256-10v86H0Z" fill="url(#garden-meadow)" />
                 <path d="M0 555c223-12 374-4 570 5 205 9 421-9 630-4v44H0Z" fill="url(#garden-soil)" />
-                <path d="M0 555c185-11 352-1 542 7 220 9 443-9 658-5" fill="none" stroke="#a4aa77" strokeWidth="5" opacity=".72" />
-                <path d="M96 545c6-16 12-16 18 0m44 6c4-13 9-15 15-5m731 1c5-16 11-17 17 0m69 0c4-13 10-14 16-2" fill="none" stroke="#c2c28c" strokeWidth="3" strokeLinecap="round" opacity=".8" />
+                <path d="M0 555c185-11 352-1 542 7 220 9 443-9 658-5" fill="none" stroke="#006732" strokeWidth="5" opacity=".72" />
+                <path d="M96 545c6-16 12-16 18 0m44 6c4-13 9-15 15-5m731 1c5-16 11-17 17 0m69 0c4-13 10-14 16-2" fill="none" stroke="#064734" strokeWidth="3" strokeLinecap="round" opacity=".8" />
               </svg>
               <GardenTree stage={growth.stage.id} condition={condition} />
               <span className="garden-scene-caption">{stageName}</span>

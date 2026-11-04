@@ -403,14 +403,14 @@ export default function DashboardPage() {
                   <AreaChart data={getLast7DaysMoodData()} margin={{ top: 12, right: 12, left: -16, bottom: 0 }}>
                     <defs>
                       <linearGradient id="dashboardMoodFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#97A87A" stopOpacity={0.28} />
-                        <stop offset="100%" stopColor="#97A87A" stopOpacity={0.02} />
+                        <stop offset="0%" stopColor="#006732" stopOpacity={0.28} />
+                        <stop offset="100%" stopColor="#006732" stopOpacity={0.02} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#44513D', fontSize: 12 }} />
-                    <YAxis domain={[1, 10]} axisLine={false} tickLine={false} tick={{ fill: '#44513D', fontSize: 12 }} />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#202B27', fontSize: 12 }} />
+                    <YAxis domain={[1, 10]} axisLine={false} tickLine={false} tick={{ fill: '#202B27', fontSize: 12 }} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Area type="natural" dataKey="mood" stroke="#44513D" strokeWidth={2.5} fill="url(#dashboardMoodFill)" dot={{ fill: '#44513D', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, fill: '#DB9558' }} connectNulls strokeLinecap="round" strokeLinejoin="round" />
+                    <Area type="natural" dataKey="mood" stroke="#064734" strokeWidth={2.5} fill="url(#dashboardMoodFill)" dot={{ fill: '#064734', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, fill: '#FE7A25' }} connectNulls strokeLinecap="round" strokeLinejoin="round" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
