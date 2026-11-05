@@ -2,41 +2,32 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {
   FaArrowRight as ArrowRight,
-  FaBookOpen as BookOpen,
-  FaHeart as Heart,
   FaInstagram as Instagram,
   FaLock as LockKeyhole,
   FaPlay as Play,
   FaSeedling as Sprout,
 } from 'react-icons/fa6';
 import BrandLogo from '@/components/BrandLogo';
+import GradualBlur from '@/components/GradualBlur';
 import HomeSignInButton from '@/components/HomeSignInButton';
-import HomeMobileNav from '@/components/HomeMobileNav';
+import StaggeredMenu from '@/components/StaggeredMenu';
 import HomeFaq from '@/components/HomeFaq';
 import HomeWave from '@/components/HomeWave';
+import ReflectiveCard from '@/components/ReflectiveCard';
+import ScrollStack, { ScrollStackItem } from '@/components/ScrollStack';
 
-const tools = [
-  {
-    icon: Heart,
-    title: 'Check in with your mood',
-    description:
-      'Record how you feel, add context like sleep or activities, and review mood patterns over time.',
-    color: 'sage',
-  },
-  {
-    icon: BookOpen,
-    title: 'Reflect in your journal',
-    description:
-      'Write about what is on your mind, respond to reflection prompts, and keep track of moments of gratitude.',
-    color: 'orange',
-  },
-  {
-    icon: Sprout,
-    title: 'Build gentle wellbeing habits',
-    description:
-      'Try breathing exercises, calming games, and Mind Garden activities in small steps that fit your day.',
-    color: 'light',
-  },
+const mobileMenuItems = [
+  { label: 'Home', link: '/' },
+  { label: 'About', link: '#about' },
+  { label: 'Services', link: '#services' },
+  { label: 'Your space', link: '#contact' },
+  { label: 'FAQs', link: '#faq' },
+  { label: 'Contact', link: '#contact' },
+  { label: 'Sign in', link: '/login' },
+];
+
+const mobileMenuSocials = [
+  { label: 'Instagram', link: 'https://www.instagram.com/safehaven.circle/' },
 ];
 
 export default function HomePage() {
@@ -52,6 +43,7 @@ export default function HomePage() {
             <Link href="/">Home</Link>
             <a href="#about">About</a>
             <a href="#services">Services</a>
+            <a href="#contact">Your space</a>
             <a href="#faq">FAQs</a>
             <a href="#contact">Contact</a>
           </nav>
@@ -69,7 +61,18 @@ export default function HomePage() {
             <HomeSignInButton />
           </div>
 
-          <HomeMobileNav />
+          <div className="home-mobile-nav">
+            <StaggeredMenu
+              className="home-staggered-menu"
+              items={mobileMenuItems}
+              socialItems={mobileMenuSocials}
+              colors={['#064734', '#FE7A25', '#006732', '#202B27']}
+              menuButtonColor="#064734"
+              openMenuButtonColor="#FE7A25"
+              accentColor="#FE7A25"
+              isFixed
+            />
+          </div>
         </div>
       </header>
 
@@ -102,9 +105,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="home-hero-art" aria-label="A calm space for your wellbeing">
+        <div
+          className="home-hero-art"
+          aria-label="A calm space for your wellbeing"
+        >
           <Image
-            src="/images/CTA 5.png"
+            src="/images/new 2.png"
             alt="Black-and-white portrait artwork with fine cracks across the face"
             fill
             loading="eager"
@@ -117,7 +123,9 @@ export default function HomePage() {
             <span className="home-art-card-mark">
               <Sprout aria-hidden="true" size={19} />
             </span>
-            <span className="home-art-card-kicker">Your wellbeing, your pace</span>
+            <span className="home-art-card-kicker">
+              Your wellbeing, your pace
+            </span>
             <strong>Small moments of care can start here.</strong>
           </div>
         </div>
@@ -127,7 +135,10 @@ export default function HomePage() {
         <p className="home-platform-caption">
           You can also explore these other mental health platforms.
         </p>
-        <div className="home-platform-logos" aria-label="BetterHelp, Talkspace, Headspace, and 7 Cups">
+        <div
+          className="home-platform-logos"
+          aria-label="BetterHelp, Talkspace, Headspace, and 7 Cups"
+        >
           <span className="home-platform-logo home-platform-betterhelp">
             <Image src="/images/BetterHelp.png" alt="" width={52} height={52} />
             <span>BetterHelp</span>
@@ -161,9 +172,9 @@ export default function HomePage() {
             Safe Haven is a digital wellbeing platform for everyday reflection
             and self-care. It gives you a place to record how you feel, write
             down your thoughts, try calming activities, and notice your own
-            progress over time. It is designed as a welcoming starting point
-            for wellbeing—not a diagnosis or a replacement for professional
-            mental health care.
+            progress over time. It is designed as a welcoming starting point for
+            wellbeing—not a diagnosis or a replacement for professional mental
+            health care.
           </p>
           <Link href="/register" className="home-text-link">
             Create your account <ArrowRight aria-hidden="true" size={16} />
@@ -172,47 +183,113 @@ export default function HomePage() {
       </section>
 
       <section id="services" className="home-section home-services">
-        <HomeWave
-          className="home-wave-services-top"
-          color="#dce8d2"
-        />
+        <HomeWave className="home-wave-services-top" color="#dce8d2" />
         <div className="home-services-heading">
           <div>
             <span className="home-section-label">What you can expect</span>
             <h2>
-              Three ways to <span>get started.</span>
+              Five ways to <span>get started.</span>
             </h2>
           </div>
           <p>
-            Start with a mood check-in, make time to write, or try a calming
-            activity. You can use one tool at a time and return whenever it
-            suits you.
+            Check in, reflect, breathe, play, or tend your Mind Garden. Explore
+            one tool at a time and return whenever it suits you.
           </p>
         </div>
-        <div className="home-tool-grid">
-          {tools.map(({ icon: Icon, title, description, color }, index) => (
-            <article className={`home-tool-card home-tool-${color}`} key={title}>
-              <span className="home-tool-number">0{index + 1}</span>
-              <span className="home-tool-icon">
-                <Icon aria-hidden="true" size={24} strokeWidth={1.7} />
+        <ScrollStack
+          className="home-tool-stack"
+          itemDistance={120}
+          itemStackDistance={22}
+          stackPosition="15%"
+          itemScale={0.035}
+          baseScale={0.86}
+          dimAmount={0.12}
+          holdDistance={560}
+          smoothScroll={false}
+          useWindowScroll
+        >
+          <ScrollStackItem itemClassName="home-tool-card">
+            <div className="home-tool-card__content" data-mark="01">
+              <span className="home-tool-card__eyebrow">
+                <span className="home-tool-card__number">01</span> Check in
               </span>
-              <h3>{title}</h3>
-              <p>{description}</p>
-              <Link href="/register" aria-label={`Explore: ${title}`}>
-                <ArrowRight aria-hidden="true" size={17} />
-              </Link>
-            </article>
-          ))}
-        </div>
+              <span className="home-tool-card__action" aria-hidden="true">
+                <ArrowRight className="home-tool-card__arrow" />
+              </span>
+              <h3>Check in with your mood</h3>
+              <p>
+                Notice how you feel, name what is present, and make space for
+                your emotions without judgment.
+              </p>
+            </div>
+          </ScrollStackItem>
+          <ScrollStackItem itemClassName="home-tool-card home-tool-card--sage">
+            <div className="home-tool-card__content" data-mark="02">
+              <span className="home-tool-card__eyebrow">
+                <span className="home-tool-card__number">02</span> Reflect
+              </span>
+              <span className="home-tool-card__action" aria-hidden="true">
+                <ArrowRight className="home-tool-card__arrow" />
+              </span>
+              <h3>Make room for your thoughts</h3>
+              <p>
+                Use gentle journal prompts to reflect, practice gratitude, and
+                keep track of the moments that matter to you.
+              </p>
+            </div>
+          </ScrollStackItem>
+          <ScrollStackItem itemClassName="home-tool-card">
+            <div className="home-tool-card__content" data-mark="03">
+              <span className="home-tool-card__eyebrow">
+                <span className="home-tool-card__number">03</span> Breathe
+              </span>
+              <span className="home-tool-card__action" aria-hidden="true">
+                <ArrowRight className="home-tool-card__arrow" />
+              </span>
+              <h3>Pause and come back to now</h3>
+              <p>
+                Try a calming breathing activity and give yourself a moment to
+                slow down and reset.
+              </p>
+            </div>
+          </ScrollStackItem>
+          <ScrollStackItem itemClassName="home-tool-card home-tool-card--sage">
+            <div className="home-tool-card__content" data-mark="04">
+              <span className="home-tool-card__eyebrow">
+                <span className="home-tool-card__number">04</span> Play
+              </span>
+              <span className="home-tool-card__action" aria-hidden="true">
+                <ArrowRight className="home-tool-card__arrow" />
+              </span>
+              <h3>Explore wellbeing your way</h3>
+              <p>
+                Find approachable activities and games that make caring for
+                yourself feel a little lighter.
+              </p>
+            </div>
+          </ScrollStackItem>
+          <ScrollStackItem itemClassName="home-tool-card">
+            <div className="home-tool-card__content" data-mark="05">
+              <span className="home-tool-card__eyebrow">
+                <span className="home-tool-card__number">05</span> Grow
+              </span>
+              <span className="home-tool-card__action" aria-hidden="true">
+                <ArrowRight className="home-tool-card__arrow" />
+              </span>
+              <h3>Tend your Mind Garden</h3>
+              <p>
+                Build small, supportive habits and celebrate the progress you
+                make, one day at a time.
+              </p>
+            </div>
+          </ScrollStackItem>
+        </ScrollStack>
       </section>
 
       <HomeFaq />
 
       <section id="contact" className="home-section home-closing">
-        <HomeWave
-          className="home-wave-closing-top"
-          color="#dce8d2"
-        />
+        <HomeWave className="home-wave-closing-top" color="#dce8d2" />
         <div className="home-closing-art" aria-hidden="true">
           {[
             'CTA 1.png',
@@ -222,7 +299,10 @@ export default function HomePage() {
             'CTA 5.png',
             'CTA 6.png',
           ].map((image, index) => (
-            <span className={`home-closing-artwork home-closing-artwork-${index + 1}`} key={image}>
+            <span
+              className={`home-closing-artwork home-closing-artwork-${index + 1}`}
+              key={image}
+            >
               <Image
                 src={`/images/${image}`}
                 alt=""
@@ -234,28 +314,48 @@ export default function HomePage() {
           ))}
         </div>
         <div className="home-closing-content">
-          <div className="home-closing-mark">
-            <LockKeyhole aria-hidden="true" size={19} />
-            A gentle place to begin
+          <div className="home-closing-copy">
+            <div className="home-closing-mark">
+              <LockKeyhole aria-hidden="true" size={19} />A gentle place to begin
+            </div>
+            <h2>
+              Take a moment for
+              <br />
+              <span>your wellbeing.</span>
+            </h2>
+            <p>
+              Create an account to explore mood tracking, journaling, wellbeing
+              games, breathing activities, and your Mind Garden.
+            </p>
+            <Link href="/register" className="home-button home-button-primary">
+              Explore Safe Haven
+              <ArrowRight aria-hidden="true" size={17} />
+            </Link>
           </div>
-          <h2>
-            Take a moment for
-            <br />
-            <span>your wellbeing.</span>
-          </h2>
-          <p>
-            Create an account to explore mood tracking, journaling, wellbeing
-            games, breathing activities, and your Mind Garden.
-          </p>
-          <Link href="/register" className="home-button home-button-primary">
-            Explore Safe Haven
-            <ArrowRight aria-hidden="true" size={17} />
-          </Link>
+          <ReflectiveCard
+            className="home-closing-card"
+            name="Your space"
+            role="Reflect, reset, and grow."
+            badge="Safe Haven"
+            status="Here for you"
+            statusColor="#006732"
+            idLabel="YOUR PACE"
+            idValue="One moment at a time"
+            theme="haven"
+            tint="#064734"
+            metalness={0.75}
+            grayscale={0.2}
+            width={320}
+            height={400}
+            webcam={false}
+          />
         </div>
       </section>
 
       <footer className="home-footer">
-        <div className="home-footer-wordmark" aria-hidden="true">Safe Haven</div>
+        <div className="home-footer-wordmark" aria-hidden="true">
+          Safe Haven
+        </div>
         <div className="home-footer-inner">
           <div className="home-footer-links">
             <span>Safe Haven</span>
@@ -276,7 +376,9 @@ export default function HomePage() {
           </div>
           <div className="home-footer-connect">
             <span>Contact</span>
-            <p>Follow along for gentle reminders and updates from Safe Haven.</p>
+            <p>
+              Follow along for gentle reminders and updates from Safe Haven.
+            </p>
             <a
               className="home-footer-instagram"
               href="https://www.instagram.com/safehaven.circle/"
@@ -289,10 +391,26 @@ export default function HomePage() {
           </div>
         </div>
         <div className="home-footer-bottom">
-          <span>© {new Date().getFullYear()} Safe Haven. All rights reserved.</span>
+          <span>
+            © {new Date().getFullYear()} Safe Haven. All rights reserved.
+          </span>
           <span>Find your peace, at your pace.</span>
         </div>
       </footer>
+      <GradualBlur
+        position="bottom"
+        target="page"
+        height="7rem"
+        strength={1.5}
+        layers={8}
+        curve="bezier"
+        exponential
+        opacity={0.75}
+        tint="rgba(252, 249, 234, 0.18)"
+        autoHide
+        duration={0.25}
+        zIndex={40}
+      />
     </main>
   );
 }

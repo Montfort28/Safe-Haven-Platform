@@ -145,8 +145,8 @@ const MoodPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const moodEmojis = [
-    { value: 1, label: 'Terrible', color: '#D95F12', className: '' },
-    { value: 2, label: 'Very Sad', color: '#D95F12', className: '' },
+    { value: 1, label: 'Terrible', color: '#FE7A25', className: '' },
+    { value: 2, label: 'Very Sad', color: '#FE7A25', className: '' },
     { value: 3, label: 'Sad', color: '#006732', className: '' },
     { value: 4, label: 'Down', color: '#006732', className: '' },
     { value: 5, label: 'Neutral', color: '#006732', className: '' },
@@ -286,7 +286,7 @@ const MoodPage = () => {
 
     // Draw background gradient
     const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0, 'rgba(217, 95, 18, 0.1)');
+    gradient.addColorStop(0, 'rgba(254, 122, 37, 0.1)');
     gradient.addColorStop(1, 'rgba(0, 103, 50, 0.1)');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
@@ -309,7 +309,7 @@ const MoodPage = () => {
     }
 
     // Draw smooth mood curve (Bezier)
-    ctx.strokeStyle = '#D95F12';
+    ctx.strokeStyle = '#FE7A25';
     ctx.lineWidth = 3;
     ctx.beginPath();
     for (let i = 0; i < data.length; i++) {
@@ -334,7 +334,7 @@ const MoodPage = () => {
     data.forEach((point, index) => {
       const x = padding + (index * xStep);
       const y = height - padding - ((point.mood - 1) * yScale);
-      ctx.fillStyle = moodEmojis.find(e => e.value === Math.round(point.mood))?.color || '#D95F12';
+      ctx.fillStyle = moodEmojis.find(e => e.value === Math.round(point.mood))?.color || '#FE7A25';
       ctx.beginPath();
       ctx.arc(x, y, 6, 0, 2 * Math.PI);
       ctx.fill();

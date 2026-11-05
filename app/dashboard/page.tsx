@@ -410,7 +410,7 @@ export default function DashboardPage() {
                     <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#202B27', fontSize: 12 }} />
                     <YAxis domain={[1, 10]} axisLine={false} tickLine={false} tick={{ fill: '#202B27', fontSize: 12 }} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Area type="natural" dataKey="mood" stroke="#064734" strokeWidth={2.5} fill="url(#dashboardMoodFill)" dot={{ fill: '#064734', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, fill: '#D95F12' }} connectNulls strokeLinecap="round" strokeLinejoin="round" />
+                    <Area type="natural" dataKey="mood" stroke="#064734" strokeWidth={2.5} fill="url(#dashboardMoodFill)" dot={{ fill: '#064734', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, fill: '#FE7A25' }} connectNulls strokeLinecap="round" strokeLinejoin="round" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
