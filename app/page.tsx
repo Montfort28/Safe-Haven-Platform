@@ -4,11 +4,11 @@ import {
   FaArrowRight as ArrowRight,
   FaInstagram as Instagram,
   FaLock as LockKeyhole,
+  FaFingerprint as Fingerprint,
   FaPlay as Play,
   FaSeedling as Sprout,
 } from 'react-icons/fa6';
 import BrandLogo from '@/components/BrandLogo';
-import GradualBlur from '@/components/GradualBlur';
 import HomeSignInButton from '@/components/HomeSignInButton';
 import StaggeredMenu from '@/components/StaggeredMenu';
 import HomeFaq from '@/components/HomeFaq';
@@ -110,7 +110,7 @@ export default function HomePage() {
           aria-label="A calm space for your wellbeing"
         >
           <Image
-            src="/images/new 2.png"
+            src="/images/new.png"
             alt="Black-and-white portrait artwork with fine cracks across the face"
             fill
             loading="eager"
@@ -204,7 +204,7 @@ export default function HomePage() {
           itemScale={0.035}
           baseScale={0.86}
           dimAmount={0.12}
-          holdDistance={560}
+          holdDistance={0}
           smoothScroll={false}
           useWindowScroll
         >
@@ -290,29 +290,6 @@ export default function HomePage() {
 
       <section id="contact" className="home-section home-closing">
         <HomeWave className="home-wave-closing-top" color="#dce8d2" />
-        <div className="home-closing-art" aria-hidden="true">
-          {[
-            'CTA 1.png',
-            'CTA 2.png',
-            'CTA 3.png',
-            'CTA 4.png',
-            'CTA 5.png',
-            'CTA 6.png',
-          ].map((image, index) => (
-            <span
-              className={`home-closing-artwork home-closing-artwork-${index + 1}`}
-              key={image}
-            >
-              <Image
-                src={`/images/${image}`}
-                alt=""
-                fill
-                loading="eager"
-                sizes="(max-width: 600px) 56px, 100px"
-              />
-            </span>
-          ))}
-        </div>
         <div className="home-closing-content">
           <div className="home-closing-copy">
             <div className="home-closing-mark">
@@ -334,21 +311,57 @@ export default function HomePage() {
           </div>
           <ReflectiveCard
             className="home-closing-card"
-            name="Your space"
-            role="Reflect, reset, and grow."
-            badge="Safe Haven"
-            status="Here for you"
-            statusColor="#006732"
-            idLabel="YOUR PACE"
-            idValue="One moment at a time"
             theme="haven"
-            tint="#064734"
-            metalness={0.75}
-            grayscale={0.2}
+            tint="#064C38"
+            metalness={0.55}
+            grayscale={0}
+            glare={1}
+            shine={1.2}
             width={320}
             height={400}
             webcam={false}
-          />
+          >
+            <div className="home-closing-card-content">
+              <div className="home-closing-card-header">
+                <span className="home-closing-card-brand">
+                  <Sprout aria-hidden="true" size={18} />
+                  Safe Haven
+                </span>
+                <span className="home-closing-card-status">
+                  <span />
+                  Here for you
+                </span>
+              </div>
+              <div className="home-closing-card-copy">
+                <span className="home-closing-card-eyebrow">
+                  YOUR WELLBEING, YOUR PACE
+                </span>
+                <h3>One moment can be a new beginning.</h3>
+                <p>
+                  Check in, reflect, or take a breath. Choose what feels right
+                  for you today.
+                </p>
+                <div className="home-closing-card-tools" aria-label="Wellbeing tools">
+                  <span>Check in</span>
+                  <span>Reflect</span>
+                  <span>Breathe</span>
+                </div>
+              </div>
+              <div className="home-closing-card-actions">
+                <Link href="/register" className="home-closing-card-link">
+                  Find your next step
+                  <ArrowRight aria-hidden="true" size={16} />
+                </Link>
+                <Link
+                  href="/register"
+                  className="home-closing-card-fingerprint"
+                  aria-label="Create your account"
+                >
+                  <Fingerprint aria-hidden="true" size={22} />
+                </Link>
+              </div>
+            </div>
+          </ReflectiveCard>
         </div>
       </section>
 
@@ -397,20 +410,6 @@ export default function HomePage() {
           <span>Find your peace, at your pace.</span>
         </div>
       </footer>
-      <GradualBlur
-        position="bottom"
-        target="page"
-        height="7rem"
-        strength={1.5}
-        layers={8}
-        curve="bezier"
-        exponential
-        opacity={0.75}
-        tint="rgba(252, 249, 234, 0.18)"
-        autoHide
-        duration={0.25}
-        zIndex={40}
-      />
     </main>
   );
 }

@@ -31,11 +31,11 @@ const THEMES = {
     '--rc-rim-highlight': 'rgba(255, 255, 255, 0.8)'
   },
   haven: {
-    '--rc-base': '#064734',
-    '--rc-shadow': '0 22px 44px -20px rgba(6, 71, 52, 0.62), 0 6px 16px -8px rgba(6, 71, 52, 0.42)',
+    '--rc-base': '#064C38',
+    '--rc-shadow': '0 22px 44px -20px rgba(6, 76, 56, 0.48), 0 6px 16px -8px rgba(6, 76, 56, 0.3)',
     '--rc-ink': '#fcf9ea',
     '--rc-muted': 'rgba(252, 249, 234, 0.72)',
-    '--rc-tile': 'linear-gradient(180deg, #006732 0%, #064734 100%)',
+    '--rc-tile': 'linear-gradient(180deg, #064C38 0%, #064734 100%)',
     '--rc-tile-edge': 'rgba(252, 249, 234, 0.14)',
     '--rc-tile-highlight': 'rgba(252, 249, 234, 0.2)',
     '--rc-tile-shadow': '0 4px 10px -4px rgba(0, 0, 0, 0.36)',
@@ -616,7 +616,7 @@ const ReflectiveCard = ({
     enableTilt,
     tiltStrength: clamp(tiltStrength, 0, 30),
     radius: Math.max(0, radius),
-    theme: palette === 'light' ? 1 : 0,
+    theme: palette === 'light' || palette === 'haven' ? 1 : 0,
     intro
   };
   const settingsRef = useRef(settings);
@@ -826,6 +826,7 @@ const ReflectiveCard = ({
       x.target = clamp(nx, -1, 1);
       y.target = clamp(ny, -1, 1);
       light.target = on ? 1 : 0;
+      root.style.setProperty('--rc-pointer-light', on ? '1' : '0');
       slowUntil = 0;
       wake();
     };
@@ -835,6 +836,8 @@ const ReflectiveCard = ({
       if (!rect.width || !rect.height) return;
       const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       const ny = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+      root.style.setProperty('--rc-pointer-x', `${((nx + 1) * 50).toFixed(2)}%`);
+      root.style.setProperty('--rc-pointer-y', `${((ny + 1) * 50).toFixed(2)}%`);
       pointer.x = nx * size.width * 0.5;
       pointer.y = ny * size.height * 0.5;
       aim(nx, ny);
@@ -1007,6 +1010,7 @@ const ReflectiveCard = ({
     <div ref={rootRef} className={`reflective-card ${className}`.trim()} style={{ ...cardStyle, ...style }}>
       <div ref={bodyRef} className="reflective-card__body">
         <canvas ref={canvasRef} className="reflective-card__canvas" aria-hidden="true" />
+        <span className="reflective-card__pointer-light" aria-hidden="true" />
         <div className="reflective-card__content">
           {children ?? (
             <>
