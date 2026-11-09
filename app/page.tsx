@@ -4,7 +4,6 @@ import {
   FaArrowRight as ArrowRight,
   FaInstagram as Instagram,
   FaLock as LockKeyhole,
-  FaFingerprint as Fingerprint,
   FaPlay as Play,
   FaSeedling as Sprout,
 } from 'react-icons/fa6';
@@ -13,14 +12,12 @@ import HomeSignInButton from '@/components/HomeSignInButton';
 import StaggeredMenu from '@/components/StaggeredMenu';
 import HomeFaq from '@/components/HomeFaq';
 import HomeWave from '@/components/HomeWave';
-import ReflectiveCard from '@/components/ReflectiveCard';
 import ScrollStack, { ScrollStackItem } from '@/components/ScrollStack';
 
 const mobileMenuItems = [
   { label: 'Home', link: '/' },
   { label: 'About', link: '#about' },
   { label: 'Services', link: '#services' },
-  { label: 'Your space', link: '#contact' },
   { label: 'FAQs', link: '#faq' },
   { label: 'Contact', link: '#contact' },
   { label: 'Sign in', link: '/login' },
@@ -43,7 +40,6 @@ export default function HomePage() {
             <Link href="/">Home</Link>
             <a href="#about">About</a>
             <a href="#services">Services</a>
-            <a href="#contact">Your space</a>
             <a href="#faq">FAQs</a>
             <a href="#contact">Contact</a>
           </nav>
@@ -309,59 +305,6 @@ export default function HomePage() {
               <ArrowRight aria-hidden="true" size={17} />
             </Link>
           </div>
-          <ReflectiveCard
-            className="home-closing-card"
-            theme="haven"
-            tint="#064C38"
-            metalness={0.55}
-            grayscale={0}
-            glare={1}
-            shine={1.2}
-            width={320}
-            height={400}
-            webcam={false}
-          >
-            <div className="home-closing-card-content">
-              <div className="home-closing-card-header">
-                <span className="home-closing-card-brand">
-                  <Sprout aria-hidden="true" size={18} />
-                  Safe Haven
-                </span>
-                <span className="home-closing-card-status">
-                  <span />
-                  Here for you
-                </span>
-              </div>
-              <div className="home-closing-card-copy">
-                <span className="home-closing-card-eyebrow">
-                  YOUR WELLBEING, YOUR PACE
-                </span>
-                <h3>One moment can be a new beginning.</h3>
-                <p>
-                  Check in, reflect, or take a breath. Choose what feels right
-                  for you today.
-                </p>
-                <div className="home-closing-card-tools" aria-label="Wellbeing tools">
-                  <span>Check in</span>
-                  <span>Reflect</span>
-                  <span>Breathe</span>
-                </div>
-              </div>
-              <div className="home-closing-card-actions">
-                <Link href="/register" className="home-closing-card-link">
-                  Find your next step
-                  <ArrowRight aria-hidden="true" size={16} />
-                </Link>
-                <Link
-                  href="/register"
-                  className="home-closing-card-fingerprint"
-                  aria-label="Create your account"
-                >
-                  <Fingerprint aria-hidden="true" size={22} />
-                </Link>
-              </div>
-            </div>
-          </ReflectiveCard>
         </div>
       </section>
 

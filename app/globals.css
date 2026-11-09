@@ -5133,12 +5133,8 @@ body :is(h1, h2, h3, h4, h5, h6):is(
 }
 
 .home-closing-content {
-  width: min(100%, 1060px);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  align-items: center;
-  gap: clamp(36px, 7vw, 96px);
-  text-align: left;
+  width: min(100%, 760px);
+  text-align: center;
 }
 
 .home-closing-copy {
@@ -5147,161 +5143,7 @@ body :is(h1, h2, h3, h4, h5, h6):is(
 
 .home-closing-copy > p {
   max-width: 535px;
-  margin: 0 0 27px;
-}
-
-.home-closing-card {
-  justify-self: end;
-}
-
-.home-closing-card-content {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  color: #fcf9ea;
-}
-
-.home-closing-card-header,
-.home-closing-card-brand,
-.home-closing-card-status {
-  display: flex;
-  align-items: center;
-}
-
-.home-closing-card-header {
-  justify-content: space-between;
-  gap: 8px;
-  color: var(--rc-ink);
-  font-size: 0.78rem;
-  font-weight: 650;
-}
-
-.home-closing-card-brand {
-  gap: 7px;
-}
-
-.home-closing-card-status {
-  gap: 6px;
-  color: var(--rc-muted);
-  font-size: 0.68rem;
-  font-weight: 500;
-}
-
-.home-closing-card-status > span {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #FE7A25;
-  box-shadow: 0 0 10px rgba(254, 122, 37, 0.55);
-}
-
-.home-closing-card-copy {
-  margin: auto 0;
-}
-
-.home-closing-card-eyebrow {
-  color: rgba(252, 249, 234, 0.78);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.11em;
-}
-
-.home-closing-card-copy h3 {
-  margin: 10px 0 8px;
-  color: #fcf9ea;
-  font-size: 1.45rem;
-  font-weight: 650;
-  letter-spacing: -0.035em;
-  line-height: 1.14;
-  text-wrap: balance;
-}
-
-.home-closing-card-copy p {
-  margin: 0;
-  color: rgba(252, 249, 234, 0.82);
-  font-size: 0.82rem;
-  line-height: 1.55;
-}
-
-.home-closing-card-tools {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 15px;
-}
-
-.home-closing-card-tools span {
-  border: 1px solid rgba(252, 249, 234, 0.22);
-  border-radius: 999px;
-  padding: 5px 8px;
-  color: var(--rc-ink);
-  font-size: 0.64rem;
-  line-height: 1;
-}
-
-.home-closing-card-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-top: 1px solid rgba(252, 249, 234, 0.22);
-  padding-top: 12px;
-}
-
-.home-closing-card-link {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  color: #fcf9ea;
-  font-size: 0.78rem;
-  font-weight: 650;
-  text-decoration: none;
-}
-
-.home-closing-card-link svg,
-.home-closing-card-fingerprint svg {
-  transition: transform 160ms ease;
-}
-
-.home-closing-card-link:hover svg,
-.home-closing-card-link:focus-visible svg {
-  transform: translateX(4px);
-}
-
-.home-closing-card-link:focus-visible {
-  outline: 2px solid #FE7A25;
-  outline-offset: 4px;
-}
-
-.home-closing-card-fingerprint {
-  display: grid;
-  width: 40px;
-  height: 40px;
-  flex: none;
-  place-items: center;
-  border: 1px solid rgba(252, 249, 234, 0.26);
-  border-radius: 12px;
-  color: #fcf9ea;
-  background: rgba(252, 249, 234, 0.08);
-  text-decoration: none;
-  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
-}
-
-.home-closing-card-fingerprint:hover,
-.home-closing-card-fingerprint:focus-visible {
-  color: #FE7A25;
-  background: rgba(252, 249, 234, 0.14);
-}
-
-.home-closing-card-fingerprint:hover svg,
-.home-closing-card-fingerprint:focus-visible svg {
-  transform: scale(1.08);
-}
-
-.home-closing-card-fingerprint:focus-visible {
-  outline: 2px solid #FE7A25;
-  outline-offset: 3px;
+  margin: 0 auto 27px;
 }
 
 @media (max-width: 1279px) {
@@ -5340,10 +5182,6 @@ body :is(h1, h2, h3, h4, h5, h6):is(
     padding-right: 32px;
   }
 
-  .home-closing-content {
-    grid-template-columns: minmax(0, 1fr) minmax(250px, 300px);
-    gap: 32px;
-  }
 }
 
 @media (max-width: 850px) {
@@ -5351,10 +5189,6 @@ body :is(h1, h2, h3, h4, h5, h6):is(
     padding-right: 20px;
   }
 
-  .home-closing-content {
-    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
-    gap: 24px;
-  }
 }
 
 @media (max-width: 600px) {
@@ -5393,20 +5227,9 @@ body :is(h1, h2, h3, h4, h5, h6):is(
     padding-left: 8px;
   }
 
-  .home-closing-content {
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    gap: 36px;
-    text-align: center;
-  }
-
   .home-closing-copy > p {
     margin-right: auto;
     margin-left: auto;
-  }
-
-  .home-closing-card {
-    justify-self: center;
   }
 
   .home-page > * {
