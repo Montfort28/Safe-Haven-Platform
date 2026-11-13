@@ -125,15 +125,13 @@ export default function HomeFaq() {
         <div className="home-faq-intro">
           <span className="home-section-label">A little more clarity</span>
           <h2 id="home-faq-title">
-            Questions,
-            <br />
-            answered.
+            Frequently asked questions
           </h2>
           <p>
             Get to know the tools, privacy considerations, and limits of Safe
             Haven before you begin. These answers explain how the platform can
             support everyday reflection, when professional care may be a better
-            fit, and where to find urgent help if you need it.
+            fit, and where to turn for urgent help.
           </p>
         </div>
         <div className="home-faq-list">

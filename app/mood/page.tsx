@@ -517,13 +517,13 @@ const MoodPage = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-4">
                   Current Mood
                 </label>
-                <div className="grid grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
                   {moodEmojis.map((emoji) => (
                     <button
                       key={emoji.value}
                       type="button"
                       onClick={() => setMood(emoji.value)}
-                      className={`p-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${mood === emoji.value
+                      className={`min-w-0 p-3 text-center sm:p-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${mood === emoji.value
                         ? 'border-blue-500 bg-blue-50 shadow-lg'
                         : 'border-gray-200 hover:border-gray-300'
                         } ${emoji.className}`}
@@ -532,7 +532,7 @@ const MoodPage = () => {
                       }}
                     >
                       <div className="mb-2 flex justify-center"><MoodEmoji mood={emoji.value} size={34} /></div>
-                      <div className="text-xs text-gray-600">{emoji.label}</div>
+                      <div className="text-xs leading-tight text-gray-600">{emoji.label}</div>
                     </button>
                   ))}
                 </div>
