@@ -1041,33 +1041,19 @@ body:has(.auth-page) {
 }
 
 .home-services .home-tool-stack {
-  max-width: 920px;
+  max-width: 1080px;
   margin: 0 auto;
   overflow: visible;
-}
-
-.home-services .scroll-stack {
-  position: relative;
-  width: 100%;
-}
-
-.home-tool-stack .scroll-stack__inner {
-  position: relative;
-  padding-inline: 0;
-}
-
-.home-services .scroll-stack__slot {
-  position: sticky;
 }
 
 .home-services .home-tool-card {
   display: flex;
   align-items: center;
   overflow: hidden;
-  height: 20rem;
-  min-height: 20rem;
-  border-radius: 28px;
-  padding: clamp(28px, 6vw, 72px);
+  height: auto;
+  min-height: 24rem;
+  border-radius: 24px;
+  padding: clamp(24px, 4vw, 48px);
   color: var(--brand-cream);
   background-color: var(--brand-primary);
   background-image: var(--paper-grain), linear-gradient(#064734, #064734);
@@ -1119,10 +1105,13 @@ body:has(.auth-page) {
 }
 
 .home-tool-card__number {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 34px;
   width: 34px;
+  min-width: 34px;
   height: 34px;
   border: 1px solid rgba(252, 249, 234, 0.34);
   border-radius: 50%;
@@ -2625,8 +2614,8 @@ body:has(.auth-page) {
   }
 
   .home-services .home-tool-card {
-    height: 18rem;
-    min-height: 18rem;
+    height: auto;
+    min-height: 22rem;
     padding: 28px;
   }
 
@@ -4569,38 +4558,199 @@ body :is(h1, h2, h3, h4, h5, h6):is(
     animation-range: entry 0% exit 100%;
   }
 
-  .home-about > :not(.home-wave),
-  .home-services-heading,
-  .home-faq-intro,
-  .home-closing > :not(.home-wave) {
-    transform-style: preserve-3d;
-    animation: home-content-depth 1s linear both;
+  .home-platform-caption {
+    animation: home-platform-caption-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 82%;
+  }
+
+  .home-platform-logo {
+    animation: home-platform-left-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 86%;
+  }
+
+  .home-platform-logo:nth-child(even) {
+    animation-name: home-platform-right-in;
+  }
+
+  .home-platform-logo:nth-child(2) {
+    animation-range: entry 9% entry 88%;
+  }
+
+  .home-platform-logo:nth-child(3) {
+    animation-range: entry 18% entry 90%;
+  }
+
+  .home-platform-logo:nth-child(4) {
+    animation-range: entry 27% entry 92%;
+  }
+
+  .home-about .home-section-heading,
+  .home-services-heading > div {
+    animation: home-editorial-left-in 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-timeline: view();
     animation-range: entry 0% entry 78%;
   }
 
   .home-about-copy,
-  .home-closing > :nth-child(2) {
-    animation-range: entry 12% entry 90%;
+  .home-services-heading > p {
+    animation: home-editorial-right-in 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 8% entry 84%;
   }
 
   .home-services-heading {
-    animation-range: entry 4% entry 78%;
+    perspective: 900px;
   }
 
   .home-faq-intro {
-    animation-range: entry 8% entry 82%;
+    animation: home-faq-intro-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 80%;
   }
 
   .home-faq-item {
-    transform-style: preserve-3d;
-    animation: home-faq-arrive 1s linear both;
+    animation: home-faq-left-in 850ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-timeline: view();
-    animation-range: entry 0% entry 75%;
+    animation-range: entry 0% entry 78%;
   }
 
   .home-faq-item:nth-child(2n) {
-    animation-range: entry 6% entry 81%;
+    animation-name: home-faq-right-in;
+    animation-range: entry 8% entry 84%;
+  }
+
+  .home-closing-content {
+    animation: home-cta-settle-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 82%;
+  }
+}
+
+@keyframes home-platform-caption-in {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-platform-left-in {
+  from {
+    opacity: 0;
+    rotate: -5deg;
+    scale: 0.88;
+    translate: -34px 20px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: 0deg;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-platform-right-in {
+  from {
+    opacity: 0;
+    rotate: 5deg;
+    scale: 0.88;
+    translate: 34px 20px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: 0deg;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-editorial-left-in {
+  from {
+    opacity: 0;
+    rotate: y -7deg;
+    translate: -7vw 22px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: y 0deg;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-editorial-right-in {
+  from {
+    opacity: 0;
+    rotate: y 7deg;
+    translate: 7vw 28px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: y 0deg;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-faq-intro-in {
+  from {
+    opacity: 0;
+    rotate: x 5deg;
+    translate: 0 38px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: x 0deg;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-faq-left-in {
+  from {
+    opacity: 0;
+    translate: -46px 24px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-faq-right-in {
+  from {
+    opacity: 0;
+    translate: 46px 24px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-cta-settle-in {
+  from {
+    opacity: 0;
+    rotate: x -5deg;
+    scale: 0.92;
+    translate: 0 72px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: x 0deg;
+    scale: 1;
+    translate: 0 0;
   }
 }
 
@@ -4616,46 +4766,21 @@ body :is(h1, h2, h3, h4, h5, h6):is(
   }
 }
 
-@keyframes home-faq-arrive {
-  from {
-    translate: 0 32px -36px;
-    rotate: x 4deg;
-    scale: 0.98;
-    opacity: 0.15;
-  }
-
-  to {
-    translate: 0 0 0;
-    rotate: x 0deg;
-    scale: 1;
-    opacity: 1;
-  }
-}
-
-@keyframes home-content-depth {
-  from {
-    translate: 0 30px -40px;
-    rotate: x 2.5deg;
-    opacity: 0.15;
-  }
-
-  to {
-    translate: 0 0 0;
-    rotate: x 0deg;
-    opacity: 1;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .home-hero-art,
-  .home-about > :not(.home-wave),
-  .home-services-heading,
+  .home-platform-caption,
+  .home-platform-logo,
+  .home-about .home-section-heading,
+  .home-about-copy,
+  .home-services-heading > div,
+  .home-services-heading > p,
   .home-faq-intro,
-  .home-closing > :not(.home-wave),
-  .home-faq-item {
+  .home-faq-item,
+  .home-closing-content {
     animation: none !important;
     translate: none;
     rotate: none;
+    scale: none;
   }
 
   .home-mobile-panel,

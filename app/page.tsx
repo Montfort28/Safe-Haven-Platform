@@ -10,9 +10,10 @@ import {
 import BrandLogo from '@/components/BrandLogo';
 import HomeSignInButton from '@/components/HomeSignInButton';
 import StaggeredMenu from '@/components/StaggeredMenu';
+import BounceCards from '@/components/BounceCards';
 import HomeFaq from '@/components/HomeFaq';
 import HomeWave from '@/components/HomeWave';
-import ScrollStack, { ScrollStackItem } from '@/components/ScrollStack';
+import { ScrollStackItem } from '@/components/ScrollStack';
 
 const mobileMenuItems = [
   { label: 'Home', link: '/' },
@@ -192,17 +193,18 @@ export default function HomePage() {
             one tool at a time and return whenever it suits you.
           </p>
         </div>
-        <ScrollStack
+        <BounceCards
           className="home-tool-stack"
-          itemDistance={120}
-          itemStackDistance={22}
-          stackPosition="15%"
-          itemScale={0.035}
-          baseScale={0.86}
-          dimAmount={0.12}
-          holdDistance={0}
-          smoothScroll={false}
-          useWindowScroll
+          containerHeight={660}
+          spread={82}
+          rotation={10}
+          arc={12}
+          pushDistance={160}
+          hoverScale={1.04}
+          bounciness={0.6}
+          animationDelay={0.2}
+          animationStagger={0.07}
+          enableHover
         >
           <ScrollStackItem itemClassName="home-tool-card">
             <div className="home-tool-card__content" data-mark="01">
@@ -279,7 +281,7 @@ export default function HomePage() {
               </p>
             </div>
           </ScrollStackItem>
-        </ScrollStack>
+        </BounceCards>
       </section>
 
       <HomeFaq />

@@ -1,0 +1,45 @@
+.bounce-cards {
+  position: relative;
+  width: 100%;
+  height: var(--bounce-cards-height, 660px);
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bounce-cards__card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(620px, 72%);
+  transform: translate(-50%, -50%) scale(0);
+  transform-origin: center;
+  will-change: transform;
+}
+
+.bounce-cards__card:focus-visible {
+  outline: 2px solid var(--brand-orange, #fe7a25);
+  outline-offset: 6px;
+  border-radius: 24px;
+}
+
+@media (max-width: 640px) {
+  .bounce-cards {
+    height: min(var(--bounce-cards-height, 660px), 165vw);
+    min-height: 420px;
+  }
+
+  .bounce-cards__card {
+    width: min(620px, 62%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bounce-cards__card {
+    transform: translate(-50%, -50%);
+    transition: none;
+  }
+
+  .bounce-cards[data-ready] .bounce-cards__card {
+    animation: none;
+  }
+}
