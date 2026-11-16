@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Montserrat:wght@500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -860,7 +860,7 @@ body:has(.auth-page) {
 }
 
 .home-platforms > .home-platform-caption,
-.home-platforms > .home-platform-logos {
+.home-platforms > .home-platform-names {
   position: relative;
   z-index: 2;
 }
@@ -870,72 +870,36 @@ body:has(.auth-page) {
 }
 
 .home-platform-caption {
+  width: 100%;
   margin: 0;
-  color: rgba(252, 249, 234, 0.78);
-  font-size: 0.78rem;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.4;
   text-align: center;
 }
 
-.home-platform-logos {
+.home-platform-names {
+  list-style: none;
   width: 100%;
-  display: flex;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: center;
-  justify-content: space-around;
-  gap: clamp(16px, 3vw, 42px);
+  gap: clamp(12px, 2vw, 28px);
 }
 
-@media (max-width: 1200px) {
-  .home-platform-logo.home-platform-seven-cups {
-    display: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .home-platform-logo.home-platform-headspace {
-    display: none;
-  }
-}
-
-.home-platform-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--brand-cream);
-  font-size: 1.22rem;
+.home-page .home-platforms .home-platform-name {
+  color: #fff;
+  font-family: "Montserrat", "Manrope", sans-serif !important;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-style: normal;
   font-weight: 600;
   letter-spacing: 0;
+  line-height: 1.1;
+  text-align: center;
   white-space: nowrap;
-}
-
-.home-platform-logo img {
-  width: 44px;
-  height: 44px;
-  padding: 3px;
-  border-radius: 50%;
-  object-fit: contain;
-  background: var(--brand-cream);
-}
-
-.home-platform-betterhelp img {
-  background: var(--brand-sage);
-}
-
-.home-platform-talkspace img,
-.home-platform-headspace img {
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-}
-
-.home-platform-headspace img {
-  width: 56px;
-  height: 56px;
-}
-
-.home-platform-seven-cups img {
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
 }
 
 .home-section {
@@ -2501,25 +2465,14 @@ body:has(.auth-page) {
     gap: 12px;
   }
 
-  .home-platform-logos {
+  .home-platform-names {
     width: 100%;
-    justify-content: space-between;
-    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 20px;
   }
 
-  .home-platform-logo {
-    gap: 6px;
-    font-size: clamp(0.78rem, 3.2vw, 0.94rem);
-  }
-
-  .home-platform-logo img {
-    width: 32px;
-    height: 32px;
-  }
-
-  .home-platform-headspace img {
-    width: 40px;
-    height: 40px;
+  .home-platform-name {
+    font-size: clamp(1.1rem, 4.5vw, 1.35rem);
   }
 
   .home-art-card {
@@ -2653,6 +2606,10 @@ body:has(.auth-page) {
 
 .home-page :is(p, li, small, figcaption, blockquote):not(.home-platform-caption):not(.home-footer *) {
   color: #202B27;
+}
+
+.home-page .home-platforms li.home-platform-name {
+  color: #fff;
 }
 
 .home-page .home-nav a,
@@ -4564,25 +4521,25 @@ body :is(h1, h2, h3, h4, h5, h6):is(
     animation-range: entry 0% entry 82%;
   }
 
-  .home-platform-logo {
+  .home-platform-name {
     animation: home-platform-left-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-timeline: view();
     animation-range: entry 0% entry 86%;
   }
 
-  .home-platform-logo:nth-child(even) {
+  .home-platform-name:nth-child(even) {
     animation-name: home-platform-right-in;
   }
 
-  .home-platform-logo:nth-child(2) {
+  .home-platform-name:nth-child(2) {
     animation-range: entry 9% entry 88%;
   }
 
-  .home-platform-logo:nth-child(3) {
+  .home-platform-name:nth-child(3) {
     animation-range: entry 18% entry 90%;
   }
 
-  .home-platform-logo:nth-child(4) {
+  .home-platform-name:nth-child(4) {
     animation-range: entry 27% entry 92%;
   }
 
@@ -4769,7 +4726,7 @@ body :is(h1, h2, h3, h4, h5, h6):is(
 @media (prefers-reduced-motion: reduce) {
   .home-hero-art,
   .home-platform-caption,
-  .home-platform-logo,
+  .home-platform-name,
   .home-about .home-section-heading,
   .home-about-copy,
   .home-services-heading > div,

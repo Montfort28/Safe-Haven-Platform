@@ -132,27 +132,12 @@ export default function HomePage() {
         <p className="home-platform-caption">
           You can also explore these other mental health platforms.
         </p>
-        <div
-          className="home-platform-logos"
-          aria-label="BetterHelp, Talkspace, Headspace, and 7 Cups"
-        >
-          <span className="home-platform-logo home-platform-betterhelp">
-            <Image src="/images/BetterHelp.png" alt="" width={52} height={52} />
-            <span>BetterHelp</span>
-          </span>
-          <span className="home-platform-logo home-platform-talkspace">
-            <Image src="/images/talkspace.png" alt="" width={52} height={52} />
-            <span>Talkspace</span>
-          </span>
-          <span className="home-platform-logo home-platform-headspace">
-            <Image src="/images/Headspace.png" alt="" width={52} height={52} />
-            <span>Headspace</span>
-          </span>
-          <span className="home-platform-logo home-platform-seven-cups">
-            <Image src="/images/7%20cups.png" alt="" width={52} height={52} />
-            <span>7 Cups</span>
-          </span>
-        </div>
+        <ul className="home-platform-names" aria-label="Other wellbeing platforms">
+          <li className="home-platform-name">BetterHelp</li>
+          <li className="home-platform-name">Talkspace</li>
+          <li className="home-platform-name">Headspace</li>
+          <li className="home-platform-name">7 Cups</li>
+        </ul>
       </section>
 
       <section id="about" className="home-section home-about">
@@ -170,7 +155,7 @@ export default function HomePage() {
             and self-care. It gives you a place to record how you feel, write
             down your thoughts, try calming activities, and notice your own
             progress over time. It is designed as a welcoming starting point for
-            wellbeing—not a diagnosis or a replacement for professional mental
+            wellbeing, not a diagnosis or a replacement for professional mental
             health care.
           </p>
           <Link href="/register" className="home-text-link">
