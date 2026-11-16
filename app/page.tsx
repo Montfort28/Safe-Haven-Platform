@@ -12,6 +12,7 @@ import HomeSignInButton from '@/components/HomeSignInButton';
 import StaggeredMenu from '@/components/StaggeredMenu';
 import BounceCards from '@/components/BounceCards';
 import HomeFaq from '@/components/HomeFaq';
+import HomeScrollEffects from '@/components/HomeScrollEffects';
 import HomeWave from '@/components/HomeWave';
 import { ScrollStackItem } from '@/components/ScrollStack';
 
@@ -31,6 +32,7 @@ const mobileMenuSocials = [
 export default function HomePage() {
   return (
     <main className="home-page">
+      <HomeScrollEffects />
       <header className="home-header">
         <div className="home-header-inner">
           <Link href="/" aria-label="Safe Haven home" className="home-brand">

@@ -4541,6 +4541,24 @@ body :is(h1, h2, h3, h4, h5, h6):is(
 }
 
 @supports (animation-timeline: view()) and (translate: 0 1px) and (rotate: x 1deg) {
+  .home-hero-copy h1 {
+    animation: home-hero-title-in 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 78%;
+  }
+
+  .home-hero-description {
+    animation: home-hero-copy-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 8% entry 84%;
+  }
+
+  .home-hero-actions {
+    animation: home-hero-actions-in 850ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 18% entry 88%;
+  }
+
   .home-hero-art {
     transform-style: preserve-3d;
     animation: home-art-depth 1s linear both;
@@ -4611,10 +4629,116 @@ body :is(h1, h2, h3, h4, h5, h6):is(
     animation-range: entry 8% entry 84%;
   }
 
+  .home-tool-stack .bounce-cards__card:nth-child(1) .home-tool-card__content {
+    animation: home-card-lift-in 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 80%;
+  }
+
+  .home-tool-stack .bounce-cards__card:nth-child(2) .home-tool-card__content {
+    animation: home-card-left-in 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 6% entry 82%;
+  }
+
+  .home-tool-stack .bounce-cards__card:nth-child(3) .home-tool-card__content {
+    animation: home-card-depth-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 12% entry 84%;
+  }
+
+  .home-tool-stack .bounce-cards__card:nth-child(4) .home-tool-card__content {
+    animation: home-card-right-in 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 18% entry 86%;
+  }
+
+  .home-tool-stack .bounce-cards__card:nth-child(5) .home-tool-card__content {
+    animation: home-card-lift-in 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 24% entry 88%;
+  }
+
   .home-closing-content {
     animation: home-cta-settle-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-timeline: view();
     animation-range: entry 0% entry 82%;
+  }
+
+  .home-footer-wordmark {
+    animation: home-footer-wordmark-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 75%;
+  }
+
+  .home-footer-inner > * {
+    animation: home-footer-left-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 78%;
+  }
+
+  .home-footer-inner > :nth-child(even) {
+    animation-name: home-footer-right-in;
+  }
+
+  .home-footer-inner > :nth-child(2) {
+    animation-range: entry 8% entry 82%;
+  }
+
+  .home-footer-inner > :nth-child(3) {
+    animation-range: entry 16% entry 86%;
+  }
+
+  .home-footer-inner > :nth-child(4) {
+    animation-range: entry 24% entry 90%;
+  }
+
+  .home-footer-bottom {
+    animation: home-footer-bottom-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 14% entry 88%;
+  }
+}
+
+@keyframes home-hero-title-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+    translate: -28px 18px;
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-hero-copy-in {
+  from {
+    opacity: 0;
+    rotate: y 5deg;
+    translate: 28px 22px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: y 0deg;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-hero-actions-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+    translate: 0 30px;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
   }
 }
 
@@ -4744,6 +4868,118 @@ body :is(h1, h2, h3, h4, h5, h6):is(
   }
 }
 
+@keyframes home-card-lift-in {
+  from {
+    opacity: 0;
+    rotate: x -6deg;
+    translate: 0 42px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: x 0deg;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-card-left-in {
+  from {
+    opacity: 0;
+    rotate: y -8deg;
+    translate: -42px 18px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: y 0deg;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-card-depth-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+    translate: 0 26px -32px;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0 0;
+  }
+}
+
+@keyframes home-card-right-in {
+  from {
+    opacity: 0;
+    rotate: y 8deg;
+    translate: 42px 18px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: y 0deg;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-footer-wordmark-in {
+  from {
+    opacity: 0;
+    scale: 0.84;
+    translate: 0 9vh;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-footer-left-in {
+  from {
+    opacity: 0;
+    rotate: y -5deg;
+    translate: -34px 22px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: y 0deg;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-footer-right-in {
+  from {
+    opacity: 0;
+    rotate: y 5deg;
+    translate: 34px 22px;
+  }
+
+  to {
+    opacity: 1;
+    rotate: y 0deg;
+    translate: 0 0;
+  }
+}
+
+@keyframes home-footer-bottom-in {
+  from {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+    translate: 0 18px;
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
 @keyframes home-art-depth {
   from {
     translate: 0 34px 0;
@@ -4756,23 +4992,19 @@ body :is(h1, h2, h3, h4, h5, h6):is(
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .home-hero-art,
-  .home-platform-caption,
-  .home-platform-name,
-  .home-about .home-section-heading,
-  .home-about-copy,
-  .home-services-heading > div,
-  .home-services-heading > p,
-  .home-faq-intro,
-  .home-faq-item,
-  .home-closing-content {
-    animation: none !important;
-    translate: none;
-    rotate: none;
-    scale: none;
+@keyframes home-reduced-scroll-in {
+  from {
+    opacity: 0.45;
+    translate: 0 12px;
   }
 
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
   .home-mobile-panel,
   .home-menu-toggle-lines span,
   .member-menu-toggle-lines span {
@@ -4794,6 +5026,27 @@ body :is(h1, h2, h3, h4, h5, h6):is(
   .home-faq-toggle,
   .home-faq-toggle::after {
     transition: none;
+  }
+}
+
+.home-page [data-home-scroll-effect] {
+  animation-name: var(--home-scroll-animation) !important;
+  animation-duration: var(--home-scroll-duration, 900ms) !important;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  animation-fill-mode: both !important;
+  animation-play-state: paused !important;
+  animation-timeline: auto !important;
+  animation-range: normal !important;
+}
+
+.home-page [data-home-scroll-effect].home-scroll-entered {
+  animation-play-state: running !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page [data-home-scroll-effect] {
+    animation-name: home-reduced-scroll-in !important;
+    animation-duration: 380ms !important;
   }
 }
 
