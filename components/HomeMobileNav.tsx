@@ -86,7 +86,7 @@ export default function HomeMobileNav() {
             }}
           >
             <div className="home-mobile-panel-header">
-              <BrandLogo className="home-mobile-panel-logo h-[56px] w-[140px]" />
+              <BrandLogo className="home-mobile-panel-logo h-[56px] w-[140px]" withName />
               <button
                 className="home-mobile-close"
                 type="button"

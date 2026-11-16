@@ -34,7 +34,7 @@ export default function HomePage() {
       <header className="home-header">
         <div className="home-header-inner">
           <Link href="/" aria-label="Safe Haven home" className="home-brand">
-            <BrandLogo className="h-[76px] w-[190px]" />
+            <BrandLogo className="h-[76px] w-[190px]" withName />
           </Link>
 
           <nav aria-label="Main navigation" className="home-nav">

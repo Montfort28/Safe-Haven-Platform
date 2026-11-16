@@ -35,7 +35,7 @@ export default function Navbar() {
             <div className="member-navbar-inner max-w-7xl mx-auto px-4 sm:px-6 py-4">
                 <div className="flex items-center justify-between">
                     <Link href="/dashboard" aria-label="Safe Haven dashboard" className="member-brand">
-                        <BrandLogo className="h-[48px] w-[120px] sm:h-[58px] sm:w-[145px]" />
+                        <BrandLogo className="h-[48px] w-[120px] sm:h-[58px] sm:w-[145px]" withName />
                     </Link>
                     <div className="member-nav-links hidden xl:flex items-center space-x-4 md:space-x-6">
                         {navItems.map(({ href, label, Icon }) => (

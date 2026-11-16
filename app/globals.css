@@ -284,6 +284,26 @@ button[class*="bg-brand-sage"]:hover {
   transition: background-color 160ms ease;
 }
 
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.brand-lockup .brand-logo {
+  width: 48px !important;
+}
+
+.brand-wordmark {
+  color: var(--brand-primary);
+  font-family: "Montserrat", "Manrope", sans-serif !important;
+  font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
 .home-brand:hover .brand-logo::before,
 .home-brand:focus-visible .brand-logo::before,
 .member-brand:hover .brand-logo::before,
@@ -295,6 +315,19 @@ button[class*="bg-brand-sage"]:hover {
 .home-mobile-panel-logo:hover::before,
 .home-mobile-panel-logo:focus-visible::before {
   background-color: var(--brand-orange);
+}
+
+.home-brand:hover .brand-wordmark,
+.home-brand:focus-visible .brand-wordmark,
+.member-brand:hover .brand-wordmark,
+.member-brand:focus-visible .brand-wordmark,
+.auth-brand:hover .brand-wordmark,
+.auth-brand:focus-visible .brand-wordmark,
+.app-shell-brand:hover .brand-wordmark,
+.app-shell-brand:focus-visible .brand-wordmark,
+.sm-logo:hover .brand-wordmark,
+.sm-logo:focus-visible .brand-wordmark {
+  color: var(--brand-orange);
 }
 
 .member-brand {
@@ -5278,8 +5311,12 @@ body :is(h1, h2, h3, h4, h5, h6):is(
     display: block;
   }
 
+  .brand-lockup .brand-logo {
+    height: 56px !important;
+  }
+
   .home-header-inner .home-brand .brand-logo {
-    width: clamp(112px, 23vw, 146px);
+    width: clamp(88px, 22vw, 112px);
     height: auto;
   }
 
@@ -5321,8 +5358,26 @@ body :is(h1, h2, h3, h4, h5, h6):is(
   }
 
   .member-navbar-inner .member-brand .brand-logo {
-    width: 116px;
-    height: 46px;
+    width: 96px;
+    height: 48px;
+  }
+
+  .brand-lockup {
+    gap: 4px;
+  }
+
+  .brand-wordmark {
+    font-size: 0.9rem;
+  }
+
+  .auth-brand .brand-logo {
+    width: 88px;
+    height: 44px;
+  }
+
+  .home-staggered-menu .sm-logo .brand-logo {
+    width: 104px;
+    height: 52px;
   }
 
   .home-staggered-menu .staggered-menu-header {

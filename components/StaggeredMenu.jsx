@@ -334,7 +334,7 @@ export const StaggeredMenu = ({
       </div>
       <header className="staggered-menu-header" aria-label="Main navigation header">
         <a className="sm-logo" href="/" aria-label="Safe Haven home">
-          <BrandLogo className="sm-logo-brand" />
+          <BrandLogo className="sm-logo-brand" withName />
         </a>
         <button
           ref={toggleBtnRef}
