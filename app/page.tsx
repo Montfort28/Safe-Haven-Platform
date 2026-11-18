@@ -2,12 +2,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {
   FaArrowRight as ArrowRight,
-  FaInstagram as Instagram,
   FaLock as LockKeyhole,
   FaPlay as Play,
   FaSeedling as Sprout,
 } from 'react-icons/fa6';
+import {
+  FaInstagram,
+  FaLinkedinIn as LinkedIn,
+} from 'react-icons/fa6';
+import { FaTwitter as Twitter } from 'react-icons/fa';
 import BrandLogo from '@/components/BrandLogo';
+import FoldText from '@/components/FoldText';
 import HomeSignInButton from '@/components/HomeSignInButton';
 import StaggeredMenu from '@/components/StaggeredMenu';
 import BounceCards from '@/components/BounceCards';
@@ -28,7 +33,21 @@ const mobileMenuItems = [
 
 const mobileMenuSocials = [
   { label: 'Instagram', link: 'https://www.instagram.com/safehaven.circle/' },
+  { label: 'LinkedIn', link: 'https://www.linkedin.com/' },
+  { label: 'Twitter', link: 'https://twitter.com/' },
 ];
+
+const heroFoldMotion = {
+  trigger: 'landing',
+  foldStyle: 'paper',
+  hinge: 'top',
+  duration: 0.85,
+  staggerFrom: 'start',
+  foldAngle: 88,
+  perspective: 700,
+  creaseShading: 0.35,
+  ease: 'power3.out',
+} as const;
 
 export default function HomePage() {
   return (
@@ -38,7 +57,7 @@ export default function HomePage() {
       <header className="home-header">
         <div className="home-header-inner">
           <Link href="/" aria-label="Safe Haven home" className="home-brand">
-            <BrandLogo className="h-[76px] w-[190px]" withName />
+            <BrandLogo className="home-header-logo" />
           </Link>
 
           <nav aria-label="Main navigation" className="home-nav">
@@ -51,13 +70,31 @@ export default function HomePage() {
 
           <div className="home-header-actions">
             <a
-              className="home-instagram-link"
+              className="home-social-link"
               href="https://www.instagram.com/safehaven.circle/"
               target="_blank"
               rel="noreferrer"
               aria-label="Follow Safe Haven on Instagram"
             >
-              <Instagram aria-hidden="true" size={19} />
+              <FaInstagram aria-hidden="true" size={19} />
+            </a>
+            <a
+              className="home-social-link"
+              href="https://www.linkedin.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Safe Haven on LinkedIn"
+            >
+              <LinkedIn aria-hidden="true" size={19} />
+            </a>
+            <a
+              className="home-social-link"
+              href="https://twitter.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Safe Haven on Twitter"
+            >
+              <Twitter aria-hidden="true" size={19} />
             </a>
             <HomeSignInButton />
           </div>
@@ -80,32 +117,74 @@ export default function HomePage() {
       <section className="home-hero" aria-labelledby="hero-title">
         <div className="home-hero-copy">
           <h1 id="hero-title">
-            A welcoming space
-            <br />
-            to check in,
-            <br />
-            <span>reflect, and reset.</span>
+            <FoldText
+              {...heroFoldMotion}
+              className="home-hero-fold-title"
+              text={'A welcoming space\nto check in,'}
+              splitBy="char"
+              stagger={0.045}
+              fontSize="clamp(2.8rem, 4.2vw, 4rem)"
+              fontWeight={700}
+              color="#064734"
+            />
+            <FoldText
+              {...heroFoldMotion}
+              className="home-hero-fold-title home-hero-fold-title-accent"
+              text="reflect, and reset."
+              splitBy="char"
+              stagger={0.045}
+              fontSize="clamp(2.8rem, 4.2vw, 4rem)"
+              fontWeight={700}
+              color="#25332D"
+            />
           </h1>
           <p className="home-hero-description">
-            Safe Haven brings mood check-ins, journaling, breathing exercises,
-            wellbeing games, and a growing Mind Garden together in one place.
-            Explore at your own pace and choose what feels useful today.
+            <FoldText
+              {...heroFoldMotion}
+              className="home-hero-fold-copy"
+              text="Safe Haven brings mood check-ins, journaling, breathing exercises, wellbeing games, and a growing Mind Garden together in one place. Explore at your own pace and choose what feels useful today."
+              splitBy="word"
+              duration={0.65}
+              stagger={0.04}
+              fontSize="inherit"
+              fontWeight="inherit"
+              color="inherit"
+            />
           </p>
 
           <div className="home-hero-actions">
             <Link href="/register" className="home-button home-button-primary">
-              Begin your journey
+              <FoldText
+                {...heroFoldMotion}
+                className="home-hero-button-fold"
+                text="Begin your journey"
+                splitBy="word"
+                duration={0.65}
+                stagger={0.055}
+                fontSize="inherit"
+                fontWeight="inherit"
+                color="inherit"
+              />
               <ArrowRight aria-hidden="true" size={17} />
             </Link>
             <a href="#about" className="home-story-link">
               <span className="home-play">
                 <Play aria-hidden="true" size={14} fill="currentColor" />
               </span>
-              What you can do here
+              <FoldText
+                {...heroFoldMotion}
+                className="home-hero-button-fold"
+                text="What you can do here"
+                splitBy="word"
+                duration={0.65}
+                stagger={0.055}
+                fontSize="inherit"
+                fontWeight="inherit"
+                color="inherit"
+              />
             </a>
           </div>
         </div>
-
         <div
           className="home-hero-art"
           aria-label="A calm space for your wellbeing"
@@ -119,8 +198,9 @@ export default function HomePage() {
             quality={100}
             sizes="(max-width: 650px) 90vw, (max-width: 1200px) 48vw, 600px"
             className="home-manifest-image"
+            data-home-parallax="0.14"
           />
-          <div className="home-art-card">
+          <div className="home-art-card" data-home-parallax="-0.1">
             <span className="home-art-card-mark">
               <Sprout aria-hidden="true" size={19} />
             </span>
@@ -144,7 +224,7 @@ export default function HomePage() {
         </ul>
       </section>
 
-      <section id="about" className="home-section home-about">
+      <section id="about" className="home-section home-about" data-home-parallax="0.07">
         <div className="home-section-heading">
           <span className="home-section-label">About Safe Haven</span>
           <h2>
@@ -168,7 +248,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="services" className="home-section home-services">
+      <section id="services" className="home-section home-services" data-home-parallax="0.06">
         <HomeWave className="home-wave-services-top" color="#dce8d2" />
         <div className="home-services-heading">
           <div>
@@ -275,9 +355,18 @@ export default function HomePage() {
 
       <HomeFaq />
 
-      <section id="contact" className="home-section home-closing">
+      <section id="contact" className="home-section home-closing" data-home-parallax="0.06">
         <HomeWave className="home-wave-closing-top" color="#dce8d2" />
         <div className="home-closing-content">
+          <div className="home-closing-art" aria-hidden="true">
+            <Image
+              src="/images/CTA 7.png"
+              alt=""
+              fill
+              sizes="(max-width: 850px) 90vw, 52vw"
+              className="home-closing-image"
+            />
+          </div>
           <div className="home-closing-copy">
             <div className="home-closing-mark">
               <LockKeyhole aria-hidden="true" size={19} />A gentle place to begin
@@ -332,7 +421,7 @@ export default function HomePage() {
               target="_blank"
               rel="noreferrer"
             >
-              <Instagram aria-hidden="true" size={18} />
+              <FaInstagram aria-hidden="true" size={18} />
               Follow us on Instagram
             </a>
           </div>

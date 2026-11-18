@@ -116,7 +116,12 @@ export default function HomeFaq() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="home-faq" aria-labelledby="home-faq-title">
+    <section
+      id="faq"
+      className="home-faq"
+      aria-labelledby="home-faq-title"
+      data-home-parallax="0.07"
+    >
       <HomeWave
         className="home-wave-faq-top"
         color="#f3eedc"
@@ -125,7 +130,9 @@ export default function HomeFaq() {
         <div className="home-faq-intro">
           <span className="home-section-label">A little more clarity</span>
           <h2 id="home-faq-title">
-            Frequently asked questions
+            <span className="home-faq-title-phrase">Frequently asked</span>
+            <br />
+            questions
           </h2>
           <p>
             Get to know the tools, privacy considerations, and limits of Safe

@@ -2,7 +2,11 @@
 
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { FaInstagram as Instagram } from 'react-icons/fa6';
+import {
+  FaInstagram,
+  FaLinkedinIn as LinkedIn,
+} from 'react-icons/fa6';
+import { FaTwitter as Twitter } from 'react-icons/fa';
 import BrandLogo from './BrandLogo';
 import './StaggeredMenu.css';
 
@@ -418,7 +422,13 @@ export const StaggeredMenu = ({
                       tabIndex={open ? 0 : -1}
                     >
                       {s.label.toLowerCase() === 'instagram' && (
-                        <Instagram aria-hidden="true" size={18} />
+                        <FaInstagram aria-hidden="true" size={18} />
+                      )}
+                      {s.label.toLowerCase() === 'linkedin' && (
+                        <LinkedIn aria-hidden="true" size={18} />
+                      )}
+                      {s.label.toLowerCase() === 'twitter' && (
+                        <Twitter aria-hidden="true" size={18} />
                       )}
                       {s.label}
                     </a>
