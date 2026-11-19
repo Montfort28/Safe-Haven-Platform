@@ -44,7 +44,6 @@ import {
   FaAward as Award,
 } from 'react-icons/fa6';
 import Navbar from '@/components/Navbar';
-import EmergencySupport from '@/components/EmergencySupport';
 
 interface User {
   quickStats?: {
@@ -469,7 +468,6 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <EmergencySupport />
       <Navbar />
 
       {/* Animated background elements */}
@@ -900,7 +898,7 @@ export default function ProfilePage() {
 
       {/* Loading Overlay */}
       {isLoading && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div data-modal-lock="true" className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="bg-white rounded-2xl p-8 shadow-2xl">
             <div className="flex items-center gap-4">
               <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>

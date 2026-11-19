@@ -41,7 +41,6 @@ import {
 import { formatDate } from '@/lib/utils';
 import SoundPlayer from '@/components/SoundPlayer';
 import Navbar from '@/components/Navbar';
-import EmergencySupport from '@/components/EmergencySupport';
 import MoodEmoji from '@/components/MoodEmoji';
 
 // Fallback getCurrentTime function if not defined in utils
@@ -331,7 +330,7 @@ export default function JournalPage() {
   }, [goals]);
 
   const BreathingGuide = () => (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div data-modal-lock="true" className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center max-w-md">
         <h3 className="text-xl font-semibold mb-4">Breathing Exercise</h3>
         <div className={`w-32 h-32 mx-auto mb-4 rounded-full flex items-center justify-center text-white font-bold text-lg transition-all duration-4000 ${breathingPhase === 'inhale' ? 'bg-blue-500 scale-110' :
@@ -420,7 +419,6 @@ export default function JournalPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
-      <EmergencySupport />
       <Navbar />
       <main className="member-page-content">
         <header className="member-page-header">
@@ -817,7 +815,7 @@ export default function JournalPage() {
 
         {/* Modal for all entries */}
         {showAllModal && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/30 backdrop-blur-md" onClick={handleModalClick}>
+          <div data-modal-lock="true" className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/30 backdrop-blur-md" onClick={handleModalClick}>
             <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-0 relative animate-fade-in border-2 border-blue-300 overflow-hidden" style={{ zIndex: 10000 }}>
               <div className="flex flex-col">
                 <div className="flex items-center justify-between px-8 pt-8 pb-4 border-b border-blue-100">

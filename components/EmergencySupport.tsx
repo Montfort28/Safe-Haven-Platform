@@ -31,7 +31,8 @@ const handleBackdropClick = (e: MouseEventWithTarget) => {
     <>
       {/* Floating Button */}
       <button
-        className="fixed bottom-6 right-6 z-50 bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 font-bold text-base animate-bounce"
+        type="button"
+        className="emergency-support-trigger fixed bottom-6 right-6 z-50 bg-[#064734] hover:bg-[#043729] text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 font-bold text-base animate-bounce"
         onClick={() => setOpen(true)}
         aria-label="Need urgent help?"
       >
@@ -42,6 +43,10 @@ const handleBackdropClick = (e: MouseEventWithTarget) => {
       {/* Modal */}
       {open && (
         <div 
+          data-modal-lock="true"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="emergency-support-title"
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 pt-20"
           onClick={handleBackdropClick}
         >
@@ -56,7 +61,7 @@ const handleBackdropClick = (e: MouseEventWithTarget) => {
 
             <div className="mb-6 flex items-center gap-3 pr-10">
               <AlertCircle className="w-8 h-8 text-red-500 animate-pulse flex-shrink-0" />
-              <h2 className="text-2xl font-bold text-red-600">Emergency Support</h2>
+              <h2 id="emergency-support-title" className="text-2xl font-bold text-red-600">Emergency Support</h2>
             </div>
 
             <div className="mb-6">

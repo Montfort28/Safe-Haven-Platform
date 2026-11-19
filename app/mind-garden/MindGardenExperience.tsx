@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FaBookOpen, FaHeart, FaGamepad, FaLeaf, FaDroplet, FaArrowRight } from 'react-icons/fa6';
 import Navbar from '@/components/Navbar';
-import EmergencySupport from '@/components/EmergencySupport';
 import GardenTree from '@/components/mind-garden/GardenTree';
 import {
   getGardenCondition,
@@ -159,7 +158,6 @@ export default function MindGardenExperience() {
   if (!garden) {
     return (
       <div className="min-h-screen bg-white">
-        <EmergencySupport />
         <Navbar />
         <main className="member-page-content garden-page">
           <section className="garden-empty-state" role="status">
@@ -196,7 +194,6 @@ export default function MindGardenExperience() {
 
   return (
     <div className="min-h-screen bg-white">
-      <EmergencySupport />
       <Navbar />
       <main className="member-page-content garden-page">
         <section className="garden-experience-card">

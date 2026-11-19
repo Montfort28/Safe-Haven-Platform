@@ -2,6 +2,7 @@ import './globals.css';
 import BlobCursor from '@/components/BlobCursor';
 import EmergencySupport from '@/components/EmergencySupport';
 import MemberTheme from '@/components/MemberTheme';
+import ModalScrollLock from '@/components/ModalScrollLock';
 import SoundPlayer from '@/components/SoundPlayer';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -12,6 +13,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <MemberTheme>{children}</MemberTheme>
           <SoundPlayer src="/sounds/ambient-rain.mp3" loop />
         </div>
+        <EmergencySupport />
+        <ModalScrollLock />
         <BlobCursor
           material="ink"
           color="#033B2C"

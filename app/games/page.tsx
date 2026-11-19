@@ -24,7 +24,6 @@ import {
   FaXmark as X,
 } from 'react-icons/fa6';
 import Navbar from '@/components/Navbar';
-import EmergencySupport from '@/components/EmergencySupport';
 
 // --- Types ---
 type Emotion = {
@@ -157,7 +156,7 @@ const PuzzleGame = ({ onGameComplete }: { onGameComplete: GameCompleteHandler })
     <div className="p-6 bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl relative">
       {/* Animated Congrats Modal for Level Completion */}
       {showCongratsModal && !gameComplete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
+        <div data-modal-lock="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
           <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full relative text-center">
             <div className="text-3xl font-bold text-green-600 mb-2">Level Complete!</div>
             <div className="text-lg text-purple-700 mb-4">Get ready for the next level!</div>
@@ -389,7 +388,7 @@ const PositivityPuzzle = ({ onGameComplete }: { onGameComplete: GameCompleteHand
     <div className="p-6 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl relative">
       {/* Animated Congrats Modal */}
       {showCongratsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
+        <div data-modal-lock="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
           <div className="bg-gradient-to-br from-yellow-300 to-orange-400 rounded-3xl shadow-2xl p-10 max-w-md w-full border-4 border-yellow-600 relative animate-bounce-in">
             <button onClick={() => setShowCongratsModal(false)} className="absolute top-2 right-2 text-yellow-700 hover:text-yellow-900 text-2xl font-bold">&times;</button>
             <div className="flex flex-col items-center">
@@ -567,7 +566,7 @@ const MindfulMemory = ({ onGameComplete }: { onGameComplete: GameCompleteHandler
     <div className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl relative">
       {/* Animated Congrats Modal */}
       {showCongratsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
+        <div data-modal-lock="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
           <div className="bg-gradient-to-br from-indigo-300 to-purple-400 rounded-3xl shadow-2xl p-10 max-w-md w-full border-4 border-indigo-600 relative animate-bounce-in">
             <button onClick={() => setShowCongratsModal(false)} className="absolute top-2 right-2 text-indigo-700 hover:text-indigo-900 text-2xl font-bold">&times;</button>
             <div className="flex flex-col items-center">
@@ -752,7 +751,7 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
     <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl relative">
       {/* Animated Congrats Modal */}
       {showCongratsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
+        <div data-modal-lock="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 animate-fade-in">
           <div className="bg-gradient-to-br from-green-300 to-emerald-400 rounded-3xl shadow-2xl p-10 max-w-md w-full border-4 border-green-600 relative animate-bounce-in">
             <button onClick={() => setShowCongratsModal(false)} className="absolute top-2 right-2 text-green-700 hover:text-green-900 text-2xl font-bold">&times;</button>
             <div className="flex flex-col items-center">
@@ -844,7 +843,7 @@ const GratitudeBuilder = ({ onGameComplete }: { onGameComplete: GameCompleteHand
 // --- Achievements Modal ---
 import React from 'react';
 const AchievementsModal = ({ achievements, onClose }: { achievements: string[]; onClose: () => void }) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+  <div data-modal-lock="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
     <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full relative">
       <button onClick={onClose} className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl">&times;</button>
       <h2 className="text-2xl font-bold mb-4 text-purple-700">Your Achievements</h2>
@@ -1011,7 +1010,6 @@ export default function GamesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
-      <EmergencySupport />
       <Navbar />
       <main className="member-page-content">
         {/* Header */}

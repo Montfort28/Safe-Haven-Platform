@@ -25,7 +25,6 @@ import {
   FaShieldHalved as Shield,
 } from 'react-icons/fa6';
 import Navbar from '@/components/Navbar';
-import EmergencySupport from '@/components/EmergencySupport';
 import MoodEmoji, { getMoodEmoji } from '@/components/MoodEmoji';
 
 interface MoodEntry {
@@ -428,7 +427,6 @@ const MoodPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 animate-fade-in">
-      <EmergencySupport />
       <Navbar />
       <main className="member-page-content">
         {/* Header Section */}

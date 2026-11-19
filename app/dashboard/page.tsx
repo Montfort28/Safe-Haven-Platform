@@ -20,7 +20,6 @@ import { XAxis, YAxis, ResponsiveContainer, Tooltip, Area, AreaChart } from 'rec
 import { formatDate } from '@/lib/utils';
 import SoundPlayer from '@/components/SoundPlayer';
 import Navbar from '@/components/Navbar';
-import EmergencySupport from '@/components/EmergencySupport';
 
 interface User {
   id: string;
@@ -333,7 +332,6 @@ export default function DashboardPage() {
 
   return (
     <div className="member-app dashboard-page">
-      <EmergencySupport />
       <SoundPlayer src="/sounds/ambient-rain.mp3" loop />
       <Navbar />
 
