@@ -215,8 +215,11 @@ export default function HomePage() {
       </section>
 
       <section className="home-platforms" aria-label="Mental health platforms">
-        <p className="home-platform-caption">
-          You can also explore these other mental health platforms.
+        <p className="home-platform-disclaimer">
+          <strong>
+            Independent platforms offering additional mental health and wellbeing
+            resources. Not affiliated with Safe Haven.
+          </strong>
         </p>
         <ul className="home-platform-names" aria-label="Other wellbeing platforms">
           <li className="home-platform-name">BetterHelp</li>
@@ -267,14 +270,14 @@ export default function HomePage() {
         <BounceCards
           className="home-tool-stack"
           containerHeight={660}
-          spread={82}
+          spread={85}
           rotation={10}
-          arc={12}
-          pushDistance={160}
-          hoverScale={1.04}
+          arc={0}
+          pushDistance={470}
+          hoverScale={1.06}
           bounciness={0.6}
-          animationDelay={0.2}
-          animationStagger={0.07}
+          animationDelay={0.5}
+          animationStagger={0.06}
           enableHover
         >
           <ScrollStackItem itemClassName="home-tool-card">

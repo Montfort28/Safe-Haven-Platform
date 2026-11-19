@@ -248,7 +248,7 @@ const FoldText = ({
     } else if (trigger === 'landing') {
       render();
       landingRevealHandler = handleEnter;
-      window.addEventListener('safe-haven:landing-reveal-complete', landingRevealHandler, { once: true });
+      window.addEventListener('safe-haven:landing-reveal-start', landingRevealHandler, { once: true });
     } else {
       play(trigger === 'loop');
     }
@@ -333,7 +333,7 @@ const FoldText = ({
     return () => {
       root.removeEventListener('mouseenter', handleEnter);
       if (landingRevealHandler) {
-        window.removeEventListener('safe-haven:landing-reveal-complete', landingRevealHandler);
+        window.removeEventListener('safe-haven:landing-reveal-start', landingRevealHandler);
       }
       window.removeEventListener('pointermove', handleMove);
       window.removeEventListener('scroll', handleScroll, { capture: true });

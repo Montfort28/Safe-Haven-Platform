@@ -17,7 +17,6 @@ export default function HomeLandingReveal() {
     const wordmark = wordmarkRef.current;
     const counter = counterRef.current;
     if (!root || !backdrop || !wordmark || !counter) return undefined;
-
     const logo = root.querySelector<HTMLSpanElement>('.home-landing-logo');
     const homeLogo = document.querySelector<HTMLElement>('.home-brand .brand-logo');
     if (!logo) return undefined;
@@ -30,7 +29,7 @@ export default function HomeLandingReveal() {
     const originalPaddingRight = body.style.paddingRight;
     const originalLogoOpacity = homeLogo?.style.opacity;
     const scrollbarCompensation = window.innerWidth - html.clientWidth;
-    const introDuration = reducedMotion ? 1250 : 2850;
+    const introDuration = reducedMotion ? 1250 : 4450;
     const exitDuration = reducedMotion ? 560 : 900;
     const animations: Animation[] = [];
 
@@ -42,19 +41,21 @@ export default function HomeLandingReveal() {
     }
     homeLogo?.style.setProperty('opacity', '0');
 
-    let countFrame = 0;
-    let countStartedAt: number | undefined;
-    const countDuration = reducedMotion ? 1500 : 3500;
-    const updateCounts = (now: number) => {
-      if (countStartedAt === undefined) countStartedAt = now;
-      const progress = Math.max(0, Math.min((now - countStartedAt) / countDuration, 1));
+    let countInterval = 0;
+    const countStartedAt = performance.now();
+    const countDuration = reducedMotion ? 1500 : 5000;
+    const updateCount = () => {
+      const progress = Math.min((performance.now() - countStartedAt) / countDuration, 1);
       setCount(Math.floor(100 * progress));
-      if (progress < 1) countFrame = window.requestAnimationFrame(updateCounts);
+      if (progress >= 1) window.clearInterval(countInterval);
     };
-    countFrame = window.requestAnimationFrame(updateCounts);
+    setCount(0);
+    countInterval = window.setInterval(updateCount, 50);
 
     const finishIntro = () => {
       if (!root.isConnected) return;
+
+      window.dispatchEvent(new Event('safe-haven:landing-reveal-start'));
 
       const start = logo.getBoundingClientRect();
       const destination = homeLogo?.getBoundingClientRect();
@@ -128,7 +129,6 @@ export default function HomeLandingReveal() {
 
       window.setTimeout(() => {
         setVisible(false);
-        window.dispatchEvent(new Event('safe-haven:landing-reveal-complete'));
         body.style.overflow = originalOverflow;
         html.style.overflow = originalHtmlOverflow;
         body.style.paddingRight = originalPaddingRight;
@@ -139,7 +139,7 @@ export default function HomeLandingReveal() {
     const timer = window.setTimeout(finishIntro, introDuration);
     return () => {
       window.clearTimeout(timer);
-      window.cancelAnimationFrame(countFrame);
+      window.clearInterval(countInterval);
       animations.forEach(animation => animation.cancel());
       body.style.overflow = originalOverflow;
       html.style.overflow = originalHtmlOverflow;

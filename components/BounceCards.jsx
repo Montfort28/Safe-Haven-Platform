@@ -116,8 +116,8 @@ export default function BounceCards({
       const hovered = settings.enableHover ? state.hovered : -1;
       const popStiffness = 170;
       const popDamping = 2 * (1 - 0.85 * settings.bounciness) * Math.sqrt(popStiffness);
-      const moveStiffness = motion.matches ? 46 : 34;
-      const moveDamping = 2 * 1.08 * Math.sqrt(moveStiffness);
+      const moveStiffness = 210;
+      const moveDamping = 2 * (motion.matches ? 1 : 0.72) * Math.sqrt(moveStiffness);
       const substeps = Math.ceil(delta / (1 / 240));
       const subDelta = delta / substeps;
       let moving = 0;
@@ -135,10 +135,9 @@ export default function BounceCards({
         let targetScale = appeared ? 1 : 0;
 
         if (hovered >= 0 && appeared) {
-          const motionFactor = motion.matches ? 0.22 : 1;
           const responsivePushDistance = Math.min(
-            settings.pushDistance * motionFactor,
-            root.clientWidth * (motion.matches ? 0.08 : 0.28),
+            settings.pushDistance * (motion.matches ? 0.85 : 1),
+            root.clientWidth * 0.6,
           );
           if (index === hovered) {
             targetY -= motion.matches ? 4 : 14;

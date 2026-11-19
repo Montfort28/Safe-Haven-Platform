@@ -7,6 +7,7 @@
 :root {
   --brand-primary: #064734;
   --brand-orange: #FE7A25;
+  --brand-orange-dark: #E56B20;
   --brand-cream: #FCF9EA;
   --brand-sage: #006732;
   --brand-sage-light: #A8BBA3;
@@ -564,7 +565,7 @@ body:has(.auth-page) {
 }
 
 .home-header-inner > .home-brand .brand-logo {
-  width: 124px;
+  width: 136px;
   height: 72px;
 }
 
@@ -596,6 +597,7 @@ body:has(.auth-page) {
 
 .home-nav a {
   font-weight: 400;
+  font-size: 1.08rem;
 }
 
 .home-nav a,
@@ -777,14 +779,26 @@ body:has(.auth-page) {
   gap: 20px;
 }
 
+.home-hero-actions .home-button {
+  min-height: 56px;
+  padding: 0 28px;
+  border-radius: 14px;
+  font-size: 1rem;
+}
+
 .home-story-link {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: var(--brand-ink);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
   text-decoration: none;
+}
+
+.home-hero-actions .home-play {
+  width: 46px;
+  height: 46px;
 }
 
 .home-play {
@@ -952,13 +966,13 @@ body:has(.auth-page) {
 .home-platforms {
   position: relative;
   z-index: 2;
-  min-height: 116px;
-  padding: 30px max(24px, calc((100% - 1210px) / 2));
+  min-height: 172px;
+  padding: 34px max(24px, calc((100% - 1210px) / 2));
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 14px;
+  gap: 24px;
   color: var(--brand-cream);
   background-color: #1B382B;
   background-image: linear-gradient(#1B382B, #1B382B);
@@ -1026,11 +1040,22 @@ body:has(.auth-page) {
 
 .home-platform-caption {
   width: 100%;
-  margin: 0;
+  margin: 0 0 4px;
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 1.4;
+  text-align: center;
+}
+
+.home-page .home-platforms .home-platform-disclaimer {
+  width: 100%;
+  max-width: 900px;
+  margin: 0;
+  color: #fff !important;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.45;
   text-align: center;
 }
 
@@ -1163,6 +1188,10 @@ body:has(.auth-page) {
   max-width: 1080px;
   margin: 0 auto;
   overflow: visible;
+}
+
+.home-services .home-tool-stack .bounce-cards__card {
+  width: min(420px, 65%);
 }
 
 .home-services .home-tool-card {
@@ -2589,8 +2618,19 @@ body:has(.auth-page) {
     font-size: 0.82rem;
   }
 
+  .home-hero-actions .home-button {
+    min-height: 52px;
+    padding: 0 22px;
+    font-size: 0.95rem;
+  }
+
   .home-story-link {
-    font-size: 0.82rem;
+    font-size: 0.95rem;
+  }
+
+  .home-hero-actions .home-play {
+    width: 42px;
+    height: 42px;
   }
 
   .home-trust-note {
@@ -2610,9 +2650,9 @@ body:has(.auth-page) {
   }
 
   .home-platforms {
-    padding: 24px 20px;
+    padding: 28px 20px;
     align-items: center;
-    gap: 12px;
+    gap: 20px;
   }
 
   .home-platform-names {
@@ -2714,6 +2754,10 @@ body:has(.auth-page) {
 
   .home-services .home-tool-stack {
     margin: 0 -8px;
+  }
+
+  .home-services .home-tool-stack .bounce-cards__card {
+    width: min(300px, 56%);
   }
 
   .home-services .home-tool-card {
@@ -5790,7 +5834,7 @@ body :is(h1, h2, h3, h4, h5, h6):is(
   }
 
   .home-header-inner .home-brand .brand-logo {
-    width: clamp(104px, 24vw, 128px);
+    width: clamp(112px, 26vw, 136px);
     height: auto;
   }
 
@@ -6098,10 +6142,11 @@ body .member-app a[class*="bg-"]:focus-visible:not([aria-disabled="true"]) {
   right: clamp(24px, 4vw, 56px);
   bottom: clamp(30px, 6vh, 68px);
   color: var(--brand-cream);
+  font-family: "Montserrat", "Manrope", sans-serif;
   font-size: clamp(1.5rem, 3.2vw, 2.25rem);
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   line-height: 1;
   text-shadow: 0 0 12px rgba(252, 249, 234, 0.45);
   pointer-events: none;
@@ -6402,6 +6447,15 @@ body .member-app a[class*="bg-"]:focus-visible:not([aria-disabled="true"]) {
   margin-right: 0.12em;
   color: #25332d;
   vertical-align: baseline;
+}
+
+.home-hero h1 .hero-rotating-fold {
+  margin-left: 0.12em;
+  color: var(--brand-orange-dark);
+}
+
+.home-hero h1 .hero-rotating-fold .fold-text-piece {
+  color: var(--brand-orange-dark);
 }
 
 .home-hero .home-hero-description .home-hero-fold-copy {
