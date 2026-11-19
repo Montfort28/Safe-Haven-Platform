@@ -13,6 +13,7 @@ import {
 import { FaTwitter as Twitter } from 'react-icons/fa';
 import BrandLogo from '@/components/BrandLogo';
 import FoldText from '@/components/FoldText';
+import HeroRotatingWord from '@/components/HeroRotatingWord';
 import HomeSignInButton from '@/components/HomeSignInButton';
 import StaggeredMenu from '@/components/StaggeredMenu';
 import BounceCards from '@/components/BounceCards';
@@ -130,13 +131,14 @@ export default function HomePage() {
             <FoldText
               {...heroFoldMotion}
               className="home-hero-fold-title home-hero-fold-title-accent"
-              text="reflect, and reset."
+              text="reflect, and"
               splitBy="char"
               stagger={0.045}
               fontSize="clamp(2.8rem, 4.2vw, 4rem)"
               fontWeight={700}
               color="#25332D"
             />
+            <HeroRotatingWord />
           </h1>
           <p className="home-hero-description">
             <FoldText
@@ -360,7 +362,7 @@ export default function HomePage() {
         <div className="home-closing-content">
           <div className="home-closing-art" aria-hidden="true">
             <Image
-              src="/images/CTA 7.png"
+              src="/images/CTA 9.png"
               alt=""
               fill
               sizes="(max-width: 850px) 90vw, 52vw"

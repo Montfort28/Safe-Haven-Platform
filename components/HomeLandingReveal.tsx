@@ -5,17 +5,18 @@ import BrandLogo from '@/components/BrandLogo';
 
 export default function HomeLandingReveal() {
   const [visible, setVisible] = useState(true);
+  const [count, setCount] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
   const wordmarkRef = useRef<HTMLSpanElement>(null);
+  const counterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
     const backdrop = backdropRef.current;
-    const progress = progressRef.current;
     const wordmark = wordmarkRef.current;
-    if (!root || !backdrop || !progress || !wordmark) return undefined;
+    const counter = counterRef.current;
+    if (!root || !backdrop || !wordmark || !counter) return undefined;
 
     const logo = root.querySelector<HTMLSpanElement>('.home-landing-logo');
     const homeLogo = document.querySelector<HTMLElement>('.home-brand .brand-logo');
@@ -29,7 +30,7 @@ export default function HomeLandingReveal() {
     const originalPaddingRight = body.style.paddingRight;
     const originalLogoOpacity = homeLogo?.style.opacity;
     const scrollbarCompensation = window.innerWidth - html.clientWidth;
-    const introDuration = reducedMotion ? 1250 : 2150;
+    const introDuration = reducedMotion ? 1250 : 2850;
     const exitDuration = reducedMotion ? 560 : 900;
     const animations: Animation[] = [];
 
@@ -39,8 +40,18 @@ export default function HomeLandingReveal() {
       const currentPadding = Number.parseFloat(window.getComputedStyle(body).paddingRight) || 0;
       body.style.paddingRight = `${currentPadding + scrollbarCompensation}px`;
     }
-    root.style.setProperty('--landing-duration', `${introDuration}ms`);
     homeLogo?.style.setProperty('opacity', '0');
+
+    let countFrame = 0;
+    let countStartedAt: number | undefined;
+    const countDuration = reducedMotion ? 1500 : 3500;
+    const updateCounts = (now: number) => {
+      if (countStartedAt === undefined) countStartedAt = now;
+      const progress = Math.max(0, Math.min((now - countStartedAt) / countDuration, 1));
+      setCount(Math.floor(100 * progress));
+      if (progress < 1) countFrame = window.requestAnimationFrame(updateCounts);
+    };
+    countFrame = window.requestAnimationFrame(updateCounts);
 
     const finishIntro = () => {
       if (!root.isConnected) return;
@@ -98,9 +109,9 @@ export default function HomeLandingReveal() {
       );
 
       animations.push(
-        progress.animate(
-          [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 -16px' }],
-          { duration: exitDuration * 0.48, easing: 'ease-in', fill: 'forwards' },
+        counter.animate(
+          [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 12px' }],
+          { delay: exitDuration * 0.84, duration: exitDuration * 0.16, easing: 'ease-in', fill: 'forwards' },
         ),
       );
 
@@ -128,6 +139,7 @@ export default function HomeLandingReveal() {
     const timer = window.setTimeout(finishIntro, introDuration);
     return () => {
       window.clearTimeout(timer);
+      window.cancelAnimationFrame(countFrame);
       animations.forEach(animation => animation.cancel());
       body.style.overflow = originalOverflow;
       html.style.overflow = originalHtmlOverflow;
@@ -153,15 +165,11 @@ export default function HomeLandingReveal() {
             <span ref={wordmarkRef} className="home-landing-wordmark">
               Safe Haven
             </span>
-            <div
-              ref={progressRef}
-              className="home-landing-progress"
-              aria-hidden="true"
-            >
-              <span className="home-landing-progress-fill" />
-            </div>
           </div>
         </div>
+      </div>
+      <div ref={counterRef} className="home-landing-counter" aria-hidden="true">
+        {count.toString().padStart(3, '0')}
       </div>
     </div>
   );
