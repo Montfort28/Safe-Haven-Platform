@@ -42,7 +42,7 @@ export default function HeroRotatingWord() {
       foldAngle={88}
       perspective={700}
       creaseShading={0.35}
-      fontSize="clamp(2.8rem, 4.2vw, 4rem)"
+      fontSize="clamp(3.05rem, 4.7vw, 4.45rem)"
       fontWeight={700}
       color="var(--brand-orange-dark)"
     />

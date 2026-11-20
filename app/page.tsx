@@ -124,7 +124,7 @@ export default function HomePage() {
               text={'A welcoming space\nto check in,'}
               splitBy="char"
               stagger={0.045}
-              fontSize="clamp(2.8rem, 4.2vw, 4rem)"
+              fontSize="clamp(3.05rem, 4.7vw, 4.45rem)"
               fontWeight={700}
               color="#064734"
             />
@@ -134,7 +134,7 @@ export default function HomePage() {
               text="reflect, and"
               splitBy="char"
               stagger={0.045}
-              fontSize="clamp(2.8rem, 4.2vw, 4rem)"
+              fontSize="clamp(3.05rem, 4.7vw, 4.45rem)"
               fontWeight={700}
               color="#25332D"
             />
@@ -144,7 +144,7 @@ export default function HomePage() {
             <FoldText
               {...heroFoldMotion}
               className="home-hero-fold-copy"
-              text="Safe Haven brings mood check-ins, journaling, breathing exercises, wellbeing games, and a growing Mind Garden together in one place. Explore at your own pace and choose what feels useful today."
+              text="Safe Haven brings mood check-ins, journaling, and calming activities together in one place. Explore at your own pace and choose what feels useful today."
               splitBy="word"
               duration={0.65}
               stagger={0.04}
