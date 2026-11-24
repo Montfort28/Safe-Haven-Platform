@@ -2291,21 +2291,22 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
 }
 
   .auth-page {
+    display: flex;
     min-height: 100vh;
-    padding: 0 clamp(20px, 5vw, 76px);
+    flex-direction: column;
+    padding: 0 clamp(16px, 5vw, 76px) 28px;
     color: var(--brand-ink);
-    background:
-      radial-gradient(ellipse at 88% 10%, rgba(0, 103, 50, 0.24), transparent 34%),
-      var(--brand-cream);
+    background: var(--brand-cream);
   }
 
   .auth-header {
+    width: min(100%, 1180px);
     min-height: 82px;
-    width: min(100%, 1120px);
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex: 0 0 82px;
   }
 
   .auth-back-link {
@@ -2314,8 +2315,8 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
     align-items: center;
     gap: 9px;
     color: var(--brand-ink);
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 600;
     text-decoration: none;
     transition: color 160ms ease;
   }
@@ -2331,36 +2332,52 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
 
   .auth-layout {
     position: relative;
-    width: min(100%, 1120px);
-    min-height: calc(100vh - 82px);
+    width: min(100%, 1180px);
+    min-height: max(600px, calc(100vh - 110px));
     margin: 0 auto;
-    padding: 25px 0 55px;
     display: grid;
-    grid-template-columns: 1fr minmax(360px, 470px);
-    align-items: center;
-    gap: clamp(38px, 8vw, 110px);
+    grid-template-columns: minmax(0, 1.02fr) minmax(390px, 0.98fr);
+    align-items: stretch;
+    overflow: hidden;
+    border: 1px solid rgba(0, 103, 50, 0.1);
+    border-radius: 30px;
+    background: #fff;
+    box-shadow: 0 26px 70px rgba(32, 43, 39, 0.12);
   }
 
   .auth-intro {
     position: relative;
-    z-index: auto;
-    min-height: 540px;
+    isolation: isolate;
+    min-height: 600px;
+    padding: clamp(36px, 5vw, 70px);
     display: flex;
     align-items: center;
-    justify-content: center;
+    overflow: hidden;
+    background: linear-gradient(145deg, #ed6d20 0%, #fb7a27 54%, #f9893d 100%);
+  }
+
+  .auth-intro > .auth-intro-waves {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    pointer-events: none;
   }
 
   .auth-intro-copy {
     position: relative;
-    z-index: 3;
+    z-index: 1;
     width: 100%;
     max-width: 510px;
+  }
+
+  .auth-intro .home-section-label {
+    color: rgba(255, 255, 255, 0.82);
   }
 
   .auth-intro h1 {
     max-width: 100%;
     margin: 18px 0;
-    color: var(--brand-primary);
+    color: #fff;
     font-size: clamp(2.7rem, 4.4vw, 3.65rem);
     font-weight: 700;
     letter-spacing: -0.055em;
@@ -2368,43 +2385,45 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
   }
 
   .auth-intro h1 span {
-    color: #25332D;
+    color: #fff2e5;
   }
 
-  .auth-intro-copy > p {
+  .auth-page .auth-intro-copy > p {
     max-width: 440px;
     margin: 0;
-    color: var(--brand-ink);
+    color: rgba(255, 255, 255, 0.9);
     font-size: 1rem;
     line-height: 1.8;
-    opacity: 0.83;
   }
 
   .auth-panel {
     position: relative;
-    z-index: 3;
+    z-index: 1;
     width: 100%;
-    padding: clamp(26px, 4vw, 42px);
-    border: 1px solid rgba(0, 103, 50, 0.3);
-    border-radius: 24px;
-    background: var(--brand-cream);
-    box-shadow: 0 8px 24px rgba(32, 43, 39, 0.12);
+    align-self: stretch;
+    padding: clamp(34px, 5vw, 68px);
+    border: 0;
+    border-radius: 0;
+    background: #fff;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .auth-panel h2 {
     margin: 0;
     color: var(--brand-primary);
-    font-size: 1.9rem;
+    font-size: 2rem;
     font-weight: 700;
     letter-spacing: -0.04em;
   }
 
   .auth-panel-intro {
     margin: 8px 0 26px;
-    color: var(--brand-ink);
+    color: rgba(32, 43, 39, 0.7);
     font-size: 0.9rem;
     line-height: 1.65;
-    opacity: 0.75;
   }
 
   .auth-form {
@@ -2431,7 +2450,7 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
     padding: 0 14px;
     outline: none;
     color: var(--brand-ink);
-    background: var(--brand-cream);
+    background: #fff;
     font-size: 0.9rem;
     transition: border-color 150ms ease, box-shadow 150ms ease;
   }
@@ -2470,7 +2489,7 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
   }
 
   .auth-password-toggle:hover {
-    background: rgba(0, 103, 50, 0.28);
+    background: rgba(0, 103, 50, 0.08);
   }
 
   .auth-submit {
@@ -2484,7 +2503,7 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
     border: 0;
     border-radius: 999px;
     color: #fff;
-    background: var(--brand-ink);
+    background: var(--brand-orange);
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
@@ -2492,7 +2511,7 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
   }
 
   .auth-submit:hover:not(:disabled) {
-    background: var(--brand-ink);
+    background: #e9681d;
     color: #fff;
     box-shadow: 0 6px 14px rgba(32, 43, 39, 0.2);
     transform: translateY(-2px);
@@ -2560,14 +2579,11 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
     .auth-layout {
       min-height: auto;
       grid-template-columns: 1fr;
-      gap: 24px;
-      padding-top: 10px;
     }
 
     .auth-intro {
       min-height: 270px;
-      padding: 25px 0;
-      justify-content: flex-start;
+      padding: 32px clamp(26px, 7vw, 48px);
     }
 
     .auth-intro h1 {
@@ -2575,46 +2591,41 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
       font-size: clamp(2.25rem, 7.2vw, 3rem);
     }
 
-    .auth-intro-copy > p {
+    .auth-page .auth-intro-copy > p {
       max-width: none;
       font-size: 0.9rem;
     }
 
     .auth-panel {
-      max-width: 520px;
-      margin: 0 auto;
+      padding: 36px clamp(26px, 7vw, 48px);
     }
   }
 
   @media (max-width: 460px) {
     .auth-page {
-      padding: 0 16px;
+      padding: 0 12px 20px;
     }
 
     .auth-header {
       min-height: 70px;
-    }
-
-    .auth-layout {
-      padding-top: 0;
+      flex-basis: 70px;
     }
 
     .auth-intro {
-      min-height: 225px;
-      padding-top: 15px;
+      min-height: 250px;
+      padding: 28px 22px;
     }
 
     .auth-intro h1 {
       font-size: clamp(2.05rem, 8vw, 2.4rem);
     }
 
-    .auth-intro-copy > p {
+    .auth-page .auth-intro-copy > p {
       font-size: 0.82rem;
     }
 
     .auth-panel {
-      padding: 24px 20px;
-      border-radius: 19px;
+      padding: 28px 22px;
     }
 
     .auth-panel h2 {

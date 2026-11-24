@@ -178,7 +178,6 @@ export default function BounceCards({
         state.layer = hovered;
         cardRefs.current.forEach((element, index) => {
           if (!element) return;
-          element.style.zIndex = index === hovered ? String(slots.length + 1) : String(slots.length - index);
           element.toggleAttribute('data-active', index === hovered);
         });
       }
