@@ -2162,7 +2162,7 @@ body:has(.auth-page) {
 
 .member-dock-shell:hover,
 .member-dock-shell:focus-within {
-  width: 260px;
+  width: 230px;
 }
 
 .member-dock-brand {
@@ -2209,7 +2209,7 @@ body button.emergency-support-trigger:focus-visible:not(:disabled) {
 
 .member-dock-shell:hover .member-platform-dock,
 .member-dock-shell:focus-within .member-platform-dock {
-  width: 248px;
+  width: 218px;
 }
 
 .member-platform-dock .dock-label {

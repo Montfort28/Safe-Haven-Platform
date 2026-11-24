@@ -25,7 +25,7 @@ import {
   FaShieldHalved as Shield,
 } from 'react-icons/fa6';
 import Navbar from '@/components/Navbar';
-import MoodEmoji, { getMoodEmoji } from '@/components/MoodEmoji';
+import MoodEmoji, { MOOD_IMAGE_PATHS } from '@/components/MoodEmoji';
 
 interface MoodEntry {
   id: string;
@@ -142,18 +142,20 @@ const MoodPage = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [streak, setStreak] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const moodImagesRef = useRef<Record<number, HTMLImageElement>>({});
+  const drawMoodChartRef = useRef<() => void>(() => {});
 
   const moodEmojis = [
-    { value: 1, label: 'Terrible', color: '#FE7A25', className: '' },
-    { value: 2, label: 'Very Sad', color: '#FE7A25', className: '' },
-    { value: 3, label: 'Sad', color: '#006732', className: '' },
-    { value: 4, label: 'Down', color: '#006732', className: '' },
-    { value: 5, label: 'Neutral', color: '#006732', className: '' },
-    { value: 6, label: 'Okay', color: '#006732', className: '' },
-    { value: 7, label: 'Good', color: '#006732', className: '' },
-    { value: 8, label: 'Great', color: '#006732', className: '' },
-    { value: 9, label: 'Amazing', color: '#006732', className: '' },
-    { value: 10, label: 'Incredible', color: '#006732', className: '' },
+    { value: 1, label: 'Terrible', color: '#FE7A25', className: '', imageSize: 48 },
+    { value: 2, label: 'Very Sad', color: '#FE7A25', className: '', imageSize: 48 },
+    { value: 3, label: 'Sad', color: '#006732', className: '', imageSize: 54 },
+    { value: 4, label: 'Down', color: '#006732', className: '', imageSize: 48 },
+    { value: 5, label: 'Neutral', color: '#006732', className: '', imageSize: 48 },
+    { value: 6, label: 'Okay', color: '#006732', className: '', imageSize: 48 },
+    { value: 7, label: 'Good', color: '#006732', className: '', imageSize: 54 },
+    { value: 8, label: 'Great', color: '#006732', className: '', imageSize: 54 },
+    { value: 9, label: 'Amazing', color: '#006732', className: '', imageSize: 48 },
+    { value: 10, label: 'Incredible', color: '#006732', className: '', imageSize: 48 },
   ];
 
   const commonTriggers = [
@@ -337,12 +339,33 @@ const MoodPage = () => {
       ctx.beginPath();
       ctx.arc(x, y, 6, 0, 2 * Math.PI);
       ctx.fill();
-      ctx.font = '16px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(getMoodEmoji(point.mood), x, y - 15);
-      // Add mood emoji (no animation)
+      const moodImage = moodImagesRef.current[Math.max(1, Math.min(10, Math.round(point.mood)))];
+      if (moodImage?.complete && moodImage.naturalWidth > 0) {
+        ctx.drawImage(moodImage, x - 10, y - 32, 20, 20);
+      }
     });
   };
+
+  drawMoodChartRef.current = drawMoodChart;
+
+  useEffect(() => {
+    const images = MOOD_IMAGE_PATHS.map((src, index) => {
+      const image = new window.Image();
+      const moodLevel = index + 1;
+      image.onload = () => {
+        moodImagesRef.current[moodLevel] = image;
+        drawMoodChartRef.current();
+      };
+      image.src = src;
+      return image;
+    });
+
+    return () => {
+      images.forEach(image => {
+        image.onload = null;
+      });
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -529,7 +552,7 @@ const MoodPage = () => {
                         backgroundColor: mood === emoji.value ? `${emoji.color}20` : 'transparent'
                       }}
                     >
-                      <div className="mb-2 flex justify-center"><MoodEmoji mood={emoji.value} size={34} /></div>
+                      <div className="mb-2 flex justify-center"><MoodEmoji mood={emoji.value} size={emoji.imageSize ?? 48} /></div>
                       <div className="text-xs leading-tight text-gray-600">{emoji.label}</div>
                     </button>
                   ))}
@@ -537,7 +560,7 @@ const MoodPage = () => {
                 {currentMoodData && (
                   <div className="mt-4 p-4 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
                     <div className="flex items-center gap-3">
-                      <MoodEmoji mood={currentMoodData.value} size={28} />
+                      <MoodEmoji mood={currentMoodData.value} size={36} />
                       <div>
                         <p className="font-medium text-gray-900">You're feeling {currentMoodData.label}</p>
                         <p className="text-sm text-gray-600">On a scale of 1-10: {mood}</p>
@@ -779,7 +802,7 @@ const MoodPage = () => {
                   const entryMood = moodEmojis.find(e => e.value === Math.round(entry.mood));
                   return (
                     <div key={entry.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                      <MoodEmoji mood={entryMood?.value ?? 5} size={24} />
+                      <MoodEmoji mood={entryMood?.value ?? 5} size={32} />
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
                           <span className="font-medium text-gray-900">{entryMood?.label || 'Neutral'}</span>

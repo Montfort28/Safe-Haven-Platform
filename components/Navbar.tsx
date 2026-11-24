@@ -71,11 +71,11 @@ export default function Navbar() {
                 items={dockItems}
                 position="left"
                 theme="dark"
-                baseItemSize={52}
-                magnification={70}
-                distance={200}
-                panelHeight={72}
-                gap={10}
+                baseItemSize={46}
+                magnification={60}
+                distance={170}
+                panelHeight={64}
+                gap={8}
                 roundness={0.55}
                 spring={{ mass: 0.1, stiffness: 150, damping: 12 }}
                 bounce

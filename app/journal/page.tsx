@@ -533,7 +533,7 @@ export default function JournalPage() {
                         className={`p-3 rounded-lg transition-all ${mood === value ? 'bg-blue-200 ring-2 ring-offset-2 ring-blue-500' : 'bg-blue-50 hover:bg-blue-100'
                           }`}
                       >
-                        <MoodEmoji mood={value} size={28} />
+                        <MoodEmoji mood={value} size={36} />
                         <div className="text-xs font-medium mt-1">{value}</div>
                       </button>
                     ))}
@@ -757,7 +757,7 @@ export default function JournalPage() {
                     <h3 className="font-medium text-black line-clamp-1 group-hover:text-purple-600 transition-colors text-lg">{entry.title}</h3>
                     {entry.mood && (
                       <span className="text-lg">
-                        <MoodEmoji mood={entry.mood} size={23} />
+                        <MoodEmoji mood={entry.mood} size={30} />
                       </span>
                     )}
                   </div>

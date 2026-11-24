@@ -1,31 +1,39 @@
+import Image from 'next/image';
+
 interface MoodEmojiProps {
   mood: number;
   size?: number;
 }
 
-const MOOD_EMOJIS = ['😫', '😭', '😞', '😔', '😐', '🙂', '😊', '😄', '😁', '😆'];
+export const MOOD_IMAGE_PATHS = [
+  '/images/emotions/terrible.png',
+  '/images/emotions/very%20sad.png',
+  '/images/emotions/sad.png',
+  '/images/emotions/down.png',
+  '/images/emotions/neutral.png',
+  '/images/emotions/okay.png',
+  '/images/emotions/good.png',
+  '/images/emotions/great.png',
+  '/images/emotions/amazing.png',
+  '/images/emotions/incredible.png',
+] as const;
 
-export function getMoodEmoji(mood: number): string {
+export function getMoodImagePath(mood: number): string {
   const level = Math.max(1, Math.min(10, Math.round(mood)));
-  return MOOD_EMOJIS[level - 1];
+  return MOOD_IMAGE_PATHS[level - 1];
 }
 
 export default function MoodEmoji({ mood, size = 40 }: MoodEmojiProps) {
   const level = Math.max(1, Math.min(10, Math.round(mood)));
-  const emoji = getMoodEmoji(level);
 
   return (
-    <span
-      role="img"
-      aria-label={`Mood ${level} out of 10`}
-      style={{
-        display: 'inline-block',
-        fontFamily: '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
-        fontSize: size,
-        lineHeight: 1,
-      }}
-    >
-      {emoji}
-    </span>
+    <Image
+      src={getMoodImagePath(level)}
+      alt={`Mood ${level} out of 10`}
+      width={size}
+      height={size}
+      draggable={false}
+      style={{ objectFit: 'contain' }}
+    />
   );
 }
