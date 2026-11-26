@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import BrandLogo from '@/components/BrandLogo';
-import LineWaves from '@/components/LineWaves';
 
 type AuthLayoutProps = {
   title: string;
@@ -33,23 +32,6 @@ export default function AuthLayout({
 
       <div className="auth-layout">
         <section className="auth-intro">
-          <LineWaves
-            className="auth-intro-waves"
-            color1="#ffffff"
-            color2="#fff1df"
-            color3="#ffffff"
-            speed={0.2}
-            lineCount={54}
-            lineWidth={1.2}
-            glow={0.55}
-            highlight={0.8}
-            warpIntensity={0.85}
-            rotation={-33}
-            enableMouseInteraction={false}
-            clickRipple={false}
-            intro={false}
-            opacity={0.27}
-          />
           <div className="auth-intro-copy">
             <span className="home-section-label">Safe Haven · Find your peace</span>
             <h1>
